@@ -1,27 +1,6 @@
 import * as express from "express";
-
-interface User {
-    name: string;
-    phone: string;
-    email?: string;
-}
-
-interface Message {
-    name: string; //מי כתב את ההודעה 
-    content: string // תוכן ההודעה
-    date: Date; //תאריך כתיבת ההודעה
-}
-
-interface Fault {
-    id: string;
-    title: string;
-    status: "Todo" | "InProgress" | "Complete";
-    category: "food" | "drugs" | "other";
-    user: User;
-    date: Date;
-    hierarchy: any // not sure yet;
-    chatHistory: Message[] // היסטוריית השיחה בנוגע לתקלה
-}
+import { getFaults } from "./faults";
+require('express-async-errors');
 
 const app = express();
 
@@ -29,7 +8,12 @@ app.get("/", (req, res) => {
     res.send("Hello World")
 })
 
-app.get("/api/v1/faults", (req, res) => {
+app.get("/checkdb", async (req, res) => {
+    const result = await getFaults();
+    res.json(result);
+});
+
+app.get("/api/v1/faults", async (req, res) => {
     const fault: Fault = {
         id: "fault",
         title: "לא הגיעה משאית",
