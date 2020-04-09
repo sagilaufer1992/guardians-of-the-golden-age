@@ -1,4 +1,6 @@
 import * as express from "express";
+import { getFaults } from "./faults";
+require('express-async-errors');
 
 interface User {
     name: string;
@@ -29,7 +31,12 @@ app.get("/", (req, res) => {
     res.send("Hello World")
 })
 
-app.get("/api/v1/faults", (req, res) => {
+app.get("/checkdb", async (req, res) => {
+    const result = await getFaults();
+    res.json(result);
+});
+
+app.get("/api/v1/faults", async (req, res) => {
     const fault: Fault = {
         id: "fault",
         title: "לא הגיעה משאית",
