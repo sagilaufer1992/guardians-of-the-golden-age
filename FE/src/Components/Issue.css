@@ -2,17 +2,21 @@
   margin: 5px;
   width: 35%;
 }
+
 .issue-content {
   display: flex;
   justify-content: space-between;
 }
+
 .content-and-status {
   display: flex;
   flex-direction: row;
 }
+
 .content {
   text-align: right;
 }
+
 .status {
   width: 10px;
   margin: 0 5px;
@@ -29,16 +33,19 @@
 .status.done {
   background-color: green;
 }
+
 .region {
   font-size: medium;
   font-style: italic;
   color: grey;
 }
+
 .station-name {
   font-size: large;
   font-style: italic;
   color: black;
 }
+
 .category-and-description {
   font-size: medium;
   color: darkgray;
