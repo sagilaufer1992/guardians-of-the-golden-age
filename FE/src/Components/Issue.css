@@ -1,0 +1,61 @@
+.issue {
+  margin: 5px;
+  width: 35%;
+}
+
+.issue-content {
+  display: flex;
+  justify-content: space-between;
+}
+
+.content-and-status {
+  display: flex;
+  flex-direction: row;
+}
+
+.content {
+  text-align: right;
+}
+
+.status {
+  width: 10px;
+  margin: 0 5px;
+}
+
+.status.active {
+  background-color: red;
+}
+
+.status.in-progress {
+  background-color: yellow;
+}
+
+.status.done {
+  background-color: green;
+}
+
+.region {
+  font-size: medium;
+  font-style: italic;
+  color: grey;
+}
+
+.station-name {
+  font-size: large;
+  font-style: italic;
+  color: black;
+}
+
+.category-and-description {
+  font-size: medium;
+  color: darkgray;
+}
+
+.history {
+  display: flex;
+  align-items: center;
+}
+
+.category {
+  margin: 0 0 0 5px;
+}
