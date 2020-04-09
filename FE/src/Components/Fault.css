@@ -1,9 +1,9 @@
-.issue {
+.fault {
   margin: 5px;
   width: 35%;
 }
 
-.issue-content {
+.fault-content {
   display: flex;
   justify-content: space-between;
 }
@@ -22,15 +22,15 @@
   margin: 0 5px;
 }
 
-.status.active {
+.status.Todo {
   background-color: red;
 }
 
-.status.in-progress {
+.status.InProgress {
   background-color: yellow;
 }
 
-.status.done {
+.status.Complete {
   background-color: green;
 }
 
