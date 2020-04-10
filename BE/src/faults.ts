@@ -1,4 +1,4 @@
-import { getFaultsContainer } from "./cosmosdb";
+import { getFaultsCollection } from "./cosmosdb";
 
 
 /**
@@ -7,17 +7,22 @@ import { getFaultsContainer } from "./cosmosdb";
  * @returns Returns all faults from the database.
  */
 export async function getFaults() {
-    const container = getFaultsContainer();
+    return await getFaultsCollection().find().toArray();
+}
 
-    const query = {
-        query: "SELECT * from c"
-    };
 
-    const { resources: faults } = await container.items
-        .query(query)
-        .fetchAll();
+/**
+ *  Get a fault by id.
+ *
+ * @param {string} id The id of the fault.
+ * @returns The fault with the given id.
+ */
+export async function getFaultById(id: string) {
+    const collection = getFaultsCollection();
 
-    return faults;
+    const result = await collection.findOne({ _id: id });
+
+    return result;
 }
 
 
@@ -25,13 +30,14 @@ export async function getFaults() {
  * Add a new fault to the cosmos database.
  *
  * @param {Fault} fault The fault to add to the database.
- * @returns {Promise<be.Fault>} Returns the newly created fault.
+ * @returns {Promise<string>} Returns the id of the created fault.
  */
-export async function addFault(fault: be.Fault): Promise<be.Fault> {
-    const container = getFaultsContainer();
-    const { resource: createdItem } = await container.items.create(fault);
+export async function addFault(fault: be.Fault): Promise<string> {
+    const collection = getFaultsCollection();
 
-    return createdItem;
+    const result = await collection.insertOne({ ...fault, date: new Date(), status: "ToDo" });
+
+    return result.insertedId;
 }
 
 
@@ -39,31 +45,28 @@ export async function addFault(fault: be.Fault): Promise<be.Fault> {
  * Update an existing fault in the database.
  *
  * @param {string} id The id of the fault to update.
- * @param {string} category The category of the fault.
  * @param {Fault} fault The updated fault object.
- * @returns {Promise<be.Fault>} Returns the updated fault in the database.
+ * @returns {Promise<number>} Returns the number of affected documents.
  */
-export async function updateFault(id: string, category: string, fault: be.Fault): Promise<be.Fault> {
-    const container = getFaultsContainer();
+export async function updateFault(id: string, fault: be.Fault): Promise<number> {
+    const collection = getFaultsCollection();
 
-    const { resource: updatedItem } = await container.item(id, category).replace(fault);
+    const result = await collection.updateOne({ _id: id }, { $set: fault });
 
-    return updatedItem;
+    return result.modifiedCount;
 }
 
 
 /**
  * Delete a fault from the database.
  *
- * @export
  * @param {string} id The id of the fault to delete.
- * @param {string} category The category category of the fault.
- * @returns {Promise<any>} Returns the delete operation result. (not sure what type it is)
+ * @returns {Promise<number>} Returns the number of affected documents.
  */
-export async function deleteFault(id: string, category: string): Promise<any> {
-    const container = getFaultsContainer();
+export async function deleteFault(id: string): Promise<number> {
+    const collection = getFaultsCollection();
 
-    const { resource: result } = await container.item(id, category).delete();
+    const result = await collection.deleteOne({ _id: id });
 
-    return result;
+    return result.deletedCount;
 }

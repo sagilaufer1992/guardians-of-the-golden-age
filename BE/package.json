@@ -12,11 +12,14 @@
   "license": "ISC",
   "dependencies": {
     "@azure/cosmos": "^3.6.3",
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "express-async-errors": "^3.1.1"
+    "express-async-errors": "^3.1.1",
+    "mongodb": "^3.5.5"
   },
   "devDependencies": {
     "@types/express": "^4.17.5",
+    "@types/mongodb": "^3.5.5",
     "@types/node": "^13.11.1",
     "eslint": "^6.8.0",
     "eslint-plugin-import": "^2.20.2",

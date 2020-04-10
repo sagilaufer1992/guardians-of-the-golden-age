@@ -1,19 +1,32 @@
-import { CosmosClient } from "@azure/cosmos";
 
-const ENDPOINT = "https://zahav.documents.azure.com:443/";
-const KEY = "MszShRrozxUpWdqMUNikn7YKt40yICnVpqLI39aBEeYXePAAQjB0XzIbrXfgfZQov6vczmVJVxh5WP0Tmt3Few==";
+import { MongoClient, Db, Collection } from "mongodb";
 
-const DATABASE_ID = "TestDB";
-const FAULTS_CONTAINER_ID = "faults";
-const BRANCHES_CONTAINER_ID = "branches";
+const BRANCHES_COLLECTION = "branches";
+const FAULTS_COLLECTION = "faults";
 
-const CLIENT = new CosmosClient({ endpoint: ENDPOINT, key: KEY  });
-const DATABASE = CLIENT.database(DATABASE_ID);
+let client: MongoClient;
+let db: Db;
 
-export function getFaultsContainer() {
-    return DATABASE.container(FAULTS_CONTAINER_ID);
+export function init() {
+    client = new MongoClient(process.env.DB_CONN_STRING);
+
+    client.connect(err => {
+        if (err !== null) console.error(`Failed to connect to the database. ${err}`);
+        else {
+            db = client.db(process.env.DB_NAME);
+            console.log("successfully connected to the database!")
+        }
+    });
 }
 
-export function getBranchesContainer() {
-    return DATABASE.container(BRANCHES_CONTAINER_ID);
+export function getFaultsCollection(): Collection<any> {
+    if (db === undefined) init();
+
+    return db.collection(FAULTS_COLLECTION)
+}
+
+export function getBranchesCollection(): Collection<any> {
+    if (db === undefined) init();
+
+    return db.collection(BRANCHES_COLLECTION);
 }
