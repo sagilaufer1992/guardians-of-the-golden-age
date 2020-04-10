@@ -3,7 +3,7 @@ import "./Fault.scss";
 import React, { useState } from "react";
 import classnames from "classnames";
 import Chip from "@material-ui/core/Chip";
-import FaultDetails from "./FaultDetails";
+import FaultChat from "./FaultChat";
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
 
 interface Props {

@@ -1,4 +1,4 @@
-.fault-expander {
+.fault-container {
   margin: 8px;
   border-bottom-left-radius: 3px;
   border-bottom-right-radius: 3px;
@@ -42,7 +42,7 @@
         margin: 0 0 0 5px;
       }
     }
-    .show-details {
+    .show-history {
       display: flex;
       flex-direction: row-reverse;
       align-items: center;
