@@ -13,7 +13,7 @@ interface Props {
     onDateChanged: (date: Date) => void;
 }
 
-export function DatePanel({ initDate = new Date(), onDateChanged }: Props) {
+export default function DatePanel({ initDate = new Date(), onDateChanged }: Props) {
     const [date, setDate] = useState(initDate);
     const momentDate = useMemo(() => moment(date), [date]);
     const onClick = (daysToAdd: number) => {
