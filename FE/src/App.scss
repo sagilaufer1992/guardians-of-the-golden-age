@@ -1,0 +1,21 @@
+.app {
+  background-color: whitesmoke;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  font-size: calc(10px + 2vmin);
+  color: #282c34;
+  text-align: center;
+  direction: rtl;
+  .app-modal {
+    top: 50%;
+    left: 50%;
+    right: auto;
+    bottom: auto;
+    direction: rtl !important;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+  }
+}

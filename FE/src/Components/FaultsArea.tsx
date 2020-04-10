@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
 
-import FaultContainer from "./Fault";
+import Fault from "./Fault";
 
 const faultStatus = [
     { value: "Todo", label: "תקלות שנפתחו" },
@@ -97,7 +97,7 @@ export default function FaultsArea(props: Props) {
                 לא נמצאו תקלות
             </div>}
             {faults.map(fault => <div key={fault.id}>
-                <FaultContainer fault={fault} />
+                <Fault fault={fault} />
             </div>)}
         </div>
     </div>
