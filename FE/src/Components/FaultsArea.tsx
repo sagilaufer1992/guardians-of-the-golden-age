@@ -1,8 +1,7 @@
 import "./FaultsArea.scss";
 
-import React, { useState, useEffect } from "react";
-import TextField from '@material-ui/core/TextField';
-import MenuItem from '@material-ui/core/MenuItem';
+import React, { useState } from "react";
+import Select from "./Select";
 
 import Fault from "./Fault";
 
@@ -20,10 +19,15 @@ const faultCategory = [
     { value: "All", label: "הכל" },
 ];
 
+const faultDistributionCenter = [
+    { value: "All", label: "הכל" }
+];
+
 const faultSortBy = [
     { value: "time", label: "זמן" },
     { value: "status", label: "סטטוס" },
     { value: "category", label: "סוג משלוח" },
+    { value: "distributionCenter", label: "מרכז חלוקה" }
 ]
 
 interface Props {
@@ -33,23 +37,8 @@ interface Props {
 export default function FaultsArea(props: Props) {
     const [categoryFilter, setCategoryFilter] = useState<string>("All");
     const [statusFilter, setStatusFilter] = useState<string>("All");
-    const [sortBy, setSortBy] = useState<string>("Time");
-
-    useEffect(() => {
-        console.log(statusFilter, categoryFilter, sortBy);
-    })
-
-    function onCategoryChange(e: React.ChangeEvent<HTMLInputElement>) {
-        setCategoryFilter(e.target.value);
-    }
-
-    function onStatusChange(e: React.ChangeEvent<HTMLInputElement>) {
-        setStatusFilter(e.target.value);
-    }
-
-    function onSortChange(e: React.ChangeEvent<HTMLInputElement>) {
-        setSortBy(e.target.value);
-    }
+    const [sortBy, setSortBy] = useState<string>("time");
+    const [distributionCenterFilter, setDistributionCenterFilter] = useState<string>("All");
 
     const faults: Fault[] = props.faults
         .filter(fault => (categoryFilter === "All" || fault.category === categoryFilter) &&
@@ -64,6 +53,8 @@ export default function FaultsArea(props: Props) {
                 return first.status.localeCompare(second.status);
             case "category":
                 return first.category.localeCompare(second.category);
+            case "distributionCenter":
+                return first.distributionCenter.localeCompare(second.distributionCenter);
             default:
                 return 0;
         }
@@ -82,15 +73,10 @@ export default function FaultsArea(props: Props) {
             </div>
         </div>
         <div className="faults-area-sort">
-            <TextField select className="select" label="סוג משלוח" value={categoryFilter} onChange={onCategoryChange}>
-                {faultCategory.map(({ value, label }) => <MenuItem key={value} value={value}>{label}</MenuItem>)}
-            </TextField>
-            <TextField select className="select" label="סטטוס" value={statusFilter} onChange={onStatusChange}>
-                {faultStatus.map(({ value, label }) => <MenuItem key={value} value={value}>{label}</MenuItem>)}
-            </TextField>
-            <TextField select className="select" label="ממויין לפי" value={sortBy} onChange={onSortChange}>
-                {faultSortBy.map(({ value, label }) => <MenuItem key={value} value={value}>{label}</MenuItem>)}
-            </TextField>
+            <Select title="סוג משלוח" options={faultCategory} value={categoryFilter} onChange={setCategoryFilter} />
+            <Select title="מרכז חלוקה" options={faultDistributionCenter} value={distributionCenterFilter} onChange={setDistributionCenterFilter} />
+            <Select title="סטטוס" options={faultStatus} value={statusFilter} onChange={setStatusFilter} />
+            <Select title="ממויין לפי" options={faultSortBy} value={sortBy} onChange={setSortBy} />
         </div>
         <div className="faults-area-body">
             {faults.length === 0 && <div className="empty-body">
