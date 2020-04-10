@@ -11,6 +11,7 @@ interface Props {
 }
 
 function FaultChat({ fault }: Props) {
+    // messages URL will be in precess.env.REACT_APP_MESSAGES_URL
     const [messages, setMessages] = useState<Message[]>();
 
     useEffect(() => {
