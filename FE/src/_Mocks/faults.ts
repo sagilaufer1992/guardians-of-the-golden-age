@@ -12,7 +12,7 @@ const fault: Fault = {
     content: "הספק לא מגיע. הוא אמר שיש לו פנצר ולא הוא לא יכול לבוא. צריך מישהו שיבוא לקחת את המזון מהמחסן"
 };
 
-export const faults = [fault, fault, fault, fault, fault, fault, fault, fault, fault, fault, fault];
+export const faults = [fault, fault, fault];
 
 export const messages: Message[] = [{
     faultId: "lala",
