@@ -14,7 +14,7 @@ interface Props {
 export default React.memo(function Fault(props: Props) {
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
 
-  const { category, hierarchy, status, title } = props.fault;
+  const { category, status, author, distributionCenter } = props.fault;
 
   return (<>
     <Card className="fault">
@@ -22,8 +22,8 @@ export default React.memo(function Fault(props: Props) {
         <div className="content-and-status">
           <div className={classnames("status", status)} />
           <div className="content">
-            <div className="region">{_getRegion(hierarchy)}</div>
-            <div className="station-name">{_getStationName(hierarchy)}</div>
+            {/* <div className="region">{_getRegion(hierarchy)}</div>
+            <div className="station-name">{_getStationName(hierarchy)}</div> */}
             <div className="category-and-description">
               <Chip
                 className="category"
@@ -31,7 +31,7 @@ export default React.memo(function Fault(props: Props) {
                 color="primary"
                 label={category}
               ></Chip>
-              <span>{title}</span>
+              <span>{distributionCenter}</span>
             </div>
           </div>
         </div>

@@ -1,23 +1,25 @@
-interface User {
-    name: string;
-    phone: string;
-    email?: string;
-}
-
-interface Message {
-    name: string; //מי כתב את ההודעה 
-    role: "Hamal" | "DistributionManager";
-    content: string // תוכן ההודעה
-    date: Date; //תאריך כתיבת ההודעה
-}
-
 interface Fault {
-    id?: string;
-    title: string;
-    status: "Todo" | "InProgress" | "Complete";
-    category: "food" | "drugs" | "other";
-    user: User;
-    date: Date;
-    hierarchy: any // not sure yet;
-    chatHistory: Message[] // היסטוריית השיחה בנוגע לתקלה
+  id: string;
+  date: Date;
+  author: UserInfo;
+  distributionCenter: string;
+  content: string;
+  category: "food" | "drugs" | "other";
+  status: "Todo" | "InProgress" | "Complete";
+}
+
+interface UserInfo {
+  name: string;
+  role: "hamal" | "manager" | "admin" | "volunteer";
+  phone?: string;
+}
+
+interface NewMessage {
+  author: UserInfo; //מי כתב את ההודעה
+  content: string; // תוכן ההודעה
+}
+
+interface Message extends NewMessage {
+  faultId: string;
+  date: Date; // תאריך כתיבת ההודעה
 }
