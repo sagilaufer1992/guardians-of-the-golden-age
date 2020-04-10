@@ -1,8 +1,14 @@
 import * as express from "express";
 import { getFaults } from "./faults";
+import { getBranches } from "./branches";
 require('express-async-errors');
 
 const app = express();
+
+app.get("/api/v1/branches", async (req, res) => {
+    const branches = await getBranches();
+    res.json(branches);
+})
 
 app.get("/", (req, res) => {
     res.send("Hello World")
