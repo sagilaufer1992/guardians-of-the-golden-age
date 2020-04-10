@@ -6,6 +6,7 @@ interface User {
 
 interface Message {
     name: string; //מי כתב את ההודעה 
+    role: "Hamal" | "DistributionManager";
     content: string // תוכן ההודעה
     date: Date; //תאריך כתיבת ההודעה
 }
