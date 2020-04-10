@@ -1,0 +1,42 @@
+.date-panel{
+    direction: rtl;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width:300px;
+    font-size: 14px;
+}
+
+.date-panel .title{
+    font-weight: bold;
+}
+
+.date-panel .value{
+    width: 150px;
+    text-align: center;
+    display: inline-block;
+    color: royalblue;
+}
+
+.right-arrow ,.left-arrow{
+    cursor: pointer;
+    border: solid black;
+    border-width: 0 3px 3px 0;
+    display: inline-block;
+    padding: 3px;
+}
+
+.left-arrow.disabled{
+    cursor: default;
+    border-color: #dddddd;
+    pointer-events: none;
+}
+
+.right-arrow {
+    transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+}
+.left-arrow {
+    transform: rotate(135deg);
+    -webkit-transform: rotate(135deg);
+}
