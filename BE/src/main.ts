@@ -14,7 +14,7 @@ app.get("/checkdb", async (req, res) => {
 });
 
 app.get("/api/v1/faults", async (req, res) => {
-    const fault: Fault = {
+    const fault: be.Fault = {
         id: "fault",
         title: "לא הגיעה משאית",
         status: "Todo",
