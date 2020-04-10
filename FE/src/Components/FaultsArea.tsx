@@ -69,8 +69,8 @@ export default function FaultsArea(props: Props) {
         }
     }
 
-    return <div className="container">
-        <div className="container-header">
+    return <div className="faults-area">
+        <div className="faults-area-header">
             <div className="label">
                 רשימת הבעיות
             </div>
@@ -81,7 +81,7 @@ export default function FaultsArea(props: Props) {
                 <div className="active-number">{faults.filter(f => f.status === "Todo").length}</div>
             </div>
         </div>
-        <div className="container-sort">
+        <div className="faults-area-sort">
             <TextField select className="select" label="סוג משלוח" value={categoryFilter} onChange={onCategoryChange}>
                 {faultCategory.map(({ value, label }) => <MenuItem key={value} value={value}>{label}</MenuItem>)}
             </TextField>
@@ -92,7 +92,7 @@ export default function FaultsArea(props: Props) {
                 {faultSortBy.map(({ value, label }) => <MenuItem key={value} value={value}>{label}</MenuItem>)}
             </TextField>
         </div>
-        <div className="container-body">
+        <div className="faults-area-body">
             {faults.length === 0 && <div className="empty-body">
                 לא נמצאו תקלות
             </div>}

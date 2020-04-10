@@ -10,28 +10,27 @@ $border-style: 1px solid rgb(189, 189, 189);
     color: $text-color;
 }
 
-.container {
-    width: 45%;
-    margin: 5px;
-    border: $border-style;
-    border-radius: 10px;
+.faults-area {
     display: flex;
     flex-direction: column;
-
-    .container-header {
-        margin: 5px 0 0 0;
-        padding: 0 5px 5px 5px;
+    width: 50vw;
+    max-height: 80vh;
+    margin: 10px;
+    position: relative;
+    border: $border-style;
+    border-radius: 3px;
+    background-color: white;
+    .faults-area-header {
+        padding: 5px;
         display: flex;
         flex-direction: row;
         border-bottom: $border-style;
-
         .label {
-            font-size: 22px;
-            padding-left: 14px;
+            font-size: 20px;
+            padding: 0 10px;
             font-weight: bold;
             border-left: $border-style;
         }
-
         .numbers {
             display: flex;
             flex-direction: row;
@@ -52,8 +51,7 @@ $border-style: 1px solid rgb(189, 189, 189);
             }
         }
     }
-
-    .container-sort {
+    .faults-area-sort {
         padding: 8px;
         display: flex;
         flex-direction: row;
@@ -66,10 +64,10 @@ $border-style: 1px solid rgb(189, 189, 189);
         }
     }
 
-    .container-body {
-        max-height: 550px;
+    .faults-area-body {
+        flex: 1;
         overflow-y: auto;
-
+        background-color: whitesmoke;
         .empty-body {
             text-align: center;
             margin: 5px;
