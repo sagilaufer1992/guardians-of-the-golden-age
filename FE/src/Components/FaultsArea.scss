@@ -57,13 +57,11 @@ $border-style: 1px solid rgb(189, 189, 189);
         flex-direction: row;
         justify-content: space-around;
         border-bottom: $border-style; 
-
         .select {
             margin: 3px;
             min-width: 32%;
         }
     }
-
     .faults-area-body {
         flex: 1;
         overflow-y: auto;

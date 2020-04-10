@@ -1,8 +1,13 @@
-.fault-container {
-  margin: 5px;
+.fault-expander {
+  margin: 8px;
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+  background-color: darken($color: whitesmoke, $amount: 10);
   .fault {
     position: relative;
     display: flex;
+    border: 1px solid darken($color: whitesmoke, $amount: 10);
+    background-color: white;
     .status {
       width: 15px;
       &.Todo {
@@ -17,7 +22,7 @@
     }
     .content {
       flex: 1;
-      margin: 10px;
+      margin: 15px;
       text-align: right;
       .region {
         font-size: medium;
@@ -37,7 +42,7 @@
         margin: 0 0 0 5px;
       }
     }
-    .show-history {
+    .show-details {
       display: flex;
       flex-direction: row-reverse;
       align-items: center;
