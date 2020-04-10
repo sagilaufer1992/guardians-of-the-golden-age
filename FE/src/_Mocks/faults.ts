@@ -9,10 +9,10 @@ const fault: Fault = {
         phone: "050-0000000"
     },
     date: new Date(),
-    content: "הספק לא מגיע. הוא אמר שיש לו פנצר ולא הוא לא יכול לבוא. צריך מישהו שיבוא לקחת את המזון מהמחסן"    
+    content: "הספק לא מגיע. הוא אמר שיש לו פנצר ולא הוא לא יכול לבוא. צריך מישהו שיבוא לקחת את המזון מהמחסן"
 };
 
-export const faults = [fault, fault, fault];
+export const faults = [fault, fault, fault, fault, fault, fault, fault, fault, fault, fault, fault];
 
 export const messages: Message[] = [{
     faultId: "lala",

@@ -1,0 +1,52 @@
+.fault-container {
+  margin: 5px;
+  .fault {
+    position: relative;
+    display: flex;
+    .status {
+      width: 15px;
+      &.Todo {
+        background-color: red;
+      }
+      &.InProgress {
+        background-color: yellow;
+      }
+      &.Complete {
+        background-color: green;
+      }
+    }
+    .content {
+      flex: 1;
+      margin: 10px;
+      text-align: right;
+      .region {
+        font-size: medium;
+        font-style: italic;
+        color: grey;
+      }
+      .station-name {
+        font-size: large;
+        font-style: italic;
+        color: black;
+      }
+      .category-and-description {
+        font-size: medium;
+        color: darkgray;
+      }
+      .category {
+        margin: 0 0 0 5px;
+      }
+    }
+    .show-history {
+      display: flex;
+      flex-direction: row-reverse;
+      align-items: center;
+      cursor: pointer;
+      margin: 0 10px;
+      .expander-arrow {
+        font-size: 16px;
+        margin-right: 5px;
+      }
+    }
+  }
+}
