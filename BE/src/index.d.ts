@@ -1,33 +1,38 @@
 declare namespace be {
-    interface Branch{
-        id:string;
-        name:string; //שם נקודות החלוקה
-        address: string // כתובת
-        napa: string // נפה 
-        district: string // מחוז
-        municipalityName: string // שם הרשות
-        municipalitySymbol: number // מזהה הרשות
-    }
-    interface User {
-        name: string;
-        phone: string;
-        email?: string;
-    }
+  interface NewMessage {
+    author: UserInfo; //מי כתב את ההודעה
+    content: string; // תוכן ההודעה
+  }
 
-    interface Message {
-        name: string; //מי כתב את ההודעה 
-        content: string // תוכן ההודעה
-        date: Date; //תאריך כתיבת ההודעה
-    }
+  interface NewFault extends NewMessage {
+    category: "food" | "drugs" | "other";
+    distributionCenter: string;
+  }
 
-    interface Fault {
-        id?: string;
-        title: string;
-        status: "Todo" | "InProgress" | "Complete";
-        category: "food" | "drugs" | "other";
-        user: User;
-        date: Date;
-        hierarchy: any // not sure yet;
-        chatHistory: Message[] // היסטוריית השיחה בנוגע לתקלה
-    }
+  interface Fault extends NewFault {
+    id: string;
+    date: Date;
+    status: "Todo" | "InProgress" | "Complete";
+  }
+
+  interface UserInfo {
+    name: string;
+    role: "hamal" | "manager" | "admin" | "volunteer";
+    phone?: string;
+  }
+
+  interface Message extends NewMessage {
+    faultId: string;
+    date: Date; // תאריך כתיבת ההודעה
+  }
+
+  interface Branch {
+    id: string;
+    name: string; //שם נקודות החלוקה
+    address: string; // כתובת
+    napa: string; // נפה
+    district: string; // מחוז
+    municipalityName: string; // שם הרשות
+    municipalitySymbol: number; // מזהה הרשות
+  }
 }

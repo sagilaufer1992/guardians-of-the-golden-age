@@ -8,14 +8,7 @@ const app = express();
 
 app.use(cors());
 
-const TEST_USER = { userName: "בדיקה", access_token: "1242141", authGroups: ["קבוצת בדיקה"] };
-
-app.post("/login", authForm.none(), (req, res) => {
-    if (!req.body.username || !req.body.password)
-        res.status(400).json({ error: "invalid payload. should use multipart/form-data with username,password fields" });
-
-    res.json(TEST_USER);
-});
+const TEST_USER = { username: "יוזר חמל", role: "hamal", authGroups: [] };
 
 app.get("/auth", authForm.none(), (req, res) => {
     const { authorization } = req.headers;
@@ -25,6 +18,6 @@ app.get("/auth", authForm.none(), (req, res) => {
     res.json(TEST_USER);
 });
 
-app.listen(5000, () => {
+app.listen(5555, () => {
     console.log("external api mock server running on port 5555");
 });

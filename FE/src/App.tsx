@@ -1,6 +1,6 @@
 import './App.scss';
 import React, { useState } from 'react';
-import faults from "./_Mocks/faults";
+import { faults } from "./_Mocks/faults";
 import FaultsArea from "./Components/FaultsArea";
 import DatePanel from "./Components/DatePanel";
 

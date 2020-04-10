@@ -1,33 +1,33 @@
-const fault = {
+const fault: Fault = {
     id: "lala",
-    title: 'מתנ"ס אבו גוש',
+    distributionCenter: 'מתנ"ס אבו גוש',
     status: "Todo",
     category: "drugs",
-    user: {
+    author: {
         name: "שירן",
-        phone: "050-0000000",
-        email: "shiran@walla.com"
+        role: "manager",
+        phone: "050-0000000"
     },
     date: new Date(),
-    hierarchy: "להלה",
-    chatHistory: [{
-        name: "אבי שמעוני",
-        role: "DistributionManager",
-        content: "הספק לא מגיע. הוא אמר שיש לו פנצר ולא הוא לא יכול לבוא. צריך מישהו שיבוא לקחת את המזון מהמחסן",
-        date: new Date()
-    }, {
-        name: "אבי שמעוני",
-        role: "Hamal",
-        content: "הספק לא מגיע. הוא אמר שיש לו פנצר ולא הוא לא יכול לבוא. צריך מישהו שיבוא לקחת את המזון מהמחסן",
-        date: new Date()
-    }, {
-        name: "אבי שמעוני",
-        role: "Hamal",
-        content: "הספק לא מגיע. הוא אמר שיש לו פנצר ולא הוא לא יכול לבוא. צריך מישהו שיבוא לקחת את המזון מהמחסן",
-        date: new Date()
-    }]
-} as Fault;
+    content: "הספק לא מגיע. הוא אמר שיש לו פנצר ולא הוא לא יכול לבוא. צריך מישהו שיבוא לקחת את המזון מהמחסן"    
+};
 
-const faults = [fault, fault, fault];
+export const faults = [fault, fault, fault];
 
-export default faults;
+export const messages: Message[] = [{
+    faultId: "lala",
+    author: {
+        name: "אבי שמעוני",
+        role: "hamal",
+    },
+    content: "הספק לא מגיע. הוא אמר שיש לו פנצר ולא הוא לא יכול לבוא. צריך מישהו שיבוא לקחת את המזון מהמחסן",
+    date: new Date()
+}, {
+    faultId: "lala",
+    author: {
+        name: "אבי שמעוני",
+        role: "hamal",
+    },
+    content: "הספק לא מגיע. הוא אמר שיש לו פנצר ולא הוא לא יכול לבוא. צריך מישהו שיבוא לקחת את המזון מהמחסן",
+    date: new Date()
+}]
