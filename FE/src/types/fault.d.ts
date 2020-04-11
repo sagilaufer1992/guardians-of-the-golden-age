@@ -4,11 +4,13 @@ interface Fault {
   author: UserInfo;
   distributionCenter: string;
   content: string;
-  category: "food" | "drugs" | "other";
+  category: FaultCategory;
   status: FaultStatus;
 }
 
 type FaultStatus = "Todo" | "InProgress" | "Complete";
+
+type FaultCategory = "food" | "drugs" | "other";
 
 interface UserInfo {
   name: string;

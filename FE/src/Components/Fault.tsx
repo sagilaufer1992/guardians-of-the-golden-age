@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import classnames from "classnames";
 import Chip from "@material-ui/core/Chip";
 import Button from "@material-ui/core/Button";
-import FaultChat from "./FaultChat";
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
 import FaultDetails from "./FaultDetails";
 

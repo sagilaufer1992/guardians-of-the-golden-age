@@ -1,26 +1,46 @@
-export async function getFaultsByDate(date: Date): Promise<Fault[]> {
-    const faults = await _getFaultsByDate(date);
-    return faults.map(fault => ({...fault, date: new Date(fault.date)}));
+function _parseJsonWithDate(data: Fault) {
+    return { ...data, date: new Date(data.date) }
 }
 
-async function _getFaultsByDate(date: Date): Promise<Fault[]>  {
-    const response = await fetch(`${process.env.REACT_APP_BE}/api/faults/date/${date.toISOString()}`);
-    console.log(response);
-    const body = await response.json();
+async function _fetchFaultsApi(url: string, method: string = "GET", body: any = null): Promise<Fault[] | Fault> {
+    const response = await fetch(`${process.env.REACT_APP_BE}/api/faults${url || ""}`, {
+        method,
+        mode: "cors",
+        headers: { "Content-Type": "application/json" },
+        body: body ? JSON.stringify(body) : undefined
+    });
 
-    return body;
+    const data = await response.json();
+
+    const dataWithDates = Array.isArray(data) ? data.map(fault => ({ ...fault, date: new Date(fault.date) })) : _parseJsonWithDate(data);
+
+    return dataWithDates;
+}
+
+export async function getFaultsByDate(date: Date): Promise<Fault[]> {
+    return await _fetchFaultsApi(`/date/${date.toISOString()}`) as Fault[];
+}
+
+export async function addFault(user: gg.User | null, fault: Partial<Fault>): Promise<Fault | null> {
+    const { distributionCenter, content, category } = fault;
+
+    try {
+        return await _fetchFaultsApi("", "POST", {
+            author: {
+                name: user?.username,
+                role: user?.role,
+            },
+            distributionCenter,
+            content,
+            category
+        }) as Fault;
+    }
+    catch {
+        alert("חלה שגיאה בהוספת תקלה");
+        return null;
+    }
 }
 
 export async function updateFault(newFault: Fault): Promise<Fault> {
-    const response = await fetch(`${process.env.REACT_APP_BE}/api/faults/${newFault._id}`, {
-        method: "PUT",
-        mode: "cors",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newFault),
-    })
-    const body = await response.json();
-
-    return body;
+    return await _fetchFaultsApi(`/${newFault._id}`, "PUT", newFault) as Fault;
 }

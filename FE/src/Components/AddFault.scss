@@ -1,0 +1,44 @@
+.add-fault {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    min-width: 30vw;
+    max-height: 40vh;
+    padding: 10px;
+    margin: 10px;
+    border: 1px solid rgb(189, 189, 189);
+    border-radius: 3px;
+    background-color: white;
+    box-sizing: content-box;
+    .title {
+      text-align: right;
+      font-weight: bold;
+    }
+    .fields {
+      width: 100%;
+      .fault-field {
+        margin: 5px;
+        display: flex;
+        flex-direction: column;
+        label {
+          margin: 5px;
+        }
+      }
+    }
+    .buttons {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      & > * {
+        margin: 5px;
+      }
+      .approve {
+        color: whitesmoke;
+        background-color: #311b92;
+      }
+      .cancel {
+        background-color: whitesmoke;
+      }
+    }
+  }
+  
