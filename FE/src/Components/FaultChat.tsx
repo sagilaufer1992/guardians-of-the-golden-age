@@ -42,7 +42,7 @@ function _createChatMessage({ date, author, content }: Fault | Message, index?: 
                 </div>}
             </div>
             <div className="details">{content}</div>
-            <div className="date">{date.toLocaleTimeString()}</div>
+            <div className="date">{new Date(date).toLocaleTimeString()}</div>
         </div>
     </div>;
 }

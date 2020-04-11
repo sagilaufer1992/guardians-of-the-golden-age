@@ -1,5 +1,5 @@
 interface Fault {
-  id: string;
+  _id: string;
   date: Date;
   author: UserInfo;
   distributionCenter: string;

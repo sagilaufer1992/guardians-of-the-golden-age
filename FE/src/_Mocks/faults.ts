@@ -1,5 +1,5 @@
 const fault: Fault = {
-    id: "lala",
+    _id: "lala",
     distributionCenter: 'מתנ"ס אבו גוש',
     status: "Todo",
     category: "drugs",

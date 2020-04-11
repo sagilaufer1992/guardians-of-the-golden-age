@@ -17,7 +17,7 @@ export default function DatePanel({ initDate = new Date(), onDateChanged }: Prop
     const [date, setDate] = useState(initDate);
     const momentDate = useMemo(() => moment(date), [date]);
     const onClick = (daysToAdd: number) => {
-        const newDate = moment(date).add(daysToAdd, "days").toDate();
+        const newDate = moment(date).add(daysToAdd, "days").startOf('day').toDate();
         setDate(newDate);
         onDateChanged(newDate);
     }

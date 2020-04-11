@@ -11,7 +11,7 @@ import FaultDetails from "./FaultDetails";
 interface Props {
   fault: Fault;
   onFaultClick?: () => void;
-  onChangeStatus: (status: FaultStatus, id: string) => void;
+  onChangeStatus: (fault: Fault) => void;
 }
 
 interface ButtonProps {
@@ -29,11 +29,10 @@ export default React.memo(function Fault(props: Props) {
     distributionCenter,
     content,
     date,
-    id,
   } = props.fault;
 
   function _onChangeStatus(status: FaultStatus) {
-    props.onChangeStatus(status, id);
+    props.onChangeStatus({...props.fault, status});
   }
 
   return (
@@ -43,7 +42,7 @@ export default React.memo(function Fault(props: Props) {
           <div className={classnames("status", status)} />
           <div className="content">
             <div className="author-and-date">
-              {author.name} - {date.toLocaleDateString("he-IL")}
+              {author.name} - {new Date(date).toLocaleDateString("he-IL")}
             </div>
             <div className="station-name">{distributionCenter}</div>
             <div className="category-and-description">
