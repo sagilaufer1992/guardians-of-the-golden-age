@@ -1,4 +1,4 @@
-FROM node:12
+FROM node:13.12.0-alpine
 WORKDIR /usr/src/server
 COPY package*.json ./
 RUN npm install
