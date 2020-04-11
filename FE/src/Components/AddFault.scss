@@ -1,9 +1,8 @@
 .add-fault {
     display: flex;
     flex-direction: column;
-    position: relative;
+    height: fit-content;
     min-width: 30vw;
-    max-height: 40vh;
     padding: 10px;
     margin: 10px;
     border: 1px solid rgb(189, 189, 189);
@@ -26,9 +25,8 @@
       }
     }
     .buttons {
-      position: absolute;
-      bottom: 10px;
-      left: 10px;
+      display: flex;
+      justify-content: flex-end;
       & > * {
         margin: 5px;
       }

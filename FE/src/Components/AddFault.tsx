@@ -41,7 +41,7 @@ export default function AddFault(props: Props) {
     }
 
     return (
-        <form className="add-fault">
+        <div className="add-fault">
             <div className="title">צור תקלה חדשה</div>
             <div className="fields">
                 <div className="fault-field">
@@ -77,6 +77,6 @@ export default function AddFault(props: Props) {
                 <Button className="approve" onClick={onAddFault}>אישור</Button>
                 <Button className="cancel" onClick={cleanForm}>נקה</Button>
             </div>
-        </form>
+        </div>
     );
 }
