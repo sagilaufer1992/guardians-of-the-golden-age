@@ -83,9 +83,7 @@ export default function FaultsArea(props: Props) {
             {faults.length === 0 && <div className="empty-body">
                 לא נמצאו תקלות
             </div>}
-            {faults.map(fault => <div key={fault._id}>
-                <Fault fault={fault} onChangeStatus={props.onFaultChange}/>
-            </div>)}
+            {faults.map(fault => <Fault key={fault._id} fault={fault} onChangeStatus={props.onFaultChange} />)}
         </div>
     </div>
 }

@@ -2,9 +2,7 @@ import React, { useState, useContext } from "react";
 import { Button, TextField } from "@material-ui/core";
 import Select from "./Select";
 import UserProvider from "../utils/UserProvider";
-import { addFault } from "../utils/fetchFaultFunctions";
 import "./AddFault.scss";
-import { prependOnceListener } from "cluster";
 
 const DISTRIBUTION_CENTER_OPTIONS = [
     { label: "בחר נקודת חלוקה...", value: "" },
