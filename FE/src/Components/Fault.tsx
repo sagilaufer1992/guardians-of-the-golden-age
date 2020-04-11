@@ -42,7 +42,7 @@ export default React.memo(function Fault(props: Props) {
           <div className={classnames("status", status)} />
           <div className="content">
             <div className="author-and-date">
-              {author.name} - {new Date(date).toLocaleDateString("he-IL")}
+              {author.name} - {date.toLocaleDateString("he-IL")}
             </div>
             <div className="station-name">{distributionCenter}</div>
             <div className="category-and-description">

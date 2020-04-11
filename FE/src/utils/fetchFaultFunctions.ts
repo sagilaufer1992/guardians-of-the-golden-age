@@ -1,4 +1,9 @@
 export async function getFaultsByDate(date: Date): Promise<Fault[]> {
+    const faults = await _getFaultsByDate(date);
+    return faults.map(fault => ({...fault, date: new Date(fault.date)}));
+}
+
+async function _getFaultsByDate(date: Date): Promise<Fault[]>  {
     const response = await fetch(`${process.env.REACT_APP_BE}/api/faults/date/${date.toISOString()}`);
     console.log(response);
     const body = await response.json();
