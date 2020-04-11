@@ -24,12 +24,10 @@ export async function getMessageById(req, res, next) {
 }
 
 export async function addMessage(req, res, next) {
-    req.body.faultId = req.params.faultId;
-
-    const fault = await Fault.findById(req.params.faultId);
+    const fault = await Fault.findById(req.body.faultId);
 
     if (!fault) {
-        return res.status(404, `No Fault with the id of ${req.params.faultId}`);
+        return res.status(404, `No Fault with the id of ${req.body.faultId}`);
     }
 
     const message = await Message.create(req.body);

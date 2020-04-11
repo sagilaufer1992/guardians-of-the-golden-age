@@ -5,8 +5,11 @@ const router = express.Router({ mergeParams: true });
 
 router
     .route('/')
-    .get(getMessages)
     .post(addMessage);
+
+router
+    .route('/fault/:faultId')
+    .get(getMessages);
 
 router
     .route('/:id')

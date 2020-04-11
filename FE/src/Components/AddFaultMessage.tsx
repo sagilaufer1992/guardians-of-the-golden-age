@@ -5,23 +5,18 @@ import TextField from '@material-ui/core/TextField';
 import Button from "@material-ui/core/Button";
 
 interface Props {
-    setNewMessage: (message: Message) => void;
+    addNewMessage: (name: string, content: string) => void;
 }
 
-interface Message {
-    name: string;
-    treatment: string;
-}
-
-export default function AddFaultMessage({ setNewMessage }: Props) {
+export default function AddFaultMessage({ addNewMessage }: Props) {
     const [name, setName] = useState<string>("");
-    const [treatment, setTreatment] = useState<string>("");
+    const [content, setContent] = useState<string>("");
 
     function _onSumbit() {
-        if (name !== "" && treatment !== "") {
-            setNewMessage({name, treatment});
+        if (name !== "" && content !== "") {
+            addNewMessage(name, content);
             setName("");
-            setTreatment("");
+            setContent("");
         }
     }
 
@@ -29,8 +24,8 @@ export default function AddFaultMessage({ setNewMessage }: Props) {
         setName(e.target.value);
     }
 
-    function _onTreatmentChange(e: React.ChangeEvent<HTMLInputElement>) {
-        setTreatment(e.target.value);
+    function _onContentChange(e: React.ChangeEvent<HTMLInputElement>) {
+        setContent(e.target.value);
     }
 
     return <div className="add-message-panel">
@@ -39,7 +34,7 @@ export default function AddFaultMessage({ setNewMessage }: Props) {
             <div className="input-label">שם המדווח על הטיפול בתקלה</div>
             <TextField className="panel-input" variant="outlined" value={name} onChange={_onNameChange} placeholder="שם המלא לצורך תיעוד" />
             <div className="input-label">אופן הטיפול</div>
-            <TextField className="panel-input" variant="outlined" value={treatment} onChange={_onTreatmentChange} multiline rows={4} placeholder="מה הצעדים שננקטו? שים לב, ההודעה תישלח למדווח הבעיה" />
+            <TextField className="panel-input" variant="outlined" value={content} onChange={_onContentChange} multiline rows={4} placeholder="מה הצעדים שננקטו? שים לב, ההודעה תישלח למדווח הבעיה" />
             <Button onClick={_onSumbit} className="panel-button" variant="contained" size="small" color="primary">סמן כטופל</Button>
         </div>
     </div>

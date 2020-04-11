@@ -1,21 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import classNames from "classnames";
 import { MdAccountCircle } from "react-icons/md";
 import "./FaultChat.scss";
 
-// TODO: change to real messages
-import { messages as MOCK_MESSAGES } from "../_Mocks/faults";
-
 interface Props {
-    fault: Fault;    
+    fault: Fault;
+    messages: Message[] | undefined;
 }
 
-function FaultChat({ fault }: Props) {
-    const [messages, setMessages] = useState<Message[]>();
+function FaultChat({ fault, messages }: Props) {
 
-    useEffect(() => {
-        setTimeout(() => setMessages(MOCK_MESSAGES), 300);
-    }, []);
 
     return <div className="chat">
         <div className="title">פירוט התקלה</div>
