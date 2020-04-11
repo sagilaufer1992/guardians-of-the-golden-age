@@ -30,7 +30,7 @@ export async function updateFault(req, res, next) {
     }
 
     fault = await Fault.findOneAndUpdate(req.params.id, req.body, {
-        new: true, // The response will be the updated data
+        new: true,
         runValidators: true
     });
 
@@ -47,4 +47,14 @@ export async function deleteFault(req, res, next) {
     fault.remove();
 
     res.status(200).json({});
+}
+
+export async function getFaultsInDate(req, res, next) {
+    const { date } = req.params;
+
+    const end = new Date(date).getTime() + 24 * 60 * 60 * 1000;
+
+    const faults = await Fault.find({ "date": { "$gte": new Date(date), "$lt": new Date(end) } });
+
+    res.status(200).json(faults);
 }

@@ -1,10 +1,12 @@
 import * as express from "express";
-import { getFaults, getFaultById, addFault, deleteFault, updateFault } from "./fault.controller";
+import { getFaults, getFaultById, addFault, deleteFault, updateFault, getFaultsInDate } from "./fault.controller";
 import messagesRouter from "../Messages/message.route";
 
 const router = express.Router();
 
 router.use('/:faultId/messages', messagesRouter);
+
+router.route('/date/:date').get(getFaultsInDate);
 
 router
     .route('/')
