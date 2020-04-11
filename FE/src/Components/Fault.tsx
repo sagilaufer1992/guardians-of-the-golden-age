@@ -5,6 +5,7 @@ import classnames from "classnames";
 import Chip from "@material-ui/core/Chip";
 import FaultChat from "./FaultChat";
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
+import FaultDetails from "./FaultDetails";
 
 interface Props {
   fault: Fault;
@@ -43,25 +44,22 @@ export default React.memo(function Fault(props: Props) {
               <span>{content}</span>
             </div>
           </div>
-          <div
-            className="show-history"
-            onClick={() => setIsDetailsOpen(!isDetailsOpen)}
-          >
+          <div className="show-history" onClick={() => setIsDetailsOpen(!isDetailsOpen)}          >
             {isDetailsOpen ? (
               <>
                 <MdKeyboardArrowUp className="expander-arrow" />
                 סגור פרטים
               </>
             ) : (
-              <>
-                <MdKeyboardArrowDown className="expander-arrow" />
+                <>
+                  <MdKeyboardArrowDown className="expander-arrow" />
                 הצג פרטים
               </>
-            )}
+              )}
           </div>
         </div>
       </div>
-      {isDetailsOpen && <FaultChat fault={props.fault} />}
+      {isDetailsOpen && <FaultDetails fault={props.fault} />}
     </>
   );
 });

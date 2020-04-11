@@ -2,30 +2,23 @@ $btn-color: #0175b6;
 
 .add-message-panel {
     padding: 10px;
-    width: 42%;
+    padding-top: 0;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     background-color: white;
-    border: 2px solid #e0e0e0;
     border-radius: 2px;
-
+    font-size: 14px;
     .panel-label {
-        font-size: 22px;
         font-weight: bold;
     }
     .panel-body {
         width: 100%;
         display: flex;
         flex-direction: column;
-
         .input-label {
-            padding: 7px;
+            padding: 5px 0;
             text-align: right;
-            font-size: 17px;
-        }
-        .panel-input {
-            margin: 5px;
         }
         .panel-button {
             margin: 5px;
