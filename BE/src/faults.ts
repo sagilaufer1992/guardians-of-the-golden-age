@@ -35,7 +35,7 @@ export async function getFaultById(id: string) {
 export async function addFault(fault: be.Fault): Promise<string> {
     const collection = getFaultsCollection();
 
-    const result = await collection.insertOne({ ...fault, date: new Date(), status: "ToDo" });
+    const result = await collection.insertOne({ ...fault, date: new Date(), status: "Todo" });
 
     return result.insertedId;
 }

@@ -1,4 +1,5 @@
 import * as express from "express";
+import * as cors from "cors";
 import { init as initMongoConnection } from "./cosmosdb";
 const env = process.env.NODE_ENV || "development";
 
@@ -11,6 +12,7 @@ require("dotenv").config({ path: `.env.${env}` });
 
 const app = express();
 app.use(express.json());
+app.use(cors());
 
 initMongoConnection();
 
