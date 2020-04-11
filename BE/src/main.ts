@@ -1,11 +1,13 @@
 import * as express from "express";
 import { init as initMongoConnection } from "./cosmosdb";
+const env = process.env.NODE_ENV || "development";
 
-require('dotenv').config();
 require('express-async-errors');
 
 import { getFaults, getFaultById, addFault, deleteFault, updateFault } from "./faults";
 import { getBranches } from "./branches";
+
+require("dotenv").config({ path: `.env.${env}` });
 
 const app = express();
 app.use(express.json());
@@ -51,6 +53,7 @@ app.delete("/api/fault/:id", async (req, res) => {
 });
 
 const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => {
+app.listen(PORT, () => {    
     console.log(`Server is running in http://localhost:${PORT}`)
+    console.log(`Running in ${env} environment.`)
 });

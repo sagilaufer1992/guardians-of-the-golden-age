@@ -23,4 +23,4 @@ yarn-debug.log*
 yarn-error.log*
 
 # Don't add the back end's .env file for security purposes.
-/BE/.env
+/BE/.env.production
