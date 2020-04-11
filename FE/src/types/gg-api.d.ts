@@ -2,6 +2,8 @@
 
 declare namespace gg {
   interface User {
+    token: string;
+
     username: string;
 
     // hamal: חמל
