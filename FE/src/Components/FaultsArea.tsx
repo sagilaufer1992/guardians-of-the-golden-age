@@ -4,6 +4,9 @@ import React, { useState } from "react";
 import Select from "./Select";
 
 import Fault from "./Fault";
+import { IconButton } from "@material-ui/core";
+import { Create } from "@material-ui/icons";
+import AddFaultForm from "./AddFaultForm";
 
 const faultStatus = [
     { value: "Todo", label: "תקלות שנפתחו" },
@@ -35,6 +38,7 @@ interface Props {
 }
 
 export default function FaultsArea(props: Props) {
+    const [isAddFaultOpen, setIsAddFaultOpen] = useState<boolean>(false);
     const [categoryFilter, setCategoryFilter] = useState<string>("All");
     const [statusFilter, setStatusFilter] = useState<string>("All");
     const [sortBy, setSortBy] = useState<string>("time");
@@ -61,6 +65,19 @@ export default function FaultsArea(props: Props) {
     }
 
     return <div className="faults-area">
+      {isAddFaultOpen ? (
+        <AddFaultForm
+          onApprove={() => setIsAddFaultOpen(false)}
+          onCancel={() => setIsAddFaultOpen(false)}
+        />
+      ) : (
+        <div className="add-fault">
+          <IconButton onClick={() => setIsAddFaultOpen(true)}>
+            <Create />
+          </IconButton>
+          <span className="label">דווח על בעיה חדשה</span>
+        </div>
+      )}
         <div className="faults-area-header">
             <div className="label">
                 רשימת הבעיות

@@ -1,0 +1,20 @@
+.add-fault-form {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  & > * {
+    margin: 5px;
+  }
+  .selection {
+    display: flex;
+    justify-content: space-between;
+  }
+  .buttons {
+    .approve {
+      background-color: forestgreen;
+    }
+    .cancel {
+      background-color: tomato;
+    }
+  }
+}
