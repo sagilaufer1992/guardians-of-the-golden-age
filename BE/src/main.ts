@@ -3,6 +3,8 @@ import * as cors from "cors";
 import connectDB from "./cosmosdb";
 import faultsRouter from "./Faults/fault.route";
 import branchesRouter from "./Branches/branch.route";
+import messagesRouter from "./Messages/message.route";
+
 require('express-async-errors');
 
 const env = process.env.NODE_ENV || "development";
@@ -15,8 +17,9 @@ app.use(cors());
 
 connectDB();
 
-app.use("/api/fault", faultsRouter);
-app.use("/api/branch", branchesRouter);
+app.use("/api/faults", faultsRouter);
+app.use("/api/branches", branchesRouter);
+app.use("/api/messages", messagesRouter);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
