@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+import { faultsDB } from "../cosmosdb";
 
 const FaultSchema = new mongoose.Schema({
     content: {
@@ -37,4 +38,4 @@ const FaultSchema = new mongoose.Schema({
     }
 });
 
-export default mongoose.model('Fault', FaultSchema);
+export default faultsDB.model('Fault', FaultSchema);

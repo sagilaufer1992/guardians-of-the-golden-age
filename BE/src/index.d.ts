@@ -1,3 +1,21 @@
+declare namespace Express {
+  interface Request {
+    username?: string;
+    user?: gg.User;
+  }
+}
+
+declare namespace gg {
+  type Role = "hamal" | "manager" | "admin" | "volunteer";
+
+  interface User {
+    token: string;
+    username: string;
+    role: gg.Role;
+    authGroups: string[];
+  }
+}
+
 declare namespace be {
   interface NewMessage {
     author: UserInfo; //מי כתב את ההודעה
@@ -17,7 +35,7 @@ declare namespace be {
 
   interface UserInfo {
     name: string;
-    role: "hamal" | "manager" | "admin" | "volunteer";
+    role: gg.Role;
     phone?: string;
   }
 
