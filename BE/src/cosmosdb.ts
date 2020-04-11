@@ -1,14 +1,18 @@
 import * as mongoose from 'mongoose';
 
-const connectDB = async () => {
-    const conn = await mongoose.connect(`${process.env.DB_CONN_STRING}`, {
+export let faultsDB: mongoose.Connection = null;
+export let usersDB: mongoose.Connection = null;
+
+async function _connectDB(connectionString: string) {
+    return await mongoose.createConnection(connectionString, {
         useNewUrlParser: true,
         useCreateIndex: true,
         useFindAndModify: false,
         useUnifiedTopology: true
     });
-
-    console.log(`MongoDB Connected: ${conn.connection.host}`);
 };
 
-export default connectDB;
+export default async function initConnections() {
+    const { FAULTS_DB_CONN_STRING, USERS_DB_CONN_STRING } = process.env;
+    [faultsDB, usersDB] = await Promise.all([FAULTS_DB_CONN_STRING, USERS_DB_CONN_STRING].map(_connectDB));
+}

@@ -2,33 +2,37 @@ import * as express from "express";
 require('express-async-errors');
 
 import * as cors from "cors";
-import connectDB from "./cosmosdb";
-import faultsRouter from "./Faults/fault.route";
-import branchesRouter from "./Branches/branch.route";
-import messagesRouter from "./Messages/message.route";
-import { getDistricts, getNapas, getMunicipalities } from "./Branches/branch.controller";
-
+import initDBConnections from "./cosmosdb";
+import { requireAuth } from "./authMiddlewares";
 
 const env = process.env.NODE_ENV || "development";
 
 require("dotenv").config({ path: `.env.${env}` });
 
-const app = express();
-app.use(express.json());
-app.use(cors());
+(async function () {
+    const app = express();
+    app.use(express.json());
+    app.use(cors());
 
-connectDB();
+    await initDBConnections();
 
-app.use("/api/faults", faultsRouter);
-app.use("/api/branches", branchesRouter);
-app.use("/api/messages", messagesRouter);
+    app.use(requireAuth);
 
-app.get("/api/districts", getDistricts);
-app.get("/api/napas", getNapas);
-app.get("/api/municipalities", getMunicipalities);
+    app.use("/api/auth", require("./Auth/auth.route").default);
 
-const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => {
-    console.log(`Server is running in http://localhost:${PORT}`)
-    console.log(`Running in ${env} environment.`)
-});
+    app.use("/api/faults", require("./Faults/fault.route").default);
+    app.use("/api/branches", require("./Branches/branch.route").default);
+    app.use("/api/messages", require("./Messages/message.route").default);
+
+    const { getDistricts, getNapas, getMunicipalities } = require("./Branches/branch.controller");
+    
+    app.get("/api/districts", getDistricts);
+    app.get("/api/napas", getNapas);
+    app.get("/api/municipalities", getMunicipalities);
+
+    const PORT = process.env.PORT || 3001;
+    app.listen(PORT, () => {
+        console.log(`Server is running in http://localhost:${PORT}`)
+        console.log(`Running in ${env} environment.`)
+    });
+})();

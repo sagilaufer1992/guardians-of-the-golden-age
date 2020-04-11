@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+import { faultsDB } from '../cosmosdb';
 
 const MessageSchema = new mongoose.Schema({
     content: {
@@ -28,4 +29,4 @@ const MessageSchema = new mongoose.Schema({
     },
 });
 
-export default mongoose.model('Message', MessageSchema);
+export default faultsDB.model('Message', MessageSchema);

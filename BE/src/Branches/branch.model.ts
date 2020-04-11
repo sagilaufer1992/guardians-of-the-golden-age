@@ -1,4 +1,5 @@
 import * as mongoose from "mongoose";
+import { faultsDB } from "../cosmosdb";
 
 const BranchSchema = new mongoose.Schema({
     id: {
@@ -31,4 +32,4 @@ const BranchSchema = new mongoose.Schema({
     }
 });
 
-export default mongoose.model("Branch", BranchSchema);
+export default faultsDB.model("Branch", BranchSchema);
