@@ -3,9 +3,9 @@ require('express-async-errors');
 
 import * as cors from "cors";
 import initDBConnections from "./cosmosdb";
-import { requireAuth } from "./authMiddlewares";
+import { requireAuthMiddleware } from "./authMiddlewares";
 
-const env = process.env.NODE_ENV || "development";
+const env = process.env.NODE_ENV = process.env.NODE_ENV || "development";
 
 require("dotenv").config({ path: `.env.${env}` });
 
@@ -16,7 +16,7 @@ require("dotenv").config({ path: `.env.${env}` });
 
     await initDBConnections();
 
-    app.use(requireAuth);
+    app.use(requireAuthMiddleware);
 
     app.use("/api/auth", require("./Auth/auth.route").default);
 

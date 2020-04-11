@@ -1,9 +1,9 @@
 import * as express from "express";
-import { getUserInfo } from "../authMiddlewares";
+import { userInfoMiddleware } from "../authMiddlewares";
 import { getUserByToken } from "./auth.controller";
 
 const router = express.Router();
-router.use(getUserInfo);
+router.use(userInfoMiddleware);
 
 router.route("/").get(getUserByToken);
 

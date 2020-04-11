@@ -1,16 +1,17 @@
 import * as express from "express";
-import { getFaults, getFaultById, addFault, deleteFault, updateFault, getFaultsInDate } from "./fault.controller";
+import { getFaultById, addFault, deleteFault, updateFault, getFaultsInDate } from "./fault.controller";
 import messagesRouter from "../Messages/message.route";
+import { userInfoMiddleware } from "../authMiddlewares";
 
 const router = express.Router();
 
 router.use('/:faultId/messages', messagesRouter);
 
-router.route('/date/:date').get(getFaultsInDate);
+router.use(userInfoMiddleware);
 
 router
     .route('/')
-    .get(getFaults)
+    .get(getFaultsInDate)
     .post(addFault);
 
 router

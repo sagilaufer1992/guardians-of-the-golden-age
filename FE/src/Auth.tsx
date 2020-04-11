@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import { CircularProgress } from "@material-ui/core";
 
 import { promiseWithTimeout } from './utils/helpers';
+import { fetchBackend } from "./utils/fetchHelpers";
 
 const TOKEN_STORAGE_KEY: string = "gg_token";
 const GG_CLIENT: string = process.env.REACT_APP_GG_CLIENT!;
@@ -13,15 +14,10 @@ interface Props {
 
 function Auth({ onSuccess }: Props) {
     useEffect(() => {
-        if (process.env.NODE_ENV === "development") return onSuccess({
-            username: "חמל פיתוח",
-            role: "hamal",
-            token: "VERY_COOL_TOKEN",
-            authGroups: []
-        });
-
         promiseWithTimeout(new Promise<string>((resolve, reject) => {
-            if (!window.opener) reject("not opened from main application");
+            if (process.env.NODE_ENV === "development") return resolve("VERY_COOL_TOKEN");
+
+            if (!window.opener) return reject("not opened from main application");
 
             function handleMessage({ origin, data }: MessageEvent) {
                 window.removeEventListener("message", handleMessage);
@@ -30,7 +26,7 @@ function Auth({ onSuccess }: Props) {
                 window.localStorage.setItem(TOKEN_STORAGE_KEY, data);
                 resolve(data);
             }
-            
+
             window.addEventListener("message", handleMessage);
             window.opener.postMessage("ready", "*");
         }), 1000)
@@ -38,17 +34,12 @@ function Auth({ onSuccess }: Props) {
             .then((token: string | null) => {
                 if (!token) throw new Error("no token");
 
-                return promiseWithTimeout(fetch(`${process.env.REACT_APP_GG_API}/auth`, {
-                    headers: new Headers({
-                        authorization: `Bearer ${token}`
-                    })
-                })
+                return promiseWithTimeout(fetchBackend("/api/auth", { token })
                     .then(res => res.json())
                     .then(user => ({ ...user, token })), 5000);
             })
-            .then(response => response.json())
             .then(onSuccess)
-            .catch(() => window.location.href = GG_CLIENT);
+            .catch(err => window.location.href = GG_CLIENT);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 

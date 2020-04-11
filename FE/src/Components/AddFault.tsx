@@ -1,52 +1,60 @@
-import React, { useState, useContext } from "react";
+import "./AddFault.scss";
+import React, { useState, useContext, useMemo } from "react";
 import { Button, TextField } from "@material-ui/core";
+
 import Select from "./Select";
 import UserProvider from "../utils/UserProvider";
-import "./AddFault.scss";
+import { categoryToText } from "../utils/translations";
+import { toSelect } from "../utils/inputs";
 
-const DISTRIBUTION_CENTER_OPTIONS = [
-    { label: "בחר נקודת חלוקה...", value: "" },
-    { label: "מתנס אבו גוש", value: "מתנס אבו גוש" },
-    { label: "מרכזית המפרץ", value: "מרכזית המפרץ" },
-];
-
-const CATEGORY_OPTIONS = [
-    { label: "food", value: "food" },
-    { label: "drugs", value: "drugs" },
-    { label: "other", value: "other" },
-];
+const CATEGORY_OPTIONS = toSelect(categoryToText);
 
 interface Props {
-    onFaultAdded: (user: gg.User | null, fault: Partial<Fault>) => void;
+    onFaultAdded: (fault: NewFault) => void;
 }
 
 export default function AddFault(props: Props) {
     const user = useContext(UserProvider);
     const [content, setContent] = useState<string>("");
+    const [name, setName] = useState<string>("");
+    const [phone, setPhone] = useState<string>("");
     const [category, setCategory] = useState<FaultCategory>("other");
-    const [distributionCenter, setDistributionCenter] = useState("");
+    const [distributionCenter, setDistributionCenter] = useState(user.authGroups[0]);
+
+    const centers = useMemo(() => user.authGroups.map(c => ({ label: c, value: c })), [user]);
 
     const onAddFault = () => {
-        props.onFaultAdded(user, {
+        if (!name || !phone || !content) return alert("אנא מלא שם, טלפון ותיאור");
+
+        props.onFaultAdded({
             distributionCenter,
+            category,
             content,
-            category
+            author: { name, phone }
         });
+        cleanForm();
     }
 
-    const cleanForm = () => {
-        setContent("");
-        setCategory("other");
-        setDistributionCenter("");
-    }
+    const cleanForm = () => setContent("");
 
     return (
         <div className="add-fault">
             <div className="title">צור תקלה חדשה</div>
             <div className="fields">
                 <div className="fault-field">
+                    <div className="inline-field">
+                        <label>שם מדווח התקלה:</label>
+                        <TextField value={name} variant="outlined" onChange={e => setName(e.target.value)} />
+                    </div>
+                    <div className="inline-field">
+                        <label>טלפון:</label>
+                        <TextField value={phone} variant="outlined" onChange={e => setPhone(e.target.value)} />
+                    </div>
+                </div>
+                <div className="fault-field">
                     <label>תיאור הבעיה</label>
                     <TextField
+                        value={content}
                         className="fault-input"
                         variant="outlined"
                         placeholder="הזן פרטים על התקלה"
@@ -58,7 +66,7 @@ export default function AddFault(props: Props) {
                     <label>נקודת חלוקה</label>
                     <Select
                         onChange={setDistributionCenter}
-                        options={DISTRIBUTION_CENTER_OPTIONS}
+                        options={centers}
                         title=""
                         value={distributionCenter}
                     />

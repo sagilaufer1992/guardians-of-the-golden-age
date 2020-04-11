@@ -9,8 +9,6 @@ interface Props {
 }
 
 function FaultChat({ fault, messages }: Props) {
-
-
     return <div className="chat">
         <div className="title">פירוט התקלה</div>
         {_createChatMessage(fault)}

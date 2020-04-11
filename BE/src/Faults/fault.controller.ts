@@ -1,7 +1,23 @@
-import Fault from "./fault.model"
+import Fault from "./fault.model";
+import * as moment from "moment";
+import { MongooseFilterQuery } from "mongoose";
 
-export async function getFaults(req, res, next) {
-    const faults = await Fault.find();
+export async function getFaultsInDate(req, res, next) {
+    const { date } = req.query;
+    const { role, authGroups } = req.user;
+
+    const query: MongooseFilterQuery<be.Fault> = {};
+
+    if (role === "manager" || role === "volunteer")
+        query.distributionCenter = { $in: authGroups };
+
+    if (date)
+        query.date = {
+            $gte: new Date(+moment(date).startOf("day")),
+            $lt: new Date(+moment(date).endOf("day"))
+        };
+
+    const faults = await Fault.find(query);
 
     res.status(200).json(faults);
 }
@@ -17,48 +33,36 @@ export async function getFaultById(req, res, next) {
 }
 
 export async function addFault(req, res, next) {
-    const fault = await Fault.create(req.body);
+    const { token, authGroups, ...baseUser } = req.user;
+
+    const fault = await Fault.create({
+        ...req.body,
+        author: { ...req.body.author, ...baseUser }
+    });
 
     res.status(201).json(fault);
 }
 
 export async function updateFault(req, res, next) {
-    let fault = await Fault.findById(req.params.id);
+    try {
+        const fault = await Fault.findOneAndUpdate({ _id: req.params.id }, req.body, {
+            new: true,
+            runValidators: true
+        });
 
-    console.log(fault)
-
-    if (!fault) {
+        res.status(200).json(fault);
+    }
+    catch {
         return res.status(404, `Fault not found with id of ${req.params.id}`);
     }
-
-    fault = await Fault.findOneAndUpdate({ _id: req.params.id }, req.body, {
-        new: true,
-        runValidators: true
-    });
-
-    console.log(fault)
-
-    res.status(200).json(fault);
 }
 
 export async function deleteFault(req, res, next) {
-    let fault = await Fault.findById(req.params.id);
-
-    if (!fault) {
+    try {
+        await Fault.findByIdAndRemove(req.params.id);
+        res.status(200).json({});
+    }
+    catch {
         return res.status(404, `Fault not found with id of ${req.params.id}`);
     }
-
-    fault.remove();
-
-    res.status(200).json({});
-}
-
-export async function getFaultsInDate(req, res, next) {
-    const { date } = req.params;
-
-    const end = new Date(date).getTime() + 24 * 60 * 60 * 1000;
-
-    const faults = await Fault.find({ "date": { "$gte": new Date(date), "$lt": new Date(end) } });
-
-    res.status(200).json(faults);
 }

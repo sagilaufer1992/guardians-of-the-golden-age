@@ -2,6 +2,7 @@ import "./Fault.scss";
 
 import React, { useState } from "react";
 import classnames from "classnames";
+import moment from "moment";
 import Chip from "@material-ui/core/Chip";
 import Button from "@material-ui/core/Button";
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
@@ -21,15 +22,7 @@ interface ButtonProps {
 export default React.memo(function Fault(props: Props) {
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
 
-  const {
-    _id,
-    category,
-    status,
-    author,
-    distributionCenter,
-    content,
-    date,
-  } = props.fault;
+  const { _id, category, status, author, distributionCenter, content, date } = props.fault;
 
   function _onStatusChange(status: FaultStatus) {
     props.onStatusChange(_id, status);
@@ -42,16 +35,13 @@ export default React.memo(function Fault(props: Props) {
           <div className={classnames("status", status)} />
           <div className="content">
             <div className="author-and-date">
-              {author.name} - {date.toLocaleDateString("he-IL")}
+              <span>{moment(date).format("DD/MM/YYYY HH:mm")}</span>
+              {" - "}
+              <span>{author.name}</span>
             </div>
             <div className="station-name">{distributionCenter}</div>
             <div className="category-and-description">
-              <Chip
-                className="category"
-                variant="outlined"
-                color="primary"
-                label={category}
-              ></Chip>
+              <Chip className="category" variant="outlined" color="primary" label={category} />
               <span>{props.fault._id}  {content}</span>
             </div>
           </div>

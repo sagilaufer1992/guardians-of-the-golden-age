@@ -1,29 +1,34 @@
-interface Fault {
-  _id: string;
-  date: Date;
-  author: UserInfo;
+interface NewFault {
+  author: AuthorInfo;
   distributionCenter: string;
   content: string;
-  category: FaultCategory;
-  status: FaultStatus;
+  category: FaultCategory;  
 }
 
 type FaultStatus = "Todo" | "InProgress" | "Complete";
 
 type FaultCategory = "food" | "drugs" | "other";
 
-interface UserInfo {
+interface AuthorInfo {
   name: string;
-  role: "hamal" | "manager" | "admin" | "volunteer";
   phone?: string;
 }
 
 interface NewMessage {
-  author: UserInfo; //מי כתב את ההודעה
+  author: AuthorInfo; //מי כתב את ההודעה
   content: string; // תוכן ההודעה
 }
 
-interface Message extends NewMessage {
+type ExtendItem<T> = Omit<T, "author"> & {
+  _id: string;
+  date: Date;
+  author: AuthorInfo & gg.UserInfo;
+}
+
+interface Fault extends ExtendItem<NewFault> {
+  status: FaultStatus;
+}
+
+interface Message extends ExtendItem<NewMessage> {
   faultId: string;
-  date: Date; // תאריך כתיבת ההודעה
 }

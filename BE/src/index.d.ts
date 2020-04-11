@@ -6,42 +6,58 @@ declare namespace Express {
 }
 
 declare namespace gg {
-  type Role = "hamal" | "manager" | "admin" | "volunteer";
-
-  interface User {
-    token: string;
+  interface UserInfo {
     username: string;
-    role: gg.Role;
+
+    // hamal: חמל
+    // manager: מנהל חלוקה
+    // admin: יוזר מנהל (כמו חמל במערכת שלנו)
+    role: "hamal" | "manager" | "admin" | "volunteer";
+  }
+
+  interface User extends UserInfo {
+    token: string;
+
+    // list of distribution centers that a user is authorized to see
+    // example: מ"ח ת"א
     authGroups: string[];
   }
 }
 
 declare namespace be {
-  interface NewMessage {
-    author: UserInfo; //מי כתב את ההודעה
-    content: string; // תוכן ההודעה
-  }
-
-  interface NewFault extends NewMessage {
-    category: "food" | "drugs" | "other";
+  interface NewFault {
+    author: AuthorInfo;
     distributionCenter: string;
+    content: string;
+    category: FaultCategory;  
   }
-
-  interface Fault extends NewFault {
-    id: string;
-    date: Date;
-    status: "Todo" | "InProgress" | "Complete";
-  }
-
-  interface UserInfo {
+  
+  type FaultStatus = "Todo" | "InProgress" | "Complete";
+  
+  type FaultCategory = "food" | "drugs" | "other";
+  
+  interface AuthorInfo {
     name: string;
-    role: gg.Role;
     phone?: string;
   }
-
-  interface Message extends NewMessage {
+  
+  interface NewMessage {
+    author: AuthorInfo; //מי כתב את ההודעה
+    content: string; // תוכן ההודעה
+  }
+  
+  type ExtendItem<T> = Omit<T, "author"> & {
+    _id: string;
+    date: Date;
+    author: AuthorInfo & gg.UserInfo;
+  }
+  
+  interface Fault extends ExtendItem<NewFault> {
+    status: FaultStatus;
+  }
+  
+  interface Message extends ExtendItem<NewMessage> {
     faultId: string;
-    date: Date; // תאריך כתיבת ההודעה
   }
 
   interface Branch {

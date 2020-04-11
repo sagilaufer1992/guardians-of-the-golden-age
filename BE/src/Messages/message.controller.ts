@@ -2,15 +2,11 @@ import Message from "./message.model"
 import Fault from "../Faults/fault.model"
 
 export async function getMessages(req, res, next) {
-    if (req.params.faultId) {
-        const messages = await Message.find({ faultId: req.params.faultId });
+    if (!req.query.faultId) return res.status(400, "Must supply fault id");
 
-        return res.status(200).json(messages);
-    }
+    const messages = await Message.find({ faultId: req.query.faultId });
 
-    const messages = await Message.find();
-
-    res.status(200).json(messages);
+    return res.status(200).json(messages);
 }
 
 export async function getMessageById(req, res, next) {
@@ -24,18 +20,27 @@ export async function getMessageById(req, res, next) {
 }
 
 export async function addMessage(req, res, next) {
-    const fault = await Fault.findById(req.body.faultId);
+    if (!req.query.faultId) return res.status(400, "Must supply fault id");
+
+    const { token, authGroups, ...baseUser } = req.user;
+
+    const fault = await Fault.findById(req.query.faultId);
 
     if (!fault) {
         return res.status(404, `No Fault with the id of ${req.body.faultId}`);
     }
 
-    const message = await Message.create(req.body);
+    const message = await Message.create({
+        ...req.body,
+        author: { ...req.body.author, ...baseUser },
+        faultId: fault._id
+    });
 
     res.status(201).json(message);
 }
 
 export async function updateMessage(req, res, next) {
+    // TODO: not everyone can update messages
     let message = await Message.findById(req.params.id);
 
     if (!Message) {
@@ -51,6 +56,7 @@ export async function updateMessage(req, res, next) {
 }
 
 export async function deleteMessage(req, res, next) {
+    // TODO: not everyone can delete messages
     let message = await Message.findById(req.params.id);
 
     if (!message) {

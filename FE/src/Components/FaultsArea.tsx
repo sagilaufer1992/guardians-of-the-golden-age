@@ -1,34 +1,22 @@
 import "./FaultsArea.scss";
 
-import React, { useState } from "react";
+import React, { useState, useMemo, useContext } from "react";
 import Select from "./Select";
 
 import Fault from "./Fault";
+import { categoryToText, statusToText } from "../utils/translations";
+import UserProvider from "../utils/UserProvider";
+import { toSelect, ALL_ITEM } from "../utils/inputs";
 
-const faultStatus = [
-    { value: "Todo", label: "תקלות שנפתחו" },
-    { value: "InProgress", label: "תקלות בתהליך" },
-    { value: "Complete", label: "תקלות שנסגרו" },
-    { value: "All", label: "הכל" },
-];
+const STATUS_FILTER = toSelect(statusToText, true);
+const CATEGORY_FILTER = toSelect(categoryToText, true);
 
-const faultCategory = [
-    { value: "food", label: "מחסור בסלי מזון" },
-    { value: "drugs", label: "מחסור בתרופות" },
-    { value: "other", label: "אחר" },
-    { value: "All", label: "הכל" },
-];
-
-const faultDistributionCenter = [
-    { value: "All", label: "הכל" }
-];
-
-const faultSortBy = [
+const SORT_BY = [
     { value: "time", label: "זמן" },
     { value: "status", label: "סטטוס" },
     { value: "category", label: "סוג משלוח" },
     { value: "distributionCenter", label: "מרכז חלוקה" }
-]
+];
 
 interface Props {
     faults: Fault[];
@@ -36,10 +24,13 @@ interface Props {
 }
 
 export default function FaultsArea(props: Props) {
-    const [categoryFilter, setCategoryFilter] = useState<string>("All");
-    const [statusFilter, setStatusFilter] = useState<string>("All");
+    const user = useContext(UserProvider);
+    const [categoryFilter, setCategoryFilter] = useState<string>(ALL_ITEM.value);
+    const [statusFilter, setStatusFilter] = useState<string>(ALL_ITEM.value);
     const [sortBy, setSortBy] = useState<string>("time");
-    const [distributionCenterFilter, setDistributionCenterFilter] = useState<string>("All");
+    const [distributionCenterFilter, setDistributionCenterFilter] = useState<string>(ALL_ITEM.value);
+
+    const distributionCenters = useMemo(() => [ALL_ITEM, ...user.authGroups.map(v => ({ value: v, label: v }))], [user]);
 
     const faults: Fault[] = props.faults
         .filter(fault => (categoryFilter === "All" || fault.category === categoryFilter) &&
@@ -64,7 +55,7 @@ export default function FaultsArea(props: Props) {
     return <div className="faults-area">
         <div className="faults-area-header">
             <div className="label">
-                רשימת הבעיות
+                רשימת התקלות
             </div>
             <div className="numbers">
                 <div className="number-label">סה״כ</div>
@@ -74,16 +65,15 @@ export default function FaultsArea(props: Props) {
             </div>
         </div>
         <div className="faults-area-sort">
-            <Select title="סוג משלוח" options={faultCategory} value={categoryFilter} onChange={setCategoryFilter} />
-            <Select title="מרכז חלוקה" options={faultDistributionCenter} value={distributionCenterFilter} onChange={setDistributionCenterFilter} />
-            <Select title="סטטוס" options={faultStatus} value={statusFilter} onChange={setStatusFilter} />
-            <Select title="ממויין לפי" options={faultSortBy} value={sortBy} onChange={setSortBy} />
+            <Select title="סוג משלוח" options={CATEGORY_FILTER} value={categoryFilter} onChange={setCategoryFilter} />
+            <Select title="מרכז חלוקה" options={distributionCenters} value={distributionCenterFilter} onChange={setDistributionCenterFilter} />
+            <Select title="סטטוס" options={STATUS_FILTER} value={statusFilter} onChange={setStatusFilter} />
+            <Select title="ממוין לפי" options={SORT_BY} value={sortBy} onChange={setSortBy} />
         </div>
         <div className="faults-area-body">
-            {faults.length === 0 && <div className="empty-body">
-                לא נמצאו תקלות
-            </div>}
-            {faults.map(fault => <Fault key={fault._id} fault={fault} onStatusChange={props.onStatusChange} />)}
+            {faults.length === 0 ?
+                <div className="empty-body">לא נמצאו תקלות</div> :
+                faults.map(fault => <Fault key={fault._id} fault={fault} onStatusChange={props.onStatusChange} />)}
         </div>
     </div>
 }

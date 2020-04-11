@@ -1,5 +1,5 @@
 import './App.scss';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import moment from "moment";
 import Auth from './Auth';
 import UserProvider from './utils/UserProvider';
@@ -12,28 +12,42 @@ function App() {
   const [user, setUser] = useState<gg.User | null>(null);
   const [date, setDate] = useState<Date>(moment().startOf('day').toDate());
   const [faults, setFaults] = useState<Fault[]>([]);
+  const [isRefresh, setIsRefresh] = useState<boolean>(false);
+  const lastRefreshTime: React.MutableRefObject<Date | null> = useRef(null);
 
   useEffect(() => {
-    async function fetchFaults() {
-      const response = await getFaultsByDate(date);
-      setFaults(response);
-    }
+    if (user) _refreshFaults();
+  }, [date, user]);
 
-    fetchFaults();
-  }, [date]);
+  async function _refreshFaults() {
+    // can't call _refreshFaults if already refreshing - can cause bugs (change date while refresh)
+    if (isRefresh) return;
 
-  async function _onFaultAdded(user: gg.User | null, newFault: Partial<Fault>) {
-    const fault = await addFault(user, newFault);
-    if (fault) setFaults([...faults, fault]);
+    setIsRefresh(true);
+
+    const newFaults = await getFaultsByDate(user!, date);
+    if (!newFaults) return alert("אירעה שגיאה בעדכון התקלות");
+    
+    setFaults(newFaults);
+
+    lastRefreshTime.current = new Date();
+    setIsRefresh(false);
+  }
+
+  async function _onFaultAdded(newFault: NewFault) {
+    const fault = await addFault(user!, newFault);
+    if (!fault) return alert("חלה שגיאה בהוספת תקלה");
+
+    setFaults([...faults, fault]);
+    _refreshFaults();
   }
 
   async function _onStatusChange(faultId: string, status: FaultStatus) {
-    const newFault = await updateFault(faultId, { status });
-    setFaults([...faults.filter(f => f._id !== newFault._id), newFault])
-  }
+    const newFault = await updateFault(user!, faultId, { status });
+    if (!newFault) return alert("חלה שגיאה בעדכון תקלה");
 
-  function _onDateChange(date: Date) {
-    setDate(date);
+    setFaults([...faults.filter(f => f._id !== newFault._id), newFault]);
+    _refreshFaults();
   }
 
   return (
@@ -44,8 +58,8 @@ function App() {
         <UserProvider.Provider value={user}>
           <div className="app-content">
             <div className="content-header">
-              <DatePanel onDateChanged={_onDateChange} />
-              <div>עודכן לאחרונה ב- 14:00 03/04/20</div>
+              <DatePanel onDateChanged={setDate} />
+              {lastRefreshTime.current && <div>עודכן לאחרונה ב- {moment(lastRefreshTime.current).format("HH:mm DD/MM/YYYY")}</div>}
             </div>
             <div className="content-body">
               <AddFault onFaultAdded={_onFaultAdded} />

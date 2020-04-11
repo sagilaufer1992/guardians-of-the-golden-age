@@ -14,7 +14,7 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: true,
         enum: ["hamal", "manager", "admin", "volunteer"]
-    },    
+    },
     authGroups: {
         type: [String],
         required: true

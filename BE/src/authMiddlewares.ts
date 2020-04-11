@@ -1,11 +1,18 @@
 import * as express from "express";
 import * as jwt from "jsonwebtoken";
 
-export const requireAuth: express.RequestHandler = (req, res, next) => {
+const DEV_USER: gg.User = { token: "VERY_COOL_TOKEN", username: "dev-user", role: "hamal", authGroups: ["מפעל הפיס פיתוחי"] };
+
+export const requireAuthMiddleware: express.RequestHandler = (req, res, next) => {
     const { authorization } = req.headers;
 
     if (!authorization?.startsWith("Bearer"))
         return res.status(400).send("No authorization header in request headers");
+
+    if (process.env.NODE_ENV === "development") {
+        req.username = DEV_USER.username;
+        return next();
+    }
 
     let token: string = null;
 
@@ -21,7 +28,12 @@ export const requireAuth: express.RequestHandler = (req, res, next) => {
     next();
 }
 
-export const getUserInfo: express.RequestHandler = async (req, res, next) => {
+export const userInfoMiddleware: express.RequestHandler = async (req, res, next) => {
+    if (process.env.NODE_ENV === "development") {
+        req.user = DEV_USER;
+        return next();
+    }
+    
     const User = require("./Auth/auth.model").default;
 
     const user = await User.findOne({ username: req.username });
