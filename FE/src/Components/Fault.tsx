@@ -3,6 +3,7 @@ import "./Fault.scss";
 import React, { useState } from "react";
 import classnames from "classnames";
 import Chip from "@material-ui/core/Chip";
+import Button from "@material-ui/core/Button";
 import FaultChat from "./FaultChat";
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
 import FaultDetails from "./FaultDetails";
@@ -10,6 +11,12 @@ import FaultDetails from "./FaultDetails";
 interface Props {
   fault: Fault;
   onFaultClick?: () => void;
+  onChangeStatus: (status: FaultStatus, id: string) => void;
+}
+
+interface ButtonProps {
+  onChangeStatus: (status: FaultStatus) => void;
+  status: FaultStatus;
 }
 
 export default React.memo(function Fault(props: Props) {
@@ -22,7 +29,12 @@ export default React.memo(function Fault(props: Props) {
     distributionCenter,
     content,
     date,
+    id,
   } = props.fault;
+
+  function _onChangeStatus(status: FaultStatus) {
+    props.onChangeStatus(status, id);
+  }
 
   return (
     <>
@@ -44,18 +56,31 @@ export default React.memo(function Fault(props: Props) {
               <span>{content}</span>
             </div>
           </div>
-          <div className="show-history" onClick={() => setIsDetailsOpen(!isDetailsOpen)}          >
-            {isDetailsOpen ? (
-              <>
-                <MdKeyboardArrowUp className="expander-arrow" />
+          <div className="left-side">
+            <div className="change-status">
+              {status === "Complete" && <StateButton status="Todo" onChangeStatus={_onChangeStatus} />}
+              {status === "Todo" && <>
+                <StateButton status="Complete" onChangeStatus={_onChangeStatus} />
+                <StateButton status="InProgress" onChangeStatus={_onChangeStatus} />
+              </>}
+              {status === "InProgress" && <>
+                <StateButton status="Complete" onChangeStatus={_onChangeStatus} />
+                <StateButton status="Todo" onChangeStatus={_onChangeStatus} />
+              </>}
+            </div>
+            <div className="show-history" onClick={() => setIsDetailsOpen(!isDetailsOpen)}>
+              {isDetailsOpen ? (
+                <>
+                  <MdKeyboardArrowUp className="expander-arrow" />
                 סגור פרטים
               </>
-            ) : (
-                <>
-                  <MdKeyboardArrowDown className="expander-arrow" />
+              ) : (
+                  <>
+                    <MdKeyboardArrowDown className="expander-arrow" />
                 הצג פרטים
               </>
-              )}
+                )}
+            </div>
           </div>
         </div>
       </div>
@@ -63,3 +88,15 @@ export default React.memo(function Fault(props: Props) {
     </>
   );
 });
+
+function StateButton({ onChangeStatus, status }: ButtonProps) {
+  const label = status === "Todo" ? "החזר ללא טופל" :
+    status === "Complete" ? "סמן כטופל" : "סמן שבתהליך";
+
+  return <Button className={classnames("button", status)}
+    onClick={() => onChangeStatus(status)}
+    variant="outlined"
+    size="small">
+    {label}
+  </Button>
+}

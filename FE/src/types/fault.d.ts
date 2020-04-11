@@ -5,8 +5,10 @@ interface Fault {
   distributionCenter: string;
   content: string;
   category: "food" | "drugs" | "other";
-  status: "Todo" | "InProgress" | "Complete";
+  status: FaultStatus;
 }
+
+type FaultStatus = "Todo" | "InProgress" | "Complete";
 
 interface UserInfo {
   name: string;

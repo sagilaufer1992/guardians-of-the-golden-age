@@ -42,15 +42,37 @@
         margin: 0 0 0 5px;
       }
     }
-    .show-history {
+    .left-side {
       display: flex;
-      flex-direction: row-reverse;
-      align-items: center;
-      cursor: pointer;
-      margin: 0 10px;
-      .expander-arrow {
-        font-size: 16px;
-        margin-right: 5px;
+      flex-direction: column;
+      .change-status {
+        margin: 5px 5px;
+        .button {
+          margin: 5px;
+          &.Todo {
+            color: red;
+            border-color: red;
+          }
+          &.InProgress {
+            color: rgb(255, 145, 0);
+            border-color: rgb(255, 145, 0);
+          }
+          &.Complete {
+            color: rgb(53, 190, 53);
+            border-color: rgb(53, 190, 53);
+          }
+        }
+      }
+      .show-history {
+        display: flex;
+        flex-direction: row-reverse;
+        align-items: center;
+        cursor: pointer;
+        margin: 0 10px;
+        .expander-arrow {
+          font-size: 16px;
+          margin-right: 5px;
+        }
       }
     }
   }

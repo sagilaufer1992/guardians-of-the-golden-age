@@ -60,6 +60,11 @@ export default function FaultsArea(props: Props) {
         }
     }
 
+    function _onChangeStatus(status: FaultStatus, id: string) {
+        const index = faults.findIndex(fault => fault.id === id);
+        console.log("area", status, id, index);
+    }
+
     return <div className="faults-area">
         <div className="faults-area-header">
             <div className="label">
@@ -83,7 +88,7 @@ export default function FaultsArea(props: Props) {
                 לא נמצאו תקלות
             </div>}
             {faults.map(fault => <div key={fault.id}>
-                <Fault fault={fault} />
+                <Fault fault={fault} onChangeStatus={_onChangeStatus}/>
             </div>)}
         </div>
     </div>

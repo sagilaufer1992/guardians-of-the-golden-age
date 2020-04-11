@@ -27,16 +27,24 @@ export default function Select({ onChange, value, title, options }: Props) {
         onChange(v);
     }
 
+    function _handleOpen(e: React.MouseEvent<HTMLButtonElement>) {
+        setAnchorEl(e.currentTarget);
+    }
+
+    function _handleClose() {
+        setAnchorEl(null);
+    }
+
     return <div className="select-group">
         <div className="select-label">{title}</div>
-        <Button className="select" variant="outlined" color="default" onClick={(event) => setAnchorEl(event.currentTarget)}>
+        <Button className="select" variant="outlined" color="default" onClick={_handleOpen}>
             {getLabel(options, value)}
             <ArrowIcon />
         </Button>
         <Menu anchorEl={anchorEl}
             keepMounted
             open={Boolean(anchorEl)}
-            onClose={() => setAnchorEl(null)}>
+            onClose={_handleClose}>
             {options.map(({ value, label }) => <MenuItem key={value} value={value} onClick={() => _onChange(value)}>
                 {label}
             </MenuItem>)}
