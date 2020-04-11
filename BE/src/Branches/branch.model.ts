@@ -3,6 +3,7 @@ import * as mongoose from "mongoose";
 const BranchSchema = new mongoose.Schema({
     id: {
         type: Number,
+        unique:true,
         required: true
     },
     name: {
@@ -14,8 +15,7 @@ const BranchSchema = new mongoose.Schema({
         required: true
     },
     address: {
-        type: String,
-        required: true
+        type: String
     },
     district: {
         type: String,
