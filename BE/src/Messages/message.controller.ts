@@ -44,7 +44,7 @@ export async function updateMessage(req, res, next) {
         return res.status(404, `Message not found with id of ${req.params.id}`);
     }
 
-    message = await Message.findOneAndUpdate(req.params.id, req.body, {
+    message = await Message.findOneAndUpdate({ _id: req.params.id }, req.body, {
         new: true,
         runValidators: true
     });

@@ -10,11 +10,11 @@ import FaultDetails from "./FaultDetails";
 interface Props {
   fault: Fault;
   onFaultClick?: () => void;
-  onChangeStatus: (fault: Fault) => void;
+  onStatusChange: (faultId: string, status: FaultStatus) => void;
 }
 
 interface ButtonProps {
-  onChangeStatus: (status: FaultStatus) => void;
+  onStatusChange: (status: FaultStatus) => void;
   status: FaultStatus;
 }
 
@@ -22,6 +22,7 @@ export default React.memo(function Fault(props: Props) {
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
 
   const {
+    _id,
     category,
     status,
     author,
@@ -30,8 +31,8 @@ export default React.memo(function Fault(props: Props) {
     date,
   } = props.fault;
 
-  function _onChangeStatus(status: FaultStatus) {
-    props.onChangeStatus({...props.fault, status});
+  function _onStatusChange(status: FaultStatus) {
+    props.onStatusChange(_id, status);
   }
 
   return (
@@ -51,19 +52,19 @@ export default React.memo(function Fault(props: Props) {
                 color="primary"
                 label={category}
               ></Chip>
-              <span>{content}</span>
+              <span>{props.fault._id}  {content}</span>
             </div>
           </div>
           <div className="left-side">
             <div className="change-status">
-              {status === "Complete" && <StateButton status="Todo" onChangeStatus={_onChangeStatus} />}
+              {status === "Complete" && <StateButton status="Todo" onStatusChange={_onStatusChange} />}
               {status === "Todo" && <>
-                <StateButton status="Complete" onChangeStatus={_onChangeStatus} />
-                <StateButton status="InProgress" onChangeStatus={_onChangeStatus} />
+                <StateButton status="Complete" onStatusChange={_onStatusChange} />
+                <StateButton status="InProgress" onStatusChange={_onStatusChange} />
               </>}
               {status === "InProgress" && <>
-                <StateButton status="Complete" onChangeStatus={_onChangeStatus} />
-                <StateButton status="Todo" onChangeStatus={_onChangeStatus} />
+                <StateButton status="Complete" onStatusChange={_onStatusChange} />
+                <StateButton status="Todo" onStatusChange={_onStatusChange} />
               </>}
             </div>
             <div className="show-history" onClick={() => setIsDetailsOpen(!isDetailsOpen)}>
@@ -87,7 +88,7 @@ export default React.memo(function Fault(props: Props) {
   );
 });
 
-function StateButton({ onChangeStatus, status }: ButtonProps) {
+function StateButton({ onStatusChange: onChangeStatus, status }: ButtonProps) {
   const label = status === "Todo" ? "החזר ללא טופל" :
     status === "Complete" ? "סמן כטופל" : "סמן שבתהליך";
 

@@ -41,7 +41,6 @@ export async function addFault(user: gg.User | null, fault: Partial<Fault>): Pro
     }
 }
 
-export async function updateFault(newFault: Fault): Promise<Fault> {
-    const { _id, ...otherDetails } = newFault;
-    return await _fetchFaultsApi(`/${_id}`, "PUT", otherDetails) as Fault;
+export async function updateFault(id: string, updated: Partial<Fault>): Promise<Fault> {
+    return await _fetchFaultsApi(`/${id}`, "PUT", updated) as Fault;
 }

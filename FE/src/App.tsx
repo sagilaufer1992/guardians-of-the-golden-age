@@ -27,8 +27,8 @@ function App() {
     if (fault) setFaults([...faults, fault]);
   }
 
-  async function _onFaultUpdate(fault: Fault) {
-    const newFault = await updateFault(fault);
+  async function _onStatusChange(faultId: string, status: FaultStatus) {
+    const newFault = await updateFault(faultId, { status });
     setFaults([...faults.filter(f => f._id !== newFault._id), newFault])
   }
 
@@ -49,7 +49,7 @@ function App() {
             </div>
             <div className="content-body">
               <AddFault onFaultAdded={_onFaultAdded} />
-              <FaultsArea faults={faults} onFaultChange={_onFaultUpdate} />
+              <FaultsArea faults={faults} onStatusChange={_onStatusChange} />
             </div>
           </div>
         </UserProvider.Provider>}

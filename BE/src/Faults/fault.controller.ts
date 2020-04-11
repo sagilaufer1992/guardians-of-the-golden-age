@@ -25,14 +25,18 @@ export async function addFault(req, res, next) {
 export async function updateFault(req, res, next) {
     let fault = await Fault.findById(req.params.id);
 
+    console.log(fault)
+
     if (!fault) {
         return res.status(404, `Fault not found with id of ${req.params.id}`);
     }
 
-    fault = await Fault.findOneAndUpdate(req.params.id, req.body, {
+    fault = await Fault.findOneAndUpdate({ _id: req.params.id }, req.body, {
         new: true,
         runValidators: true
     });
+
+    console.log(fault)
 
     res.status(200).json(fault);
 }
