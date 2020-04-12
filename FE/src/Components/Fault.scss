@@ -1,9 +1,7 @@
-.fault-container {
-  margin: 8px;
-  border-bottom-left-radius: 3px;
-  border-bottom-right-radius: 3px;
-  background-color: darken($color: whitesmoke, $amount: 10);
   .fault {
+    margin: 8px;
+    border-radius: 3px;
+    background-color: darken($color: whitesmoke, $amount: 10);
     position: relative;
     display: flex;
     border: 1px solid darken($color: whitesmoke, $amount: 10);
@@ -76,4 +74,4 @@
       }
     }
   }
-}
+

@@ -66,7 +66,7 @@ function App() {
                 {lastRefreshTime.current && <div>עודכן לאחרונה ב- {moment(lastRefreshTime.current).format("HH:mm DD/MM/YYYY")}</div>}
               </div>
               <div className="content-body">
-                <AddFault onFaultAdded={_onFaultAdded} />
+                {user.role !== "hamal" && <AddFault onFaultAdded={_onFaultAdded} />}
                 <FaultsArea faults={faults} onStatusChange={_onStatusChange} />
               </div>
             </div>

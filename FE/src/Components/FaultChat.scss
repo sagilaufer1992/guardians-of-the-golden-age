@@ -18,6 +18,7 @@ $handler-color: #ffa726;
         align-items: center;
         text-align: right;
         margin: 10px 0;
+        position: relative;
         .user-icon {
             margin-top: -10px;
             font-size: 50px;
@@ -27,6 +28,8 @@ $handler-color: #ffa726;
             background: $chat-comment-color;
             border-radius: .4em;
             padding: 10px;
+            max-width: calc(100% - 60px);
+            box-sizing: border-box;
             .bubble-header {
                 display: flex;
                 margin-bottom: 5px;
@@ -36,6 +39,9 @@ $handler-color: #ffa726;
                         font-weight: bold;
                     }
                 }
+            }
+            .details {
+                word-wrap: break-word;
             }
             .date {
                 padding-top: 5px;

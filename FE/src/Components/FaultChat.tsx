@@ -18,10 +18,10 @@ function FaultChat({ fault, messages }: Props) {
 
 function _createChatMessage({ date, author, content }: Fault | Message, index?: number) {
     const isHamal = author.role === "hamal";
-    const commentClass = classNames("comment", { hamal: isHamal });    
+    const commentClass = classNames("comment", { hamal: isHamal });
 
     return <div className={commentClass} key={index}>
-        <MdAccountCircle className="user-icon" />
+        <div className="user-icon"><MdAccountCircle /></div>
         <div className="comment-bubble">
             <div className="bubble-header">
                 <div>
