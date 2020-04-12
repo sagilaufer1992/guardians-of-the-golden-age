@@ -1,7 +1,6 @@
 import Fault from "./fault.model";
 import Branch from "../Branches/branch.model";
 
-import * as moment from "moment";
 import { MongooseFilterQuery } from "mongoose";
 
 export async function getFaultsInDate(req, res, next) {
@@ -13,11 +12,10 @@ export async function getFaultsInDate(req, res, next) {
     if (role === "manager" || role === "volunteer")
         query.distributionCenter = { $in: authGroups };
 
-    if (date)
-        query.date = {
-            $gte: new Date(+moment(date).startOf("day")),
-            $lt: new Date(+moment(date).endOf("day"))
-        };
+    if (date) {
+        const end = new Date(date).getTime() + 24 * 60 * 60 * 1000;
+        query.date = { "$gte": new Date(date), "$lt": new Date(end) };
+    }
 
     const faults = await Fault.find(query);
 
