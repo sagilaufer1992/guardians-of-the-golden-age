@@ -49,7 +49,7 @@ function App() {
 
   useEffect(() => {
     document.addEventListener("visibilitychange", () => {
-      if (document.visibilityState === "visible") _refreshFaults();
+      if (user && document.visibilityState === "visible") _refreshFaults();
     });
   }, []);
 
