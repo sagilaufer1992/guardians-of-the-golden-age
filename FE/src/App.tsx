@@ -6,7 +6,7 @@ import UserProvider from './utils/UserProvider';
 import AuthFailedScreen from "./AuthFailedScreen";
 import FaultsArea from "./Components/FaultsArea";
 import DatePanel from "./Components/DatePanel";
-import { getFaultsByDate, updateFault, addFault } from "./utils/fetchFaultFunctions";
+import { getFaultsByDate, updateFault, addFault, deleteFault } from "./utils/fetchFaultFunctions";
 import AddFault from "./Components/AddFault";
 
 function App() {
@@ -44,6 +44,13 @@ function App() {
     _refreshFaults();
   }
 
+  async function _onFaultDelete(id: string) {
+    await deleteFault(user!, id);
+
+    setFaults([...faults.filter(f => f._id !== id)]);
+    _refreshFaults();
+  }
+
   async function _onStatusChange(faultId: string, status: FaultStatus) {
     const newFault = await updateFault(user!, faultId, { status });
     if (!newFault) return alert("חלה שגיאה בעדכון תקלה");
@@ -67,7 +74,7 @@ function App() {
               </div>
               <div className="content-body">
                 {user.role !== "hamal" && <AddFault onFaultAdded={_onFaultAdded} />}
-                <FaultsArea faults={faults} onStatusChange={_onStatusChange} />
+                <FaultsArea faults={faults} onStatusChange={_onStatusChange} onFaultDelete={_onFaultDelete} />
               </div>
             </div>
           </UserProvider.Provider>}

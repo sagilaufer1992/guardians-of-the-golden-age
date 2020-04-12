@@ -20,21 +20,23 @@
     }
     .content {
       flex: 1;
-      margin: 15px;
+      margin: 0 10px;
       text-align: right;
-      .author-and-date {
-        font-size: medium;
-        font-style: italic;
-        color: grey;
+      & > * {
+        margin: 5px 0;
       }
-      .station-name {
-        font-size: large;
-        font-style: italic;
+      .name {
+        font-weight: bold;
         color: black;
       }
-      .category-and-description {
-        font-size: medium;
-        color: darkgray;
+      .more-info {
+        color: grey;
+        span:not(:last-child) {
+          &::after {
+            padding: 0 5px;
+            content: "|";
+          }
+        }
       }
       .category {
         margin: 0 0 0 5px;
@@ -43,24 +45,9 @@
     .left-side {
       display: flex;
       flex-direction: column;
-      .change-status {
-        margin: 5px 5px;
-        .button {
-          margin: 5px;
-          &.Todo {
-            color: red;
-            border-color: red;
-          }
-          &.InProgress {
-            color: rgb(255, 145, 0);
-            border-color: rgb(255, 145, 0);
-          }
-          &.Complete {
-            color: rgb(53, 190, 53);
-            border-color: rgb(53, 190, 53);
-          }
-        }
-      }
+      justify-content: space-between;
+      align-items: flex-end;
+      margin: 10px;
       .show-history {
         display: flex;
         flex-direction: row-reverse;

@@ -1,0 +1,22 @@
+.delete-fault-button {
+    font-size: 20px;
+    cursor: pointer;
+}
+.fault-status-buttons {
+    .button {
+      margin-right: 5px;
+      cursor: pointer;
+      &.Todo {
+        color: red;
+        border-color: red;
+      }
+      &.InProgress {
+        color: rgb(255, 145, 0);
+        border-color: rgb(255, 145, 0);
+      }
+      &.Complete {
+        color: rgb(53, 190, 53);
+        border-color: rgb(53, 190, 53);
+      }
+    }
+}

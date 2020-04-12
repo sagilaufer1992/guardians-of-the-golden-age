@@ -20,6 +20,7 @@ const SORT_BY = [
 
 interface Props {
     faults: Fault[];
+    onFaultDelete: (id: string) => void;
     onStatusChange: (faultId: string, status: FaultStatus) => void;
 }
 
@@ -73,7 +74,10 @@ export default function FaultsArea(props: Props) {
         <div className="faults-area-body">
             {faults.length === 0 ?
                 <div className="empty-body">לא נמצאו תקלות</div> :
-                faults.map(fault => <Fault key={fault._id} fault={fault} onStatusChange={props.onStatusChange} />)}
+                faults.map(fault => <Fault key={fault._id}
+                    fault={fault}
+                    onStatusChange={props.onStatusChange}
+                    onFaultDelete={props.onFaultDelete} />)}
         </div>
     </div>
 }

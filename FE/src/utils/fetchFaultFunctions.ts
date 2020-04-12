@@ -32,3 +32,7 @@ export async function addFault({ token }: gg.User, fault: NewFault): Promise<Fau
 export async function updateFault({ token }: gg.User, id: string, updated: Partial<Fault>): Promise<Fault | null> {
     return await _fetchFaultsApi(`/${id}`, { method: "PUT", token, body: updated }) as any;
 }
+
+export async function deleteFault({ token }: gg.User, id: string): Promise<Fault | null> {
+    return await _fetchFaultsApi(`/${id}`, { method: "DELETE", token }) as any;
+}
