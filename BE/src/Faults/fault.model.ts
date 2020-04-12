@@ -39,6 +39,26 @@ const FaultSchema = new mongoose.Schema({
             enum: ["hamal", "manager", "admin", "volunteer"]
         },
         phone: String
+    },
+    branch: {
+        id: {
+            type: Number,
+        },
+        name: {
+            type: String,
+        },
+        napa: {
+            type: String,
+        },
+        district: {
+            type: String,
+        },
+        municipalityName: {
+            type: String,
+        },
+        municipalitySymbol: {
+            type: Number,
+        }
     }
 });
 

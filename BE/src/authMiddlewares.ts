@@ -1,7 +1,7 @@
 import * as express from "express";
 import * as jwt from "jsonwebtoken";
 
-const DEV_USER: gg.User = { token: "VERY_COOL_TOKEN", username: "dev-user", role: "hamal", authGroups: ["מפעל הפיס פיתוחי"] };
+const DEV_USER: gg.User = { token: "VERY_COOL_TOKEN", username: "dev-user", role: "hamal", authGroups: ["מתנס אבו גוש"] };
 
 export const requireAuthMiddleware: express.RequestHandler = (req, res, next) => {
     const { authorization } = req.headers;

@@ -1,4 +1,6 @@
 import Fault from "./fault.model";
+import Branch from "../Branches/branch.model";
+
 import * as moment from "moment";
 import { MongooseFilterQuery } from "mongoose";
 
@@ -34,11 +36,21 @@ export async function getFaultById(req, res, next) {
 
 export async function addFault(req, res, next) {
     const { token, authGroups, ...baseUser } = req.user;
-
-    const fault = await Fault.create({
+    const distributionCenter = req.body.distributionCenter;
+    
+    let newFault = {
         ...req.body,
         author: { ...req.body.author, ...baseUser }
-    });
+    };
+
+    const branchDocument = await _getBranch(distributionCenter);
+
+    if (branchDocument) {
+        const { _id, ...branch } = branchDocument.toJSON();
+        newFault.branch = branch;
+    }
+
+    const fault = await Fault.create(newFault);
 
     res.status(201).json(fault);
 }
@@ -64,5 +76,17 @@ export async function deleteFault(req, res, next) {
     }
     catch {
         return res.status(404, `Fault not found with id of ${req.params.id}`);
+    }
+}
+
+async function _getBranch(name: string) {
+    if (!name) return null;
+
+    try {
+        const branch = await Branch.findOne({ "name": { $eq: name } });
+        return branch;
+    }
+    catch{
+        return null;
     }
 }
