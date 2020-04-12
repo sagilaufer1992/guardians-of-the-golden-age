@@ -1,7 +1,7 @@
 import "./AddFault.scss";
 import React, { useState, useContext, useMemo } from "react";
-import { Button, TextField } from "@material-ui/core";
-
+import { Button } from "@material-ui/core";
+import TextField from "./TextField";
 import Select from "./Select";
 import UserProvider from "../utils/UserProvider";
 import { categoryToText } from "../utils/translations";
@@ -43,12 +43,10 @@ export default function AddFault(props: Props) {
       <div className="fields">
         <div className="fault-field row">
           <div className="inline-field">
-            <label>שם מלא</label>
-            <TextField value={name} variant="outlined" onChange={e => setName(e.target.value)} />
+            <TextField label="שם מלא" onChange={(value, isValid) => setName(value)} value={name} />
           </div>
           <div className="inline-field">
-            <label>טלפון</label>
-            <TextField value={phone} variant="outlined" onChange={e => setPhone(e.target.value)} />
+            <TextField label="טלפון" onChange={(value, isValid) => setPhone(value)} value={phone} />
           </div>
         </div>
         <div className="fault-field">
@@ -70,15 +68,14 @@ export default function AddFault(props: Props) {
           />
         </div>
         <div className="fault-field">
-          <label>תיאור הבעיה</label>
-          <TextField
-            value={content}
+          <TextField 
+            label="תיאור הבעיה"
+            onChange={(value, isValid) => setContent(value)} 
+            value={content} 
             className="fault-input"
-            variant="outlined"
+            multiline
             placeholder="הזן פרטים על התקלה"
             rows={4}
-            multiline
-            onChange={(e) => setContent(e.target.value)}
           />
         </div>
       </div>
