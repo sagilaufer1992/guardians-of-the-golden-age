@@ -1,11 +1,10 @@
 .select-group {
     margin: 3px;
-    min-width: 18%;
     position: relative;
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    
+    width: 16%;
     .select-label {
         padding: 0 10px;
         text-align: right;

@@ -2,7 +2,8 @@ import "./FaultsArea.scss";
 
 import React, { useState, useMemo, useContext, useEffect } from "react";
 import Select from "./Select";
-
+import Autocomplete from "@material-ui/lab/Autocomplete";
+import TextField from '@material-ui/core/TextField';
 import Fault from "./Fault";
 import { categoryToText, statusToText } from "../utils/translations";
 import UserProvider from "../utils/UserProvider";
@@ -39,7 +40,7 @@ export default function FaultsArea(props: Props) {
         const district = Array.from(new Set(branches.map(b => b.district)));
         return [ALL_ITEM, ...district.map(b => ({ value: b, label: b }))];
     },
-    [branches]);
+        [branches]);
 
     const faults: Fault[] = props.faults
         .filter(fault => (categoryFilter === ALL_ITEM.value || fault.category === categoryFilter) &&
@@ -54,7 +55,6 @@ export default function FaultsArea(props: Props) {
 
     async function fetchBranches() {
         const newBranches = await getBranches(user) as Branch[];
-        console.log("fetchBranches", newBranches);
         if (!newBranches) return alert("אירעה שגיאה בקבלת מרכזי קבלה");
 
         setBranches(newBranches);
@@ -88,9 +88,14 @@ export default function FaultsArea(props: Props) {
             </div>
         </div>
         <div className="faults-area-sort">
-            <Select title="קטגוריה" options={CATEGORY_FILTER} value={categoryFilter} onChange={setCategoryFilter} />
-            <Select title="מרכז חלוקה" options={distributionCenters} value={distributionCenterFilter} onChange={setDistributionCenterFilter} />
             <Select title="מחוז" options={districts} value={districtFilter} onChange={setDistrictFilter} />
+            <Autocomplete disableClearable
+                defaultValue={ALL_ITEM}
+                onChange={(e: any, value: any) => { setDistributionCenterFilter(value?.value) }}
+                getOptionLabel={(option) => option.label}
+                options={distributionCenters}
+                renderInput={(params: any) => (<TextField className="distribution-autocomplete" {...params} label="מרכז חלוקה" variant="outlined" />)} />
+            <Select title="קטגוריה" options={CATEGORY_FILTER} value={categoryFilter} onChange={setCategoryFilter} />
             <Select title="סטטוס" options={STATUS_FILTER} value={statusFilter} onChange={setStatusFilter} />
             <Select title="ממוין לפי" options={SORT_BY} value={sortBy} onChange={setSortBy} />
         </div>
