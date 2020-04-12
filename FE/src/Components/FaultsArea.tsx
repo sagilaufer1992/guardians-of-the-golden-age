@@ -1,12 +1,13 @@
 import "./FaultsArea.scss";
 
-import React, { useState, useMemo, useContext } from "react";
+import React, { useState, useMemo, useContext, useEffect } from "react";
 import Select from "./Select";
 
 import Fault from "./Fault";
 import { categoryToText, statusToText } from "../utils/translations";
 import UserProvider from "../utils/UserProvider";
 import { toSelect, ALL_ITEM } from "../utils/inputs";
+import { getBranches } from "../utils/fetchBranches";
 
 const STATUS_FILTER = toSelect(statusToText, true);
 const CATEGORY_FILTER = toSelect(categoryToText, true);
@@ -26,24 +27,38 @@ interface Props {
 
 export default function FaultsArea(props: Props) {
     const user = useContext(UserProvider);
+    const [branches, setBranches] = useState<Branch[]>([]);
     const [categoryFilter, setCategoryFilter] = useState<string>(ALL_ITEM.value);
     const [statusFilter, setStatusFilter] = useState<string>(ALL_ITEM.value);
     const [sortBy, setSortBy] = useState<string>("time");
     const [distributionCenterFilter, setDistributionCenterFilter] = useState<string>(ALL_ITEM.value);
 
-    const distributionCenters = useMemo(() => [ALL_ITEM, ...user.authGroups.map(v => ({ value: v, label: v }))], [user]);
+    const distributionCenters = useMemo(() => [ALL_ITEM, ...branches.map(b => ({ value: b.name, label: b.name }))], [branches]);
 
     const faults: Fault[] = props.faults
         .filter(fault => (categoryFilter === "All" || fault.category === categoryFilter) &&
-            (statusFilter === "All" || fault.status === statusFilter)
+            (statusFilter === "All" || fault.status === statusFilter) &&
+            (distributionCenterFilter === "All" || fault.distributionCenter === distributionCenterFilter)
         ).sort(sortFault);
+
+    useEffect(() => {
+        if (user) fetchBranches();
+    }, [user]);
+
+    async function fetchBranches() {
+        const newBranches = await getBranches(user) as Branch[];
+        console.log("fetchBranches", newBranches);
+        if (!newBranches) return alert("אירעה שגיאה בקבלת מרכזי קבלה");
+
+        setBranches(newBranches);
+    }
 
     function sortFault(first: Fault, second: Fault): number {
         switch (sortBy) {
             case "time":
-                return first.date.getTime() - second.date.getTime();
+                return second.date.getTime() - first.date.getTime();
             case "status":
-                return first.status.localeCompare(second.status);
+                return second.status.localeCompare(first.status);
             case "category":
                 return first.category.localeCompare(second.category);
             case "distributionCenter":
