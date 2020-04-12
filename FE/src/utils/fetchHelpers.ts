@@ -7,7 +7,7 @@ export interface FetchOptions {
 export async function fetchBackend(url: string, options: FetchOptions = {}): Promise<Response> {
     const { token, method = "GET", body } = options;
 
-    return await fetch(process.env.REACT_APP_BE + url, {
+    return await fetch((process.env.REACT_APP_BE || "") + url, {
         method,
         headers: new Headers({
             "Content-Type": "application/json",
