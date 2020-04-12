@@ -15,9 +15,9 @@ interface Props {
 
 export default function AddFault(props: Props) {
   const user = useContext(UserProvider);
-  const [isName,setIsNameValid] = useState<boolean>(false);
-  const [isPhoneValid,setIsPhoneValid] = useState<boolean>(false);
-  const [isContentValid,setIsContentValid] = useState<boolean>(false);
+  const [isName, setIsNameValid] = useState<boolean>(false);
+  const [isPhoneValid, setIsPhoneValid] = useState<boolean>(false);
+  const [isContentValid, setIsContentValid] = useState<boolean>(false);
   const [content, setContent] = useState<string>("");
   const [name, setName] = useState<string>("");
   const [phone, setPhone] = useState<string>("");
@@ -44,8 +44,8 @@ export default function AddFault(props: Props) {
       <div className="fields">
         <div className="fault-field row">
           <div className="inline-field">
-            <TextField 
-              label="שם מלא" 
+            <TextField
+              label="שם מלא"
               onChange={(value, isValid) => {
                 setIsNameValid(isValid);
                 setName(value);
@@ -53,15 +53,15 @@ export default function AddFault(props: Props) {
               value={name} />
           </div>
           <div className="inline-field">
-            <TextField 
-              label="טלפון" 
+            <TextField
+              label="טלפון"
               onChange={(value, isValid) => {
                 setIsPhoneValid(isValid);
                 setPhone(value);
-              }} 
+              }}
               value={phone}
               helperText="מספר טלפון המתחיל ב-05 באורך 10"
-              isValid={(value: string)=>{
+              isValid={(value: string) => {
                 return !!value.match(/\d{10}/)?.length && value.length === 10 && value.startsWith("05")
               }} />
           </div>
@@ -85,13 +85,13 @@ export default function AddFault(props: Props) {
           />
         </div>
         <div className="fault-field">
-          <TextField 
+          <TextField
             label="תיאור הבעיה"
             onChange={(value, isValid) => {
-                setIsContentValid(isValid);
-                setContent(value);
-              }} 
-            value={content} 
+              setIsContentValid(isValid);
+              setContent(value);
+            }}
+            value={content}
             className="fault-input"
             multiline
             placeholder="הזן פרטים על התקלה"
@@ -100,11 +100,11 @@ export default function AddFault(props: Props) {
         </div>
       </div>
       <div className="buttons">
-        <Button 
-          disabled={!(isContentValid && isName && isPhoneValid)} 
-          className="approve"
+        <Button
+          disabled={!(isContentValid && isName && isPhoneValid)}
+          size="small" color="primary" variant="contained"
           onClick={onAddFault}>
-            אישור
+          אישור
         </Button>
         <Button className="cancel" onClick={cleanForm}>נקה</Button>
       </div>

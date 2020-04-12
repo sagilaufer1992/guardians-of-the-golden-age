@@ -1,6 +1,8 @@
 import './App.scss';
 import React, { useState, useEffect, useRef } from 'react';
 import moment from "moment";
+import { ThemeProvider } from "@material-ui/core";
+import { createMuiTheme } from '@material-ui/core/styles';
 import Auth from './Auth';
 import UserProvider from './utils/UserProvider';
 import AuthFailedScreen from "./AuthFailedScreen";
@@ -11,6 +13,17 @@ import AddFault from "./Components/AddFault";
 
 import logo from "./assets/logo.png";
 
+const theme = createMuiTheme({
+  typography: {
+    fontFamily: "Heebo"
+  },
+  palette: {
+    primary: {
+      main: "#00a7ff",
+      contrastText: "#FFF"
+    }
+  }
+});
 
 function App() {
   const [user, setUser] = useState<gg.User | null>(null);
@@ -63,28 +76,30 @@ function App() {
   }
 
   return (
-    <div className="app">
-      <div className="app-bar">
-        <img className="logo" src={logo} />
-        <span>משמרות הזהב - תקלות</span>
+    <ThemeProvider theme={theme}>
+      <div className="app">
+        <div className="app-bar">
+          <img className="logo" src={logo} />
+          <span>משמרות הזהב - תקלות</span>
+        </div>
+        {authFailed ?
+          <AuthFailedScreen error={authFailed} /> :
+          !user ?
+            <Auth onSuccess={setUser} onFail={setAuthFailed} /> :
+            <UserProvider.Provider value={user}>
+              <div className="app-content">
+                <div className="content-header">
+                  <DatePanel onDateChanged={setDate} />
+                  {lastRefreshTime.current && <div>עודכן לאחרונה ב- {moment(lastRefreshTime.current).format("HH:mm DD/MM/YYYY")}</div>}
+                </div>
+                <div className="content-body">
+                  {user.role !== "hamal" && <AddFault onFaultAdded={_onFaultAdded} />}
+                  <FaultsArea faults={faults} onStatusChange={_onStatusChange} onFaultDelete={_onFaultDelete} />
+                </div>
+              </div>
+            </UserProvider.Provider>}
       </div>
-      {authFailed ?
-        <AuthFailedScreen error={authFailed} /> :
-        !user ?
-          <Auth onSuccess={setUser} onFail={setAuthFailed} /> :
-          <UserProvider.Provider value={user}>
-            <div className="app-content">
-              <div className="content-header">
-                <DatePanel onDateChanged={setDate} />
-                {lastRefreshTime.current && <div>עודכן לאחרונה ב- {moment(lastRefreshTime.current).format("HH:mm DD/MM/YYYY")}</div>}
-              </div>
-              <div className="content-body">
-                {user.role !== "hamal" && <AddFault onFaultAdded={_onFaultAdded} />}
-                <FaultsArea faults={faults} onStatusChange={_onStatusChange} onFaultDelete={_onFaultDelete} />
-              </div>
-            </div>
-          </UserProvider.Provider>}
-    </div>
+    </ThemeProvider>
   );
 }
 

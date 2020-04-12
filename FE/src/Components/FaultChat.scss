@@ -1,6 +1,6 @@
 $chat-comment-color: #eeeeee;
-$reporter-color: #0091ea;
-$handler-color: #ffa726;
+$reporter-color: #0099ff;
+$handler-color: #fabf01;
 
 .chat {
     font-size: 14px;
@@ -28,6 +28,7 @@ $handler-color: #ffa726;
             background: $chat-comment-color;
             border-radius: .4em;
             padding: 10px;
+            min-width: 200px;
             max-width: calc(100% - 60px);
             box-sizing: border-box;
             .bubble-header {

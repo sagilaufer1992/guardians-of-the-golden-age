@@ -38,13 +38,6 @@
       & > * {
         margin: 5px;
       }
-      .approve {
-        color: whitesmoke;
-        background-color: #311b92;
-        &:disabled{
-          background-color: gray;
-        }
-      }
       .cancel {
         background-color: whitesmoke;
       }
