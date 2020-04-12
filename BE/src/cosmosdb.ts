@@ -4,6 +4,7 @@ export let faultsDB: mongoose.Connection = null;
 export let usersDB: mongoose.Connection = null;
 
 async function _connectDB(connectionString: string) {
+    console.log("Connecting to: " + connectionString);
     return await mongoose.createConnection(connectionString, {
         useNewUrlParser: true,
         useCreateIndex: true,

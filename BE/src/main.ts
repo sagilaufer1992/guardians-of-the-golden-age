@@ -7,13 +7,16 @@ import { requireAuthMiddleware, userInfoMiddleware } from "./authMiddlewares";
 
 const env = process.env.NODE_ENV = process.env.NODE_ENV || "development";
 
-require("dotenv").config({ path: `.env.${env}` });
+if (env === "development")
+    require("dotenv").config({ path: `.env.${env}` });
 
 (async function () {
     const app = express();
     app.use(express.json());
     app.use(cors());
 
+    app.get("/api/test", (req, res) => res.status(200).send("Server Is Up"));
+    
     await initDBConnections();
 
     app.use(requireAuthMiddleware);
@@ -30,9 +33,8 @@ require("dotenv").config({ path: `.env.${env}` });
     app.get("/api/napas", userInfoMiddleware, getNapas);
     app.get("/api/municipalities", userInfoMiddleware, getMunicipalities);
 
-    const PORT = process.env.PORT || 3001;
-    app.listen(PORT, () => {
-        console.log(`Server is running in http://localhost:${PORT}`)
+    app.listen(8000, () => {
+        console.log(`Server is running in http://localhost:8000`)
         console.log(`Running in ${env} environment.`)
     });
 })();

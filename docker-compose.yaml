@@ -1,0 +1,21 @@
+version: '3.3'
+
+services:
+   nginx:
+     image: zahav.azurecr.io/zahav/client:1.9
+     restart: always
+     ports:
+        - "80:80"
+     environment:
+        BE_PORT: 8000
+
+   be:
+     depends_on:
+       - nginx
+     image: zahav.azurecr.io/zahav/be:1.9
+     restart: always
+     environment:
+        BE_PORT: 8000
+        FAULTS_DB_CONN_STRING: ${FAULTS_DB_CONN_STRING}
+        USERS_DB_CONN_STRING: ${USERS_DB_CONN_STRING}
+        USERS_TOKEN_SECRET: ${USERS_TOKEN_SECRET}
