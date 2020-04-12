@@ -22,7 +22,7 @@ interface ButtonProps {
 export default React.memo(function Fault(props: Props) {
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
 
-  const { _id, category, status, author, distributionCenter, content, date } = props.fault;
+  const { _id, category, status, author, distributionCenter, content, date, branch } = props.fault;
 
   function _onStatusChange(status: FaultStatus) {
     props.onStatusChange(_id, status);
@@ -34,12 +34,13 @@ export default React.memo(function Fault(props: Props) {
         <div className="fault">
           <div className={classnames("status", status)} />
           <div className="content">
+            <div className="hierarchy">{branch ? `${branch.district} / ${branch.napa} / ${branch.municipalityName} ` : ""}</div>
+            <div className="station-name">{branch ? `${branch.name} - ${branch.id}` : distributionCenter}</div>
             <div className="author-and-date">
               <span>{moment(date).format("DD/MM/YYYY HH:mm")}</span>
               {" - "}
               <span>{author.name}</span>
             </div>
-            <div className="station-name">{distributionCenter}</div>
             <div className="category-and-description">
               <Chip className="category" variant="outlined" color="primary" label={category} />
               <span>{props.fault._id}  {content}</span>

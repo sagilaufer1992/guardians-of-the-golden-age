@@ -27,6 +27,7 @@ type ExtendItem<T> = Omit<T, "author"> & {
 
 interface Fault extends ExtendItem<NewFault> {
   status: FaultStatus;
+  branch?: Branch;
 }
 
 interface Message extends ExtendItem<NewMessage> {
