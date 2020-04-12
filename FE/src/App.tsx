@@ -10,6 +10,8 @@ import {
   StylesProvider,
   jssPreset
 } from "@material-ui/core/styles";
+import { CircularProgress } from '@material-ui/core';
+
 import Auth from './Auth';
 import UserProvider from './utils/UserProvider';
 import AuthFailedScreen from "./AuthFailedScreen";
@@ -34,6 +36,8 @@ const theme: Theme = createMuiTheme({
 
 const jss = create({ plugins: [...jssPreset().plugins, rtl()] });
 
+const REFRESH_TIMEOUT: number = 20 * 1000;
+
 function App() {
   const [user, setUser] = useState<gg.User | null>(null);
   const [authFailed, setAuthFailed] = useState<string | null>(null);
@@ -41,6 +45,13 @@ function App() {
   const [faults, setFaults] = useState<Fault[]>([]);
   const [isRefresh, setIsRefresh] = useState<boolean>(false);
   const lastRefreshTime: React.MutableRefObject<Date | null> = useRef(null);
+  const refreshTimeout: React.MutableRefObject<any | null> = useRef(null);
+
+  useEffect(() => {
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible") _refreshFaults();
+    });
+  }, []);
 
   useEffect(() => {
     if (user) _refreshFaults();
@@ -48,9 +59,11 @@ function App() {
 
   async function _refreshFaults() {
     // can't call _refreshFaults if already refreshing - can cause bugs (change date while refresh)
-    if (isRefresh) return;
+    // also - stop refreshing when user is not watching
+    if (isRefresh || document.hidden) return;
 
     setIsRefresh(true);
+    if (refreshTimeout.current) clearTimeout(refreshTimeout.current);
 
     const newFaults = await getFaultsByDate(user!, date);
     if (!newFaults) return alert("אירעה שגיאה בעדכון התקלות");
@@ -58,6 +71,7 @@ function App() {
     setFaults(newFaults);
 
     lastRefreshTime.current = new Date();
+    refreshTimeout.current = setTimeout(_refreshFaults, REFRESH_TIMEOUT);
     setIsRefresh(false);
   }
 
@@ -100,7 +114,10 @@ function App() {
                 <div className="app-content">
                   <div className="content-header">
                     <DatePanel onDateChanged={setDate} />
-                    {lastRefreshTime.current && <div>עודכן לאחרונה ב- {moment(lastRefreshTime.current).format("HH:mm DD/MM/YYYY")}</div>}
+                    <div>
+                      {isRefresh && <CircularProgress className="fault-fetch-progress" size={15} thickness={5} />}
+                      {lastRefreshTime.current && <div className="last-fault-update">עודכן לאחרונה ב- {moment(lastRefreshTime.current).format("HH:mm DD/MM/YYYY")}</div>}
+                    </div>
                   </div>
                   <div className="content-body">
                     {user.role !== "hamal" && <AddFault onFaultAdded={_onFaultAdded} />}

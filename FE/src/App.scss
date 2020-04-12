@@ -36,6 +36,12 @@ $primary-color: #0099ff;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      .last-fault-update {
+        display: inline;
+      }
+      .fault-fetch-progress {
+        margin-left: 10px;
+      }
     }
     .content-body {
       display: flex;
