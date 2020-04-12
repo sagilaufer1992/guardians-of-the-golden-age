@@ -37,7 +37,7 @@ export async function getFaultById(req, res, next) {
 export async function addFault(req, res, next) {
     const { token, authGroups, ...baseUser } = req.user;
     const distributionCenter = req.body.distributionCenter;
-    
+
     let newFault = {
         ...req.body,
         author: { ...req.body.author, ...baseUser }
@@ -70,13 +70,18 @@ export async function updateFault(req, res, next) {
 }
 
 export async function deleteFault(req, res, next) {
-    try {
-        await Fault.findByIdAndRemove(req.params.id);
-        res.status(200).json({});
-    }
-    catch {
-        return res.status(404, `Fault not found with id of ${req.params.id}`);
-    }
+    const fault = await Fault.findById(req.params.id);
+
+    if (!fault) return res.status(404).json(`Fault not found with id of ${req.params.id}`);
+
+    const { author: { username }, status } = fault.toJSON() as be.Fault;
+
+    if (username !== req.username) return res.status(403).json("Not Allowed");
+
+    if (status !== "Todo") return res.status(400).json("You can delete only when status is Todo");
+
+    await Fault.findByIdAndRemove(req.params.id);
+    res.status(200).json({});
 }
 
 async function _getBranch(name: string) {
