@@ -2,8 +2,7 @@ import "./AuthFailedScreen.scss";
 import React from "react";
 
 import loginImg from "./assets/golden-guard-login.png";
-//import openFaultsImg from "./assets/golden-guard-open-faults.png";
-import newNavbarImg from "./assets/golden-guard-new-navbar.jpeg";
+import openFaultsImg from "./assets/golden-guard-open-faults-new.png";
 
 interface Props {
     error: string;
@@ -29,7 +28,7 @@ export default function AuthFailedScreen({ error }: Props) {
                     {"2. "}
                     לחצו על כפתור "ניהול תקלות" שבצד ימין למעלה:
                 </div>
-                <img src={newNavbarImg} />
+                <img src={openFaultsImg} />
             </div>
         </div>
     </div>
