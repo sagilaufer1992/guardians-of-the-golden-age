@@ -1,9 +1,9 @@
 import "./AuthFailedScreen.scss";
 import React from "react";
-import { Button } from "@material-ui/core";
 
 import loginImg from "./assets/golden-guard-login.png";
-import openFaultsImg from "./assets/golden-guard-open-faults.png";
+//import openFaultsImg from "./assets/golden-guard-open-faults.png";
+import newNavbarImg from "./assets/golden-guard-new-navbar.jpeg";
 
 interface Props {
     error: string;
@@ -27,9 +27,9 @@ export default function AuthFailedScreen({ error }: Props) {
             <div className="step">
                 <div className="step-text">
                     {"2. "}
-                    לחצו על כפתור "ניהול תקלות" שבצד שמאל למעלה:
+                    לחצו על כפתור "ניהול תקלות" שבצד ימין למעלה:
                 </div>
-                <img src={openFaultsImg} />
+                <img src={newNavbarImg} />
             </div>
         </div>
     </div>
