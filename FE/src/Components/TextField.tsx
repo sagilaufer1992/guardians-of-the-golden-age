@@ -5,6 +5,7 @@ interface Props {
   value: string;
   onChange: (value: string, isValid: boolean) => void;
   label: string;
+  helperText?: string;
   multiline?: boolean;
   rows?: number;
   placeholder?: string;
@@ -20,14 +21,15 @@ export default function TextField(props: Props) {
     onChange,
     value,
     className,
+    helperText,
     isValid,
     multiline,
     placeholder,
     rows,
   } = props;
- 
+
   const mountRef = useRef<boolean>(false);
- 
+
   useEffect(() => {
     if (mountRef.current) {
       if (!_validate(value) && !error) {
@@ -51,6 +53,7 @@ export default function TextField(props: Props) {
         placeholder={placeholder || ""}
         rows={(multiline && rows) || undefined}
         multiline={!!multiline}
+        helperText={helperText}
         onChange={(e) => {
           const { value } = e.target;
           const isValidValue = _validate(value);

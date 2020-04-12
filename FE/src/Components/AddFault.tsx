@@ -60,8 +60,9 @@ export default function AddFault(props: Props) {
                 setPhone(value);
               }} 
               value={phone}
-              isValid={(value:string)=>{
-                return !isNaN(parseInt(value)) && value.length === 10 && value.startsWith("05")
+              helperText="מספר טלפון המתחיל ב-05 באורך 10"
+              isValid={(value: string)=>{
+                return !!value.match(/\d{10}/)?.length && value.length === 10 && value.startsWith("05")
               }} />
           </div>
         </div>
