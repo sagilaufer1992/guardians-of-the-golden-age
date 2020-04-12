@@ -9,6 +9,9 @@ import DatePanel from "./Components/DatePanel";
 import { getFaultsByDate, updateFault, addFault, deleteFault } from "./utils/fetchFaultFunctions";
 import AddFault from "./Components/AddFault";
 
+import logo from "./assets/logo.png";
+
+
 function App() {
   const [user, setUser] = useState<gg.User | null>(null);
   const [authFailed, setAuthFailed] = useState<string | null>(null);
@@ -61,7 +64,10 @@ function App() {
 
   return (
     <div className="app">
-      <div className="app-bar">משמרות הזהב - תקלות</div>
+      <div className="app-bar">
+        <img className="logo" src={logo} />
+        <span>משמרות הזהב - תקלות</span>
+      </div>
       {authFailed ?
         <AuthFailedScreen error={authFailed} /> :
         !user ?
