@@ -66,10 +66,13 @@ function App() {
     if (refreshTimeout.current) clearTimeout(refreshTimeout.current);
 
     const newFaults = await getFaultsByDate(user!, date);
-    if (newFaults) setFaults(newFaults);
-    else alert("אירעה שגיאה בעדכון התקלות");
 
-    lastRefreshTime.current = new Date();
+    if (!newFaults) alert("אירעה שגיאה בעדכון התקלות");
+    else {
+      setFaults(newFaults);
+      lastRefreshTime.current = new Date();
+    }
+
     refreshTimeout.current = setTimeout(_refreshFaults, REFRESH_TIMEOUT);
     setIsRefresh(false);
   }
