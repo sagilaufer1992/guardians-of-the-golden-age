@@ -10,9 +10,10 @@ const GG_CLIENT: string = process.env.REACT_APP_GG_CLIENT!;
 
 interface Props {
     onSuccess: (user: gg.User) => void;
+    onFail: (err: string) => void;
 }
 
-function Auth({ onSuccess }: Props) {
+function Auth({ onSuccess, onFail }: Props) {
     useEffect(() => {
         promiseWithTimeout(new Promise<string>((resolve, reject) => {
             if (process.env.NODE_ENV === "development") return resolve("VERY_COOL_TOKEN");
@@ -39,7 +40,7 @@ function Auth({ onSuccess }: Props) {
                     .then(user => ({ ...user, token })), 5000);
             })
             .then(onSuccess)
-            .catch(err => window.location.href = GG_CLIENT);
+            .catch(onFail);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 

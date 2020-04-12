@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import moment from "moment";
 import Auth from './Auth';
 import UserProvider from './utils/UserProvider';
+import AuthFailedScreen from "./AuthFailedScreen";
 import FaultsArea from "./Components/FaultsArea";
 import DatePanel from "./Components/DatePanel";
 import { getFaultsByDate, updateFault, addFault } from "./utils/fetchFaultFunctions";
@@ -10,6 +11,7 @@ import AddFault from "./Components/AddFault";
 
 function App() {
   const [user, setUser] = useState<gg.User | null>(null);
+  const [authFailed, setAuthFailed] = useState<string | null>(null);
   const [date, setDate] = useState<Date>(moment().startOf('day').toDate());
   const [faults, setFaults] = useState<Fault[]>([]);
   const [isRefresh, setIsRefresh] = useState<boolean>(false);
@@ -27,7 +29,7 @@ function App() {
 
     const newFaults = await getFaultsByDate(user!, date);
     if (!newFaults) return alert("אירעה שגיאה בעדכון התקלות");
-    
+
     setFaults(newFaults);
 
     lastRefreshTime.current = new Date();
@@ -53,20 +55,22 @@ function App() {
   return (
     <div className="app">
       <div className="app-bar">משמרות הזהב - תקלות</div>
-      {!user ?
-        <Auth onSuccess={setUser} /> :
-        <UserProvider.Provider value={user}>
-          <div className="app-content">
-            <div className="content-header">
-              <DatePanel onDateChanged={setDate} />
-              {lastRefreshTime.current && <div>עודכן לאחרונה ב- {moment(lastRefreshTime.current).format("HH:mm DD/MM/YYYY")}</div>}
+      {authFailed ?
+        <AuthFailedScreen error={authFailed} /> :
+        !user ?
+          <Auth onSuccess={setUser} onFail={setAuthFailed} /> :
+          <UserProvider.Provider value={user}>
+            <div className="app-content">
+              <div className="content-header">
+                <DatePanel onDateChanged={setDate} />
+                {lastRefreshTime.current && <div>עודכן לאחרונה ב- {moment(lastRefreshTime.current).format("HH:mm DD/MM/YYYY")}</div>}
+              </div>
+              <div className="content-body">
+                <AddFault onFaultAdded={_onFaultAdded} />
+                <FaultsArea faults={faults} onStatusChange={_onStatusChange} />
+              </div>
             </div>
-            <div className="content-body">
-              <AddFault onFaultAdded={_onFaultAdded} />
-              <FaultsArea faults={faults} onStatusChange={_onStatusChange} />
-            </div>
-          </div>
-        </UserProvider.Provider>}
+          </UserProvider.Provider>}
     </div>
   );
 }

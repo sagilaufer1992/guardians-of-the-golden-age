@@ -1,0 +1,29 @@
+.auth-failed-container {
+  height: 100%;
+  padding: 50px;
+  .title {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 35px;
+  }
+  .content {
+    width: 100%;
+    .description-text {
+        font-size: 25px;
+    }
+    a {
+      color: #2597db;
+    }
+    .step {
+      margin-top: 20px;
+      font-size: 20px;
+      display: flex;
+      flex-direction: column;
+      img {
+        align-self: center;
+        margin-top: 10px;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+      }
+    }
+  }
+}
