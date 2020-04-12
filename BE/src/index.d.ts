@@ -6,13 +6,14 @@ declare namespace Express {
 }
 
 declare namespace gg {
+  type Role = "hamal" | "manager" | "admin" | "volunteer";
   interface UserInfo {
     username: string;
 
     // hamal: חמל
     // manager: מנהל חלוקה
     // admin: יוזר מנהל (כמו חמל במערכת שלנו)
-    role: "hamal" | "manager" | "admin" | "volunteer";
+    role: Role
   }
 
   interface User extends UserInfo {
