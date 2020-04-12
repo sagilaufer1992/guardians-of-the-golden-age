@@ -3,7 +3,7 @@ require('express-async-errors');
 
 import * as cors from "cors";
 import initDBConnections from "./cosmosdb";
-import { requireAuthMiddleware } from "./authMiddlewares";
+import { requireAuthMiddleware, userInfoMiddleware } from "./authMiddlewares";
 
 const env = process.env.NODE_ENV = process.env.NODE_ENV || "development";
 
@@ -25,10 +25,10 @@ require("dotenv").config({ path: `.env.${env}` });
     app.use("/api/messages", require("./Messages/message.route").default);
 
     const { getDistricts, getNapas, getMunicipalities } = require("./Branches/branch.controller");
-    
-    app.get("/api/districts", getDistricts);
-    app.get("/api/napas", getNapas);
-    app.get("/api/municipalities", getMunicipalities);
+
+    app.get("/api/districts", userInfoMiddleware, getDistricts);
+    app.get("/api/napas", userInfoMiddleware, getNapas);
+    app.get("/api/municipalities", userInfoMiddleware, getMunicipalities);
 
     const PORT = process.env.PORT || 3001;
     app.listen(PORT, () => {
