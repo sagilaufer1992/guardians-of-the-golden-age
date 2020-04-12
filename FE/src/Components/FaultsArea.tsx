@@ -14,7 +14,7 @@ const CATEGORY_FILTER = toSelect(categoryToText, true);
 const SORT_BY = [
     { value: "time", label: "זמן" },
     { value: "status", label: "סטטוס" },
-    { value: "category", label: "סוג משלוח" },
+    { value: "category", label: "קטגוריה" },
     { value: "distributionCenter", label: "מרכז חלוקה" }
 ];
 
@@ -65,7 +65,7 @@ export default function FaultsArea(props: Props) {
             </div>
         </div>
         <div className="faults-area-sort">
-            <Select title="סוג משלוח" options={CATEGORY_FILTER} value={categoryFilter} onChange={setCategoryFilter} />
+            <Select title="קטגוריה" options={CATEGORY_FILTER} value={categoryFilter} onChange={setCategoryFilter} />
             <Select title="מרכז חלוקה" options={distributionCenters} value={distributionCenterFilter} onChange={setDistributionCenterFilter} />
             <Select title="סטטוס" options={STATUS_FILTER} value={statusFilter} onChange={setStatusFilter} />
             <Select title="ממוין לפי" options={SORT_BY} value={sortBy} onChange={setSortBy} />

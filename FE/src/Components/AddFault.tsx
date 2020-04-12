@@ -41,13 +41,13 @@ export default function AddFault(props: Props) {
         <div className="add-fault">
             <div className="title">צור תקלה חדשה</div>
             <div className="fields">
-                <div className="fault-field">
+                <div className="fault-field row">
                     <div className="inline-field">
-                        <label>שם מדווח התקלה:</label>
+                        <label>שם מלא</label>
                         <TextField value={name} variant="outlined" onChange={e => setName(e.target.value)} />
                     </div>
                     <div className="inline-field">
-                        <label>טלפון:</label>
+                        <label>טלפון</label>
                         <TextField value={phone} variant="outlined" onChange={e => setPhone(e.target.value)} />
                     </div>
                 </div>

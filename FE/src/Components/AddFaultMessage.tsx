@@ -35,7 +35,7 @@ export default function AddFaultMessage({ addNewMessage }: Props) {
             <TextField className="panel-input" variant="outlined" value={name} onChange={_onNameChange} placeholder="שם המלא לצורך תיעוד" />
             <div className="input-label">אופן הטיפול</div>
             <TextField className="panel-input" variant="outlined" value={content} onChange={_onContentChange} multiline rows={4} placeholder="מה הצעדים שננקטו? שים לב, ההודעה תישלח למדווח הבעיה" />
-            <Button onClick={_onSumbit} className="panel-button" variant="contained" size="small" color="primary">סמן כטופל</Button>
+            <Button onClick={_onSumbit} className="panel-button" variant="contained" size="small" color="primary">פרסם</Button>
         </div>
     </div>
 }

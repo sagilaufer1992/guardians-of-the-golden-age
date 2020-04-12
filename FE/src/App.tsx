@@ -52,7 +52,7 @@ function App() {
 
   return (
     <div className="app">
-      <div className="app-bar">משמרות זהב</div>
+      <div className="app-bar">משמרות הזהב - תקלות</div>
       {!user ?
         <Auth onSuccess={setUser} /> :
         <UserProvider.Provider value={user}>
