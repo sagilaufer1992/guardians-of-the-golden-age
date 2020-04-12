@@ -30,15 +30,22 @@ export default function FaultsArea(props: Props) {
     const [branches, setBranches] = useState<Branch[]>([]);
     const [categoryFilter, setCategoryFilter] = useState<string>(ALL_ITEM.value);
     const [statusFilter, setStatusFilter] = useState<string>(ALL_ITEM.value);
+    const [districtFilter, setDistrictFilter] = useState<string>(ALL_ITEM.value);
     const [sortBy, setSortBy] = useState<string>("time");
     const [distributionCenterFilter, setDistributionCenterFilter] = useState<string>(ALL_ITEM.value);
 
     const distributionCenters = useMemo(() => [ALL_ITEM, ...branches.map(b => ({ value: b.name, label: b.name }))], [branches]);
+    const districts = useMemo(() => {
+        const district = Array.from(new Set(branches.map(b => b.district)));
+        return [ALL_ITEM, ...district.map(b => ({ value: b, label: b }))];
+    },
+    [branches]);
 
     const faults: Fault[] = props.faults
-        .filter(fault => (categoryFilter === "All" || fault.category === categoryFilter) &&
-            (statusFilter === "All" || fault.status === statusFilter) &&
-            (distributionCenterFilter === "All" || fault.distributionCenter === distributionCenterFilter)
+        .filter(fault => (categoryFilter === ALL_ITEM.value || fault.category === categoryFilter) &&
+            (statusFilter === ALL_ITEM.value || fault.status === statusFilter) &&
+            (distributionCenterFilter === ALL_ITEM.value || fault.distributionCenter === distributionCenterFilter) &&
+            (districtFilter === ALL_ITEM.value || fault.branch?.district === districtFilter)
         ).sort(sortFault);
 
     useEffect(() => {
@@ -83,6 +90,7 @@ export default function FaultsArea(props: Props) {
         <div className="faults-area-sort">
             <Select title="קטגוריה" options={CATEGORY_FILTER} value={categoryFilter} onChange={setCategoryFilter} />
             <Select title="מרכז חלוקה" options={distributionCenters} value={distributionCenterFilter} onChange={setDistributionCenterFilter} />
+            <Select title="מחוז" options={districts} value={districtFilter} onChange={setDistrictFilter} />
             <Select title="סטטוס" options={STATUS_FILTER} value={statusFilter} onChange={setStatusFilter} />
             <Select title="ממוין לפי" options={SORT_BY} value={sortBy} onChange={setSortBy} />
         </div>
