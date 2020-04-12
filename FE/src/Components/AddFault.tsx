@@ -15,6 +15,9 @@ interface Props {
 
 export default function AddFault(props: Props) {
   const user = useContext(UserProvider);
+  const [isName,setIsNameValid] = useState<boolean>(false);
+  const [isPhoneValid,setIsPhoneValid] = useState<boolean>(false);
+  const [isContentValid,setIsContentValid] = useState<boolean>(false);
   const [content, setContent] = useState<string>("");
   const [name, setName] = useState<string>("");
   const [phone, setPhone] = useState<string>("");
@@ -24,8 +27,6 @@ export default function AddFault(props: Props) {
   const centers = useMemo(() => user.authGroups.map(c => ({ label: c, value: c })), [user]);
 
   const onAddFault = () => {
-    if (!name || !phone || !content) return alert("אנא מלא שם, טלפון ותיאור");
-
     props.onFaultAdded({
       distributionCenter,
       category,
@@ -43,10 +44,25 @@ export default function AddFault(props: Props) {
       <div className="fields">
         <div className="fault-field row">
           <div className="inline-field">
-            <TextField label="שם מלא" onChange={(value, isValid) => setName(value)} value={name} />
+            <TextField 
+              label="שם מלא" 
+              onChange={(value, isValid) => {
+                setIsNameValid(isValid);
+                setName(value);
+              }}
+              value={name} />
           </div>
           <div className="inline-field">
-            <TextField label="טלפון" onChange={(value, isValid) => setPhone(value)} value={phone} />
+            <TextField 
+              label="טלפון" 
+              onChange={(value, isValid) => {
+                setIsPhoneValid(isValid);
+                setPhone(value);
+              }} 
+              value={phone}
+              isValid={(value:string)=>{
+                return !isNaN(parseInt(value)) && value.length === 10 && value.startsWith("05")
+              }} />
           </div>
         </div>
         <div className="fault-field">
@@ -70,7 +86,10 @@ export default function AddFault(props: Props) {
         <div className="fault-field">
           <TextField 
             label="תיאור הבעיה"
-            onChange={(value, isValid) => setContent(value)} 
+            onChange={(value, isValid) => {
+                setIsContentValid(isValid);
+                setContent(value);
+              }} 
             value={content} 
             className="fault-input"
             multiline
@@ -80,7 +99,12 @@ export default function AddFault(props: Props) {
         </div>
       </div>
       <div className="buttons">
-        <Button className="approve" onClick={onAddFault}>אישור</Button>
+        <Button 
+          disabled={!(isContentValid && isName && isPhoneValid)} 
+          className="approve"
+          onClick={onAddFault}>
+            אישור
+        </Button>
         <Button className="cancel" onClick={cleanForm}>נקה</Button>
       </div>
     </div>
