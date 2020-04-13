@@ -19,6 +19,10 @@ const theme: Theme = createMuiTheme({
     primary: {
       main: "#00a7ff",
       contrastText: "#FFF"
+    },
+    secondary: {
+      main: "#FFF",
+      contrastText: "#00a7ff"
     }
   },
 }, { direction: 'rtl' });

@@ -1,8 +1,8 @@
 import './App.scss';
 import React, { useState, useEffect, useRef } from 'react';
 import moment from "moment";
+import classnames from "classnames";
 import { useSnackbar } from "notistack";
-
 import Auth from './Components/Auth';
 import UserProvider from './utils/UserProvider';
 import Login from "./Components/Auth/Login";
@@ -50,7 +50,7 @@ function App() {
     // can't call _refreshFaults if already refreshing - can cause bugs (change date while refresh)
     // also - stop refreshing when user is not watching
     // TODO: MAKE IT WORK FOR MOBILE
-    if (isRefresh || document.hidden || isMobile) return;
+    if (isRefresh || document.hidden) return;
 
     setIsRefresh(true);
     if (refreshTimeout.current) clearTimeout(refreshTimeout.current);
@@ -93,7 +93,7 @@ function App() {
     _refreshFaults();
   }
 
-  return <div className="app">
+  return <div className={classnames("app", { "mobile": isMobile })}>
     <div className="app-bar">
       <img className="logo" src={logo} />
       <span>משמרות הזהב - תקלות</span>

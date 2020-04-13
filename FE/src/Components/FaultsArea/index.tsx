@@ -1,14 +1,15 @@
 import "./index.scss";
 
 import React, { useState, useMemo, useContext, useEffect } from "react";
-import Autocomplete from "@material-ui/lab/Autocomplete";
-import TextField from '@material-ui/core/TextField';
 import { useSnackbar } from "notistack";
-
+import Autocomplete from "@material-ui/lab/Autocomplete";
+import { Hidden, TextField, Button } from '@material-ui/core';
+import FilterListIcon from "@material-ui/icons/FilterList";
 import { categoryToText, statusToText } from "../../utils/translations";
 import UserProvider from "../../utils/UserProvider";
 import { toSelect, ALL_ITEM } from "../../utils/inputs";
 import { getBranches } from "../../utils/fetchBranches";
+import { isHamal } from "../../utils/roles";
 
 import Fault from "./Fault";
 import Select from "../Inputs/Select";
@@ -81,25 +82,34 @@ export default function FaultsArea(props: Props) {
             <div className="label">
                 רשימת התקלות
             </div>
-            <div className="numbers">
-                <div className="number-label">סה״כ</div>
-                <div className="total-number">{faults.length}</div>
-                <div className="number-label">טרם טופלו</div>
-                <div className="active-number">{faults.filter(f => f.status === "Todo").length}</div>
+            <Hidden smUp>
+                <Button
+                    variant="outlined"
+                    color="secondary"
+                    onClick={() => { }}                >
+                    <FilterListIcon style={{ marginLeft: 5 }} />
+                        סינון ומיון
+                </Button>
+            </Hidden>
+            {isHamal(user) && <div className="numbers">
+                <div>{`סה״כ ${faults.length}`}</div>
+                <div>{`טרם טופלו ${faults.filter(f => f.status === "Todo").length}`}</div>
+            </div>}
+        </div>
+        <Hidden smDown>
+            <div className="faults-area-sort">
+                <Select title="מחוז" options={districts} value={districtFilter} onChange={setDistrictFilter} />
+                <Autocomplete disableClearable
+                    defaultValue={ALL_ITEM}
+                    onChange={(e: any, value: any) => { setDistributionCenterFilter(value?.value) }}
+                    getOptionLabel={(option) => option.label}
+                    options={distributionCenters}
+                    renderInput={(params: any) => (<TextField className="distribution-autocomplete" {...params} label="מרכז חלוקה" variant="outlined" />)} />
+                <Select title="קטגוריה" options={CATEGORY_FILTER} value={categoryFilter} onChange={setCategoryFilter} />
+                <Select title="סטטוס" options={STATUS_FILTER} value={statusFilter} onChange={setStatusFilter} />
+                <Select title="ממוין לפי" options={SORT_BY} value={sortBy} onChange={setSortBy} />
             </div>
-        </div>
-        <div className="faults-area-sort">
-            <Select title="מחוז" options={districts} value={districtFilter} onChange={setDistrictFilter} />
-            <Autocomplete disableClearable
-                defaultValue={ALL_ITEM}
-                onChange={(e: any, value: any) => { setDistributionCenterFilter(value?.value) }}
-                getOptionLabel={(option) => option.label}
-                options={distributionCenters}
-                renderInput={(params: any) => (<TextField className="distribution-autocomplete" {...params} label="מרכז חלוקה" variant="outlined" />)} />
-            <Select title="קטגוריה" options={CATEGORY_FILTER} value={categoryFilter} onChange={setCategoryFilter} />
-            <Select title="סטטוס" options={STATUS_FILTER} value={statusFilter} onChange={setStatusFilter} />
-            <Select title="ממוין לפי" options={SORT_BY} value={sortBy} onChange={setSortBy} />
-        </div>
+        </Hidden>
         <div className="faults-area-body">
             {faults.length === 0 ?
                 <div className="empty-body">לא נמצאו תקלות</div> :
