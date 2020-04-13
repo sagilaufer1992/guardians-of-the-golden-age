@@ -5,15 +5,15 @@ import { CircularProgress } from "@material-ui/core";
 import { promiseWithTimeout } from '../../utils/helpers';
 import { fetchBackend } from "../../utils/fetchHelpers";
 
-const TOKEN_STORAGE_KEY: string = "gg_token";
 const GG_CLIENT: string = process.env.REACT_APP_GG_CLIENT!;
 
 interface Props {
+    tokenKey: string;
     onSuccess: (user: gg.User) => void;
     onFail: (err: string) => void;
 }
 
-function Auth({ onSuccess, onFail }: Props) {
+function Auth({ tokenKey, onSuccess, onFail }: Props) {
     useEffect(() => {
         promiseWithTimeout(new Promise<string>((resolve, reject) => {
             if (process.env.NODE_ENV === "development") return resolve("VERY_COOL_TOKEN");
@@ -24,14 +24,14 @@ function Auth({ onSuccess, onFail }: Props) {
                 window.removeEventListener("message", handleMessage);
                 if (!origin.startsWith(GG_CLIENT) || !data) return;
 
-                window.localStorage.setItem(TOKEN_STORAGE_KEY, data);
+                window.localStorage.setItem(tokenKey, data);
                 resolve(data);
             }
 
             window.addEventListener("message", handleMessage);
             window.opener.postMessage("ready", "*");
         }), 1000)
-            .catch(err => window.localStorage.getItem(TOKEN_STORAGE_KEY))
+            .catch(err => window.localStorage.getItem(tokenKey))
             .then((token: string | null) => {
                 if (!token) throw new Error("no token");
 

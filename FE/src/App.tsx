@@ -4,7 +4,7 @@ import moment from "moment";
 
 import Auth from './Components/Auth';
 import UserProvider from './utils/UserProvider';
-import AuthFailedScreen from "./Components/Auth/AuthFailedScreen";
+import Login from "./Components/Auth/Login";
 import FaultsArea from "./Components/FaultsArea";
 import DatePanel from "./Components/DatePanel";
 import { getFaultsByDate, updateFault, addFault, deleteFault } from "./utils/fetchFaultFunctions";
@@ -15,6 +15,7 @@ import { useMediaQuery, Theme } from '@material-ui/core';
 import { isVolunteer } from './utils/roles';
 
 const REFRESH_TIMEOUT: number = 20 * 1000;
+const TOKEN_STORAGE_KEY: string = "gg_token";
 
 function App() {
   const [user, setUser] = useState<gg.User | null>(null);
@@ -36,6 +37,12 @@ function App() {
   useEffect(() => {
     if (user) _refreshFaults();
   }, [date, user]);
+
+  function _handleLogin({ access_token, ...user }: gg.LoginResult) {
+    window.localStorage.setItem(TOKEN_STORAGE_KEY, access_token);
+    setUser({ ...user, token: access_token });
+    setAuthFailed(null);
+  }
 
   async function _refreshFaults() {
     // can't call _refreshFaults if already refreshing - can cause bugs (change date while refresh)
@@ -86,9 +93,9 @@ function App() {
       <span>משמרות הזהב - תקלות</span>
     </div>
     {authFailed ?
-      <AuthFailedScreen error={authFailed} /> :
+      <Login onLogin={_handleLogin} /> :
       !user ?
-        <Auth onSuccess={setUser} onFail={setAuthFailed} /> :
+        <Auth tokenKey={TOKEN_STORAGE_KEY} onSuccess={setUser} onFail={setAuthFailed} /> :
         <UserProvider.Provider value={user}>
           {isMobile && isVolunteer(user) ?
             <AddFault onFaultAdded={_onFaultAdded} /> :
