@@ -1,11 +1,10 @@
 import './App.scss';
 import React, { useState, useEffect, useRef } from 'react';
 import moment from "moment";
-import { CircularProgress } from '@material-ui/core';
 
-import Auth from './Auth';
+import Auth from './Components/Auth';
 import UserProvider from './utils/UserProvider';
-import AuthFailedScreen from "./AuthFailedScreen";
+import AuthFailedScreen from "./Components/Auth/AuthFailedScreen";
 import FaultsArea from "./Components/FaultsArea";
 import DatePanel from "./Components/DatePanel";
 import { getFaultsByDate, updateFault, addFault, deleteFault } from "./utils/fetchFaultFunctions";
@@ -88,13 +87,7 @@ function App() {
         <Auth onSuccess={setUser} onFail={setAuthFailed} /> :
         <UserProvider.Provider value={user}>
           <div className="app-content">
-            <div className="content-header">
-              <DatePanel onDateChanged={setDate} />
-              <div>
-                {isRefresh && <CircularProgress className="fault-fetch-progress" size={15} thickness={5} />}
-                {lastRefreshTime.current && <div className="last-fault-update">עודכן לאחרונה ב- {moment(lastRefreshTime.current).format("HH:mm DD/MM/YYYY")}</div>}
-              </div>
-            </div>
+            <DatePanel isRefresh={isRefresh} lastRefreshTime={lastRefreshTime.current} onDateChanged={setDate} />
             <div className="content-body">
               {user.role !== "hamal" && <AddFault onFaultAdded={_onFaultAdded} />}
               <FaultsArea faults={faults} onStatusChange={_onStatusChange} onFaultDelete={_onFaultDelete} />

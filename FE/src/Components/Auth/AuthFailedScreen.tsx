@@ -1,8 +1,8 @@
 import "./AuthFailedScreen.scss";
 import React from "react";
 
-import loginImg from "./assets/golden-guard-login.png";
-import openFaultsImg from "./assets/golden-guard-open-faults-new.png";
+import loginImg from "../../assets/golden-guard-login.png";
+import openFaultsImg from "../../assets/golden-guard-open-faults-new.png";
 
 interface Props {
     error: string;

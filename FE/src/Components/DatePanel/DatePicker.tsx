@@ -1,4 +1,4 @@
-import "./DatePanel.css";
+import "./DatePicker.scss";
 
 import React, { useState, useMemo } from "react";
 import classnames from "classnames";
@@ -13,8 +13,8 @@ interface Props {
     onDateChanged: (date: Date) => void;
 }
 
-export default function DatePanel({ initDate = new Date(), onDateChanged }: Props) {
-    const [date, setDate] = useState(initDate);
+export default function DatePicker({ initDate, onDateChanged }: Props) {
+    const [date, setDate] = useState(initDate || new Date());
     const momentDate = useMemo(() => moment(date), [date]);
     const onClick = (daysToAdd: number) => {
         const newDate = moment(date).add(daysToAdd, "days").startOf('day').toDate();
@@ -24,7 +24,7 @@ export default function DatePanel({ initDate = new Date(), onDateChanged }: Prop
 
     const leftArrowClassName = classnames("left-arrow", { disabled: _isToday(date) });
 
-    return <div className="date-panel" >
+    return <div className="date-picker" >
         <div className="title">תמונת מצב ליום:</div>
         <div>
             <div className="right-arrow" onClick={() => onClick(-1)} />

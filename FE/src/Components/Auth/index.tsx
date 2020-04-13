@@ -1,9 +1,9 @@
-import './Auth.scss';
+import './index.scss';
 import React, { useEffect } from 'react';
 import { CircularProgress } from "@material-ui/core";
 
-import { promiseWithTimeout } from './utils/helpers';
-import { fetchBackend } from "./utils/fetchHelpers";
+import { promiseWithTimeout } from '../../utils/helpers';
+import { fetchBackend } from "../../utils/fetchHelpers";
 
 const TOKEN_STORAGE_KEY: string = "gg_token";
 const GG_CLIENT: string = process.env.REACT_APP_GG_CLIENT!;
