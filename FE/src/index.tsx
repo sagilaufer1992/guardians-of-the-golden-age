@@ -16,7 +16,8 @@ import * as serviceWorker from './serviceWorker';
 
 const theme: Theme = createMuiTheme({
   typography: {
-    fontFamily: "Heebo"
+    fontFamily: "Heebo",
+    fontSize: 12
   },
   palette: {
     primary: {

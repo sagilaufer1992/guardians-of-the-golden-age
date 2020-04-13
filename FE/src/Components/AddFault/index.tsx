@@ -42,29 +42,26 @@ export default function AddFault(props: Props) {
     <div className="add-fault">
       <div className="title">צור תקלה חדשה</div>
       <div className="fields">
-        <div className="fault-field row">
-          <div className="inline-field">
-            <TextField
-              label="שם מלא"
-              onChange={(value, isValid) => {
-                setIsNameValid(isValid);
-                setName(value);
-              }}
-              value={name} />
-          </div>
-          <div className="inline-field">
-            <TextField
-              label="טלפון"
-              onChange={(value, isValid) => {
-                setIsPhoneValid(isValid);
-                setPhone(value);
-              }}
-              value={phone}
-              helperText="מספר טלפון המתחיל ב-05 באורך 10"
-              isValid={(value: string) => {
-                return !!value.match(/\d{10}/)?.length && value.length === 10 && value.startsWith("05")
-              }} />
-          </div>
+        <div className="user-details fault-field row">
+          <TextField
+            className="name-field"
+            label="שם מלא"
+            onChange={(value, isValid) => {
+              setIsNameValid(isValid);
+              setName(value);
+            }}
+            value={name} />
+          <TextField
+            className="phone-field"
+            label="טלפון"
+            onChange={(value, isValid) => {
+              setIsPhoneValid(isValid);
+              setPhone(value);
+            }}
+            value={phone}
+            isValid={(value: string) => {
+              return !!value.match(/\d{10}/)?.length && value.length === 10 && value.startsWith("05")
+            }} />
         </div>
         <div className="fault-field">
           <label>נקודת חלוקה</label>
@@ -92,7 +89,7 @@ export default function AddFault(props: Props) {
               setContent(value);
             }}
             value={content}
-            className="fault-input"
+            inputClassName="fault-content"
             multiline
             placeholder="הזן פרטים על התקלה"
             rows={4}
@@ -106,7 +103,7 @@ export default function AddFault(props: Props) {
           onClick={onAddFault}>
           אישור
         </Button>
-        <Button className="cancel" onClick={cleanForm}>נקה</Button>
+        <Button className="clean-button" onClick={cleanForm}>נקה</Button>
       </div>
     </div>
   );

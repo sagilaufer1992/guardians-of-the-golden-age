@@ -1,4 +1,7 @@
+import "./TextField.scss";
+
 import React, { useState, useEffect, useRef } from "react";
+import classnames from "classnames";
 import { TextField as TextFieldCore } from "@material-ui/core";
 
 interface Props {
@@ -10,6 +13,7 @@ interface Props {
   rows?: number;
   placeholder?: string;
   className?: string;
+  inputClassName?: string;
   isValid?: (value: string) => boolean;
 }
 
@@ -21,6 +25,7 @@ export default function TextField(props: Props) {
     onChange,
     value,
     className,
+    inputClassName,
     helperText,
     isValid,
     multiline,
@@ -43,12 +48,12 @@ export default function TextField(props: Props) {
     return isValid ? isValid(value) : !!value?.length;
   }
   return (
-    <>
+    <div className={classnames("text-field", className || "")}>
       <label>{label}</label>
       <TextFieldCore
         error={error}
         value={value}
-        className={className}
+        className={inputClassName}
         variant="outlined"
         placeholder={placeholder || ""}
         rows={(multiline && rows) || undefined}
@@ -61,6 +66,6 @@ export default function TextField(props: Props) {
           setError(!isValidValue);
         }}
       />
-    </>
+    </div>
   );
 }
