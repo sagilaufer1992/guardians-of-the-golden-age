@@ -11,6 +11,8 @@ import { getFaultsByDate, updateFault, addFault, deleteFault } from "./utils/fet
 import AddFault from "./Components/AddFault";
 
 import logo from "./assets/logo.png";
+import { useMediaQuery, Theme } from '@material-ui/core';
+import { isVolunteer } from './utils/roles';
 
 const REFRESH_TIMEOUT: number = 20 * 1000;
 
@@ -22,6 +24,8 @@ function App() {
   const [isRefresh, setIsRefresh] = useState<boolean>(false);
   const lastRefreshTime: React.MutableRefObject<Date | null> = useRef(null);
   const refreshTimeout: React.MutableRefObject<any | null> = useRef(null);
+
+  const isMobile = useMediaQuery<Theme>(theme => theme.breakpoints.down("sm"));
 
   useEffect(() => {
     document.addEventListener("visibilitychange", () => {
@@ -86,13 +90,15 @@ function App() {
       !user ?
         <Auth onSuccess={setUser} onFail={setAuthFailed} /> :
         <UserProvider.Provider value={user}>
-          <div className="app-content">
-            <DatePanel isRefresh={isRefresh} lastRefreshTime={lastRefreshTime.current} onDateChanged={setDate} />
-            <div className="content-body">
-              {user.role !== "hamal" && <AddFault onFaultAdded={_onFaultAdded} />}
-              <FaultsArea faults={faults} onStatusChange={_onStatusChange} onFaultDelete={_onFaultDelete} />
-            </div>
-          </div>
+          {isMobile && isVolunteer(user) ?
+            <AddFault onFaultAdded={_onFaultAdded} /> :
+            <div className="app-content">
+              <DatePanel isRefresh={isRefresh} lastRefreshTime={lastRefreshTime.current} onDateChanged={setDate} />
+              <div className="content-body">
+                {isVolunteer(user) && <AddFault onFaultAdded={_onFaultAdded} />}
+                <FaultsArea faults={faults} onStatusChange={_onStatusChange} onFaultDelete={_onFaultDelete} />
+              </div>
+            </div>}
         </UserProvider.Provider>}
   </div>;
 }

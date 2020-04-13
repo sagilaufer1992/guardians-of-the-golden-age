@@ -5,6 +5,7 @@ import FaultChat from "./FaultChat";
 import AddFaultMessage from "./AddFaultMessage";
 import { addMessage, getMessagesByFaultId } from "../../utils/fetchMessageFunctions";
 import UserProvider from "../../utils/UserProvider";
+import { isHamal } from "../../utils/roles";
 
 interface Props {
     fault: Fault;
@@ -35,7 +36,7 @@ function FaultDetails({ fault }: Props) {
 
     return <div className="fault-details">
         <FaultChat fault={fault} messages={messages} />
-        {user.role === "hamal" && <AddFaultMessage addNewMessage={_onAddMessage} />}
+        {isHamal(user) && <AddFaultMessage addNewMessage={_onAddMessage} />}
     </div>;
 }
 
