@@ -1,9 +1,7 @@
 $primary-color: #0099ff;
 
 .login {
-    width: 100%;
     margin: 30px auto;
-    max-width: 400px;
     position: relative;
     .login-container {
         display: flex;
@@ -21,12 +19,19 @@ $primary-color: #0099ff;
             width: 100%;
             margin-right: 10px;
         }
+        .login-loading {
+            margin-top: 4px;
+        }
+        .login-error {
+            text-align: center;
+            color: #f44336;
+        }
     }
     .login-button {
         position: absolute;
         height: 40px;
         width: 170px;
-        bottom: -20px;
+        bottom: -50px;
         left: 0;
         right: 0;
         margin: auto;

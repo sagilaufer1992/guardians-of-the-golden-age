@@ -46,7 +46,7 @@ function Auth({ tokenKey, onSuccess, onFail }: Props) {
 
     return <div className="auth-container">
         <div className="auth-title">מוודא הרשאות משתמש...</div>
-        <CircularProgress className="auth-progress" size={100} thickness={4} />
+        <CircularProgress color="primary" className="auth-progress" size={100} thickness={4} />
     </div>;
 }
 

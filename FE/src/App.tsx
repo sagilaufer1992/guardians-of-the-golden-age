@@ -47,7 +47,8 @@ function App() {
   async function _refreshFaults() {
     // can't call _refreshFaults if already refreshing - can cause bugs (change date while refresh)
     // also - stop refreshing when user is not watching
-    if (isRefresh || document.hidden) return;
+    // TODO: MAKE IT WORK FOR MOBILE
+    if (isRefresh || document.hidden || isMobile) return;
 
     setIsRefresh(true);
     if (refreshTimeout.current) clearTimeout(refreshTimeout.current);
