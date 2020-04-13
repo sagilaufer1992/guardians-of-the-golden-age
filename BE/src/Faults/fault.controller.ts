@@ -69,12 +69,13 @@ export async function updateFault(req, res, next) {
 
 export async function deleteFault(req, res, next) {
     const fault = await Fault.findById(req.params.id);
+    const { authGroups, role } = req.user as gg.User;
 
     if (!fault) return res.status(404).json(`Fault not found with id of ${req.params.id}`);
 
-    const { author: { username }, status } = fault.toJSON() as be.Fault;
+    const { status, distributionCenter } = fault.toJSON() as be.Fault;
 
-    if (username !== req.username) return res.status(403).json("Not Allowed");
+    if (role !== "manager" || !authGroups.includes(distributionCenter)) return res.status(403).json("Not Allowed");
 
     if (status !== "Todo") return res.status(400).json("You can delete only when status is Todo");
 
