@@ -1,14 +1,17 @@
 import "./index.scss";
 
 import React, { useState, useMemo, useContext, useEffect } from "react";
-import Select from "../Inputs/Select";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import TextField from '@material-ui/core/TextField';
-import Fault from "./Fault";
+import { useSnackbar } from "notistack";
+
 import { categoryToText, statusToText } from "../../utils/translations";
 import UserProvider from "../../utils/UserProvider";
 import { toSelect, ALL_ITEM } from "../../utils/inputs";
 import { getBranches } from "../../utils/fetchBranches";
+
+import Fault from "./Fault";
+import Select from "../Inputs/Select";
 
 const STATUS_FILTER = toSelect(statusToText, true);
 const CATEGORY_FILTER = toSelect(categoryToText, true);
@@ -28,6 +31,7 @@ interface Props {
 
 export default function FaultsArea(props: Props) {
     const user = useContext(UserProvider);
+    const { enqueueSnackbar } = useSnackbar();
     const [branches, setBranches] = useState<Branch[]>([]);
     const [categoryFilter, setCategoryFilter] = useState<string>(ALL_ITEM.value);
     const [statusFilter, setStatusFilter] = useState<string>(ALL_ITEM.value);
@@ -39,8 +43,7 @@ export default function FaultsArea(props: Props) {
     const districts = useMemo(() => {
         const district = Array.from(new Set(branches.map(b => b.district)));
         return [ALL_ITEM, ...district.map(b => ({ value: b, label: b }))];
-    },
-        [branches]);
+    }, [branches]);
 
     const faults: Fault[] = props.faults
         .filter(fault => (categoryFilter === ALL_ITEM.value || fault.category === categoryFilter) &&
@@ -53,7 +56,7 @@ export default function FaultsArea(props: Props) {
 
     async function fetchBranches() {
         const newBranches = await getBranches(user) as Branch[];
-        if (!newBranches) return alert("אירעה שגיאה בקבלת מרכזי חלוקה");
+        if (!newBranches) return enqueueSnackbar("אירעה שגיאה בקבלת מרכזי חלוקה", { variant: "warning" });
 
         setBranches(newBranches);
     }

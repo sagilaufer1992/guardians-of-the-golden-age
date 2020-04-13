@@ -3,15 +3,11 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import rtl from "jss-rtl";
 import { create } from "jss";
-import {
-  createMuiTheme,
-  ThemeProvider,
-  Theme,
-  StylesProvider,
-  jssPreset
-} from "@material-ui/core/styles";
+import { SnackbarProvider } from "notistack";
+import { createMuiTheme, ThemeProvider, Theme, StylesProvider, jssPreset } from "@material-ui/core/styles";
 
 import App from './App';
+import { useMediaQuery, SnackbarOrigin } from '@material-ui/core';
 import * as serviceWorker from './serviceWorker';
 
 const theme: Theme = createMuiTheme({
@@ -29,16 +25,29 @@ const theme: Theme = createMuiTheme({
 
 const jss = create({ plugins: [...jssPreset().plugins, rtl()] });
 
-ReactDOM.render(
-  <React.StrictMode>
+const DESKTOP_ANCHOR: SnackbarOrigin = { horizontal: "center", vertical: "top" };
+const MOBILE_ANCHOR: SnackbarOrigin = { horizontal: "right", vertical: "bottom" };
+
+const Main = () => {
+  const mobile = useMediaQuery("(max-width:966px)");
+
+  return <React.StrictMode>
     <ThemeProvider theme={theme}>
-      <StylesProvider jss={jss}>
-        <App />
-      </StylesProvider>
+      <SnackbarProvider
+        anchorOrigin={mobile ? MOBILE_ANCHOR : DESKTOP_ANCHOR}
+        classes={{ root: "snackbar-root" }}
+        hideIconVariant
+        autoHideDuration={2000}
+      >
+        <StylesProvider jss={jss}>
+          <App />
+        </StylesProvider>
+      </SnackbarProvider>
     </ThemeProvider>
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+  </React.StrictMode>;
+}
+
+ReactDOM.render(<Main />, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

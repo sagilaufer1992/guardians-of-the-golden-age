@@ -1,6 +1,7 @@
 import './App.scss';
 import React, { useState, useEffect, useRef } from 'react';
 import moment from "moment";
+import { useSnackbar } from "notistack";
 
 import Auth from './Components/Auth';
 import UserProvider from './utils/UserProvider';
@@ -18,6 +19,7 @@ const REFRESH_TIMEOUT: number = 20 * 1000;
 const TOKEN_STORAGE_KEY: string = "gg_token";
 
 function App() {
+  const { enqueueSnackbar } = useSnackbar();
   const [user, setUser] = useState<gg.User | null>(null);
   const [authFailed, setAuthFailed] = useState<string | null>(null);
   const [date, setDate] = useState<Date>(moment().startOf('day').toDate());
@@ -55,7 +57,7 @@ function App() {
 
     const newFaults = await getFaultsByDate(user!, date);
 
-    if (!newFaults) alert("אירעה שגיאה בעדכון התקלות");
+    if (!newFaults) enqueueSnackbar("אירעה שגיאה בעדכון התקלות", { variant: "error" });
     else {
       setFaults(newFaults);
       lastRefreshTime.current = new Date();
@@ -67,22 +69,25 @@ function App() {
 
   async function _onFaultAdded(newFault: NewFault) {
     const fault = await addFault(user!, newFault);
-    if (!fault) return alert("חלה שגיאה בהוספת תקלה");
+    if (!fault) return enqueueSnackbar("חלה שגיאה בהוספת תקלה", { variant: "error" });
 
+    enqueueSnackbar("התקלה נוספה בהצלחה", { variant: "success" });
     setFaults([...faults, fault]);
     _refreshFaults();
   }
 
   async function _onFaultDelete(id: string) {
-    await deleteFault(user!, id);
+    const fault = await deleteFault(user!, id);
+    if (!fault) return enqueueSnackbar("חלה שגיאה מחיקת תקלה", { variant: "error" });
 
+    enqueueSnackbar("התקלה נמחקה בהצלחה", { variant: "success" });
     setFaults([...faults.filter(f => f._id !== id)]);
     _refreshFaults();
   }
 
   async function _onStatusChange(faultId: string, status: FaultStatus) {
     const newFault = await updateFault(user!, faultId, { status });
-    if (!newFault) return alert("חלה שגיאה בעדכון תקלה");
+    if (!newFault) return enqueueSnackbar("חלה שגיאה בעדכון תקלה", { variant: "error" });
 
     setFaults([...faults.filter(f => f._id !== newFault._id), newFault]);
     _refreshFaults();
