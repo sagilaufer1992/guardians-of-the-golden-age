@@ -4,7 +4,7 @@ import React, { useContext } from "react";
 import classnames from "classnames";
 import Button from "@material-ui/core/Button";
 import { MdClose } from "react-icons/md";
-import UserProvider from "../utils/UserProvider";
+import UserProvider from "../../utils/UserProvider";
 import Tooltip from "@material-ui/core/Tooltip";
 
 interface Props {

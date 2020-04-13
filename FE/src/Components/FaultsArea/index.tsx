@@ -1,14 +1,14 @@
-import "./FaultsArea.scss";
+import "./index.scss";
 
 import React, { useState, useMemo, useContext, useEffect } from "react";
-import Select from "./Select";
+import Select from "../Inputs/Select";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import TextField from '@material-ui/core/TextField';
 import Fault from "./Fault";
-import { categoryToText, statusToText } from "../utils/translations";
-import UserProvider from "../utils/UserProvider";
-import { toSelect, ALL_ITEM } from "../utils/inputs";
-import { getBranches } from "../utils/fetchBranches";
+import { categoryToText, statusToText } from "../../utils/translations";
+import UserProvider from "../../utils/UserProvider";
+import { toSelect, ALL_ITEM } from "../../utils/inputs";
+import { getBranches } from "../../utils/fetchBranches";
 
 const STATUS_FILTER = toSelect(statusToText, true);
 const CATEGORY_FILTER = toSelect(categoryToText, true);
@@ -49,13 +49,11 @@ export default function FaultsArea(props: Props) {
             (districtFilter === ALL_ITEM.value || fault.branch?.district === districtFilter)
         ).sort(sortFault);
 
-    useEffect(() => {
-        if (user) fetchBranches();
-    }, [user]);
+    useEffect(() => { fetchBranches() }, []);
 
     async function fetchBranches() {
         const newBranches = await getBranches(user) as Branch[];
-        if (!newBranches) return alert("אירעה שגיאה בקבלת מרכזי קבלה");
+        if (!newBranches) return alert("אירעה שגיאה בקבלת מרכזי חלוקה");
 
         setBranches(newBranches);
     }

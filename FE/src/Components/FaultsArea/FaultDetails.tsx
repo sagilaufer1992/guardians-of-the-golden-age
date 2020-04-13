@@ -3,8 +3,8 @@ import "./FaultDetails.scss";
 import React, { useState, useEffect, useContext } from "react";
 import FaultChat from "./FaultChat";
 import AddFaultMessage from "./AddFaultMessage";
-import { addMessage, getMessagesByFaultId } from "../utils/fetchMessageFunctions";
-import UserProvider from "../utils/UserProvider";
+import { addMessage, getMessagesByFaultId } from "../../utils/fetchMessageFunctions";
+import UserProvider from "../../utils/UserProvider";
 
 interface Props {
     fault: Fault;

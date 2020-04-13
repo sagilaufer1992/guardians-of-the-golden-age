@@ -1,15 +1,6 @@
 import './App.scss';
 import React, { useState, useEffect, useRef } from 'react';
 import moment from "moment";
-import rtl from "jss-rtl";
-import { create } from "jss";
-import {
-  createMuiTheme,
-  ThemeProvider,
-  Theme,
-  StylesProvider,
-  jssPreset
-} from "@material-ui/core/styles";
 import { CircularProgress } from '@material-ui/core';
 
 import Auth from './Auth';
@@ -21,20 +12,6 @@ import { getFaultsByDate, updateFault, addFault, deleteFault } from "./utils/fet
 import AddFault from "./Components/AddFault";
 
 import logo from "./assets/logo.png";
-
-const theme: Theme = createMuiTheme({
-  typography: {
-    fontFamily: "Heebo"
-  },
-  palette: {
-    primary: {
-      main: "#00a7ff",
-      contrastText: "#FFF"
-    }
-  },
-}, { direction: 'rtl' });
-
-const jss = create({ plugins: [...jssPreset().plugins, rtl()] });
 
 const REFRESH_TIMEOUT: number = 20 * 1000;
 
@@ -100,37 +77,31 @@ function App() {
     _refreshFaults();
   }
 
-  return (
-    <ThemeProvider theme={theme}>
-      <StylesProvider jss={jss}>
-        <div className="app">
-          <div className="app-bar">
-            <img className="logo" src={logo} />
-            <span>משמרות הזהב - תקלות</span>
+  return <div className="app">
+    <div className="app-bar">
+      <img className="logo" src={logo} />
+      <span>משמרות הזהב - תקלות</span>
+    </div>
+    {authFailed ?
+      <AuthFailedScreen error={authFailed} /> :
+      !user ?
+        <Auth onSuccess={setUser} onFail={setAuthFailed} /> :
+        <UserProvider.Provider value={user}>
+          <div className="app-content">
+            <div className="content-header">
+              <DatePanel onDateChanged={setDate} />
+              <div>
+                {isRefresh && <CircularProgress className="fault-fetch-progress" size={15} thickness={5} />}
+                {lastRefreshTime.current && <div className="last-fault-update">עודכן לאחרונה ב- {moment(lastRefreshTime.current).format("HH:mm DD/MM/YYYY")}</div>}
+              </div>
+            </div>
+            <div className="content-body">
+              {user.role !== "hamal" && <AddFault onFaultAdded={_onFaultAdded} />}
+              <FaultsArea faults={faults} onStatusChange={_onStatusChange} onFaultDelete={_onFaultDelete} />
+            </div>
           </div>
-          {authFailed ?
-            <AuthFailedScreen error={authFailed} /> :
-            !user ?
-              <Auth onSuccess={setUser} onFail={setAuthFailed} /> :
-              <UserProvider.Provider value={user}>
-                <div className="app-content">
-                  <div className="content-header">
-                    <DatePanel onDateChanged={setDate} />
-                    <div>
-                      {isRefresh && <CircularProgress className="fault-fetch-progress" size={15} thickness={5} />}
-                      {lastRefreshTime.current && <div className="last-fault-update">עודכן לאחרונה ב- {moment(lastRefreshTime.current).format("HH:mm DD/MM/YYYY")}</div>}
-                    </div>
-                  </div>
-                  <div className="content-body">
-                    {user.role !== "hamal" && <AddFault onFaultAdded={_onFaultAdded} />}
-                    <FaultsArea faults={faults} onStatusChange={_onStatusChange} onFaultDelete={_onFaultDelete} />
-                  </div>
-                </div>
-              </UserProvider.Provider>}
-        </div>
-      </StylesProvider>
-    </ThemeProvider>
-  );
+        </UserProvider.Provider>}
+  </div>;
 }
 
 export default App;

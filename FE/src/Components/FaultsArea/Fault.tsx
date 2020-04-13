@@ -4,7 +4,7 @@ import React, { useState, useContext } from "react";
 import classnames from "classnames";
 import moment from "moment";
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
-import UserProvider from "../utils/UserProvider";
+import UserProvider from "../../utils/UserProvider";
 import FaultDetails from "./FaultDetails";
 import FaultButtons from "./FaultButtons";
 

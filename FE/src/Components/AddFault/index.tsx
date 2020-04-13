@@ -1,11 +1,11 @@
-import "./AddFault.scss";
+import "./index.scss";
 import React, { useState, useContext, useMemo } from "react";
 import { Button } from "@material-ui/core";
-import TextField from "./TextField";
-import Select from "./Select";
-import UserProvider from "../utils/UserProvider";
-import { categoryToText } from "../utils/translations";
-import { toSelect } from "../utils/inputs";
+import TextField from "../Inputs/TextField";
+import Select from "../Inputs/Select";
+import UserProvider from "../../utils/UserProvider";
+import { categoryToText } from "../../utils/translations";
+import { toSelect } from "../../utils/inputs";
 
 const CATEGORY_OPTIONS = toSelect(categoryToText);
 
