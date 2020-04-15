@@ -1,16 +1,52 @@
-$primary-color: #0099ff;
+$primary-color: #007aff;
 
-.app-bar {
+.nav-bar {
+  display: flex;
+  justify-content: space-between;
+  .title {
     display: flex;
-    justify-content: center;
     align-items: center;
-    padding: 5px;
-    text-align: right;
-    color: whitesmoke;
-    background-color: $primary-color;
-    box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.3);
+    font-size: 20px;
     .logo {
-      height: 30px;
       margin-left: 10px;
     }
   }
+}
+.pages {
+  display: flex;
+  .page-item {
+    width: fit-content;
+    padding: 0 !important;
+    .page-button {
+      font-size: 14px;
+      font-weight: normal;
+      margin: 5px;
+      padding: 5px 15px;
+      color: $primary-color;
+      .page-icon {
+        margin-left:3px;
+      }
+    }
+  }
+}
+.drawer-pages {
+  flex-direction: column;
+  .page-button {
+    &.selected {
+        color: white !important;
+        background-color: $primary-color;
+    }
+  }
+}
+.bar-pages {
+  flex: 1;
+  margin-right: 20px !important;
+  .page-button {
+    color: white !important;
+    background-color: $primary-color;
+    &.selected {
+      color: $primary-color !important;
+      background-color: white;
+    }
+  }
+}

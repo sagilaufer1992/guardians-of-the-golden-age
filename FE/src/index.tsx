@@ -17,12 +17,12 @@ const theme: Theme = createMuiTheme({
   },
   palette: {
     primary: {
-      main: "#00a7ff",
+      main: "#007aff",
       contrastText: "#FFF"
     },
     secondary: {
       main: "#FFF",
-      contrastText: "#00a7ff"
+      contrastText: "#007aff"
     }
   },
 }, { direction: 'rtl' });

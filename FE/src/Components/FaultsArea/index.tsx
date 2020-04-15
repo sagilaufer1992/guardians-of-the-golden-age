@@ -11,7 +11,7 @@ import { getBranches } from "../../utils/fetchBranches";
 import UserProvider from "../../utils/UserProvider";
 import Fault from "./Fault";
 import FaultsMenu from "./FaultsMenu";
-import getFilters from "./filters";
+import getFilterDefinitions from "./filters";
 
 interface Props {
     faults: Fault[];
@@ -19,28 +19,45 @@ interface Props {
     onStatusChange: (faultId: string, status: FaultStatus) => void;
 }
 
-export default function FaultsArea(props: Props) {
+const FaultsArea = (props: Props) => {
     const user = useContext(UserProvider);
     const { enqueueSnackbar } = useSnackbar();
-    const [isFilterOpen, setFilterOpen] = useState<boolean>(false);
-    const [branches, setBranches] = useState<Branch[]>([]);
 
-    const [district, setDistrict] = useState<string>();
-    const [distributionCenter, setDistributionCenter] = useState<string>();
-    const [category, setCategory] = useState<string>();
-    const [statusFilter, setStatus] = useState<string>();
+    const [isFilterOpen, setFilterOpen] = useState<boolean>(false);
+    const [filterDefinitions, setFilterDefinitions] = useState<Record<string, FilterDefinition>>();
+
     const [sortBy, setSortBy] = useState<string>("time");
+    const [filters, setFilters] = useState({
+        district: null,
+        distributionCenter: null,
+        category: null,
+        status: null
+    });
 
     useEffect(() => {
-        const fetchBranches = async () => {
-            const newBranches = await getBranches(user) as Branch[];
-            if (!newBranches) return enqueueSnackbar("אירעה שגיאה בקבלת מרכזי חלוקה", { variant: "warning" });
-            setBranches(newBranches);
+        const initFilterDefinitions = async () => {
+            const branches = await getBranches(user);
+
+            if (!branches) enqueueSnackbar("אירעה שגיאה בקבלת מרכזי חלוקה", { variant: "warning" });
+
+            setFilterDefinitions(getFilterDefinitions(branches || []));
         }
-        fetchBranches();
+
+        initFilterDefinitions();
     }, []);
 
-    function sortFault(first: Fault, second: Fault): number {
+    const faults = useMemo(() => {
+        const { category, status, distributionCenter, district } = filters;
+
+        return props.faults.filter(fault =>
+            (!category || category === ALL_ITEM.value || fault.category === category) &&
+            (!status || status === ALL_ITEM.value || fault.status === status) &&
+            (!distributionCenter || distributionCenter === ALL_ITEM.value || fault.distributionCenter === distributionCenter) &&
+            (!district || district === ALL_ITEM.value || fault.branch?.district === district)
+        ).sort(sortFault);
+    }, [props.faults, filters, sortBy]);
+
+    function sortFault(first: Fault, second: Fault) {
         switch (sortBy) {
             case "time":
                 return second.date.getTime() - first.date.getTime();
@@ -55,27 +72,11 @@ export default function FaultsArea(props: Props) {
         }
     }
 
-    const onFilterChange = (fieldName: string, value: string) => {
-        if (fieldName === "category") setCategory(value)
-        else if (fieldName === "status") setStatus(value)
-        else if (fieldName === "distributionCenter") setDistributionCenter(value)
-        else if (fieldName === "district") setDistrict(value);
-    }
-
-    const filters = useMemo(() => getFilters(branches), [branches]);
-
-    const faults = useMemo(() => {
-        return props.faults.filter(fault =>
-            (!category || category === ALL_ITEM.value || fault.category === category) &&
-            (!statusFilter || statusFilter === ALL_ITEM.value || fault.status === statusFilter) &&
-            (!distributionCenter || distributionCenter === ALL_ITEM.value || fault.distributionCenter === distributionCenter) &&
-            (!district || district === ALL_ITEM.value || fault.branch?.district === district)
-        ).sort(sortFault);
-    }, [props.faults, category, statusFilter, distributionCenter, district, sortBy]);
+    const onFilterChange = (fieldName: string, value: string) => setFilters({ ...filters, [fieldName]: value });
 
     return <div className="faults-area">
         <div className="faults-area-header">
-            <div className="label">רשימת התקלות</div>
+            <div className="title">רשימת התקלות</div>
             <Button
                 variant="outlined"
                 color="secondary"
@@ -85,7 +86,10 @@ export default function FaultsArea(props: Props) {
             </Button>
         </div>
         <div className={classnames("faults-filter-container", { open: isFilterOpen })}>
-            <FaultsMenu filters={filters} onFilterChange={onFilterChange} onSortChange={setSortBy} />
+            {filterDefinitions && <FaultsMenu
+                filters={filterDefinitions}
+                onFilterChange={onFilterChange}
+                onSortChange={setSortBy} />}
         </div>
         <div className="faults-list">
             {faults.length === 0 ?
@@ -100,3 +104,5 @@ export default function FaultsArea(props: Props) {
         </div>
     </div>
 }
+
+export default React.memo(FaultsArea);

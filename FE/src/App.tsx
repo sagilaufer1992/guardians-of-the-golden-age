@@ -34,7 +34,7 @@ function App() {
     setAuthFailed(null);
   }
 
-  return <div className={classnames("app", { "mobile": isMobile })}>
+  return <div className="app">
     <NavBar />
     {authFailed ?
       <Login onLogin={_handleLogin} /> :
@@ -42,7 +42,7 @@ function App() {
         <Auth tokenKey={TOKEN_STORAGE_KEY} onSuccess={setUser} onFail={setAuthFailed} /> :
         <UserProvider.Provider value={user}>
           {isMobile && isVolunteer(user) ?
-            <AddFault onFaultAdded={faultManager.addFault} /> :
+            <FaultsArea faults={faultManager.faults} onStatusChange={faultManager.setFaultStatus} onFaultDelete={faultManager.deleteFault} /> :
             <div className="app-content">
               <DatePanel isRefresh={faultManager.isRefresh} lastRefreshTime={faultManager.lastRefreshTime} onDateChanged={setDate} />
               <div className="content-body">
