@@ -1,54 +1,52 @@
 $primary-color: #007aff;
 
 .nav-bar {
-  .toolbar {
+  display: flex;
+  justify-content: space-between;
+  .title {
     display: flex;
-    justify-content: space-between;
-    .title {
-      display: flex;
-      align-items: center;
-      font-size: 20px;
-      .logo {
-        margin-left: 10px;
-      }
+    align-items: center;
+    font-size: 20px;
+    .logo {
+      margin-left: 10px;
     }
   }
-  .pages {
-    display: flex;
-    .page-item {
-      width: fit-content;
-      padding: 0 !important;
-      .page-button {
-        font-size: 14px;
-        font-weight: normal;
-        margin: 5px;
-        padding: 5px 15px;
-        color: $primary-color;
-        .page-icon {
-          margin-left:3px;
-        }
-      }
-    }
-  }
-  .drawer-pages {
-    flex-direction: column;
+}
+.pages {
+  display: flex;
+  .page-item {
+    width: fit-content;
+    padding: 0 !important;
     .page-button {
-      &.selected {
-          color: white !important;
-          background-color: $primary-color;
+      font-size: 14px;
+      font-weight: normal;
+      margin: 5px;
+      padding: 5px 15px;
+      color: $primary-color;
+      .page-icon {
+        margin-left:3px;
       }
     }
   }
-  .bar-pages {
-    flex: 1;
-    margin-right: 20px !important;
-    .page-button {
-      color: white !important;
-      background-color: $primary-color;
-      &.selected {
-        color: $primary-color !important;
-        background-color: white;
-      }
+}
+.drawer-pages {
+  flex-direction: column;
+  .page-button {
+    &.selected {
+        color: white !important;
+        background-color: $primary-color;
+    }
+  }
+}
+.bar-pages {
+  flex: 1;
+  margin-right: 20px !important;
+  .page-button {
+    color: white !important;
+    background-color: $primary-color;
+    &.selected {
+      color: $primary-color !important;
+      background-color: white;
     }
   }
 }

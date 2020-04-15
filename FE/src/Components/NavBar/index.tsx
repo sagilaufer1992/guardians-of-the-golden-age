@@ -26,8 +26,8 @@ export default function NavBar() {
         setCurrentPage(name);
     }
 
-    return <AppBar className="nav-bar" position="static">
-        <Toolbar className="toolbar">
+    return <AppBar position="static">
+        <Toolbar className="nav-bar">
             <Typography className="title" color="secondary">
                 <img className="logo" src={logo} height={isMobile ? 24 : 30} alt="logo" />
                 {"משמרות הזהב"}
