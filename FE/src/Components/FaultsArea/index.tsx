@@ -1,28 +1,17 @@
 import "./index.scss";
 
 import React, { useState, useMemo, useContext, useEffect } from "react";
+import classnames from "classnames";
+
 import { useSnackbar } from "notistack";
-import Autocomplete from "@material-ui/lab/Autocomplete";
-import { Hidden, TextField, Button } from '@material-ui/core';
+import { Button } from '@material-ui/core';
 import FilterListIcon from "@material-ui/icons/FilterList";
-import { categoryToText, statusToText } from "../../utils/translations";
-import UserProvider from "../../utils/UserProvider";
-import { toSelect, ALL_ITEM } from "../../utils/inputs";
+import { ALL_ITEM } from "../../utils/inputs";
 import { getBranches } from "../../utils/fetchBranches";
-import { isHamal } from "../../utils/roles";
-
+import UserProvider from "../../utils/UserProvider";
 import Fault from "./Fault";
-import Select from "../Inputs/Select";
-
-const STATUS_FILTER = toSelect(statusToText, true);
-const CATEGORY_FILTER = toSelect(categoryToText, true);
-
-const SORT_BY = [
-    { value: "time", label: "זמן" },
-    { value: "status", label: "סטטוס" },
-    { value: "category", label: "קטגוריה" },
-    { value: "distributionCenter", label: "מרכז חלוקה" }
-];
+import FaultsMenu from "./FaultsMenu";
+import getFilters from "./filters";
 
 interface Props {
     faults: Fault[];
@@ -33,34 +22,23 @@ interface Props {
 export default function FaultsArea(props: Props) {
     const user = useContext(UserProvider);
     const { enqueueSnackbar } = useSnackbar();
+    const [isFilterOpen, setFilterOpen] = useState<boolean>(false);
     const [branches, setBranches] = useState<Branch[]>([]);
-    const [categoryFilter, setCategoryFilter] = useState<string>(ALL_ITEM.value);
-    const [statusFilter, setStatusFilter] = useState<string>(ALL_ITEM.value);
-    const [districtFilter, setDistrictFilter] = useState<string>(ALL_ITEM.value);
+
+    const [district, setDistrict] = useState<string>();
+    const [distributionCenter, setDistributionCenter] = useState<string>();
+    const [category, setCategory] = useState<string>();
+    const [statusFilter, setStatus] = useState<string>();
     const [sortBy, setSortBy] = useState<string>("time");
-    const [distributionCenterFilter, setDistributionCenterFilter] = useState<string>(ALL_ITEM.value);
 
-    const distributionCenters = useMemo(() => [ALL_ITEM, ...branches.map(b => ({ value: b.name, label: b.name }))], [branches]);
-    const districts = useMemo(() => {
-        const district = Array.from(new Set(branches.map(b => b.district)));
-        return [ALL_ITEM, ...district.map(b => ({ value: b, label: b }))];
-    }, [branches]);
-
-    const faults: Fault[] = props.faults
-        .filter(fault => (categoryFilter === ALL_ITEM.value || fault.category === categoryFilter) &&
-            (statusFilter === ALL_ITEM.value || fault.status === statusFilter) &&
-            (distributionCenterFilter === ALL_ITEM.value || fault.distributionCenter === distributionCenterFilter) &&
-            (districtFilter === ALL_ITEM.value || fault.branch?.district === districtFilter)
-        ).sort(sortFault);
-
-    useEffect(() => { fetchBranches() }, []);
-
-    async function fetchBranches() {
-        const newBranches = await getBranches(user) as Branch[];
-        if (!newBranches) return enqueueSnackbar("אירעה שגיאה בקבלת מרכזי חלוקה", { variant: "warning" });
-
-        setBranches(newBranches);
-    }
+    useEffect(() => {
+        const fetchBranches = async () => {
+            const newBranches = await getBranches(user) as Branch[];
+            if (!newBranches) return enqueueSnackbar("אירעה שגיאה בקבלת מרכזי חלוקה", { variant: "warning" });
+            setBranches(newBranches);
+        }
+        fetchBranches();
+    }, []);
 
     function sortFault(first: Fault, second: Fault): number {
         switch (sortBy) {
@@ -77,39 +55,38 @@ export default function FaultsArea(props: Props) {
         }
     }
 
+    const onFilterChange = (fieldName: string, value: string) => {
+        if (fieldName === "category") setCategory(value)
+        else if (fieldName === "status") setStatus(value)
+        else if (fieldName === "distributionCenter") setDistributionCenter(value)
+        else if (fieldName === "district") setDistrict(value);
+    }
+
+    const filters = useMemo(() => getFilters(branches), [branches]);
+
+    const faults = useMemo(() => {
+        return props.faults.filter(fault =>
+            (!category || category === ALL_ITEM.value || fault.category === category) &&
+            (!statusFilter || statusFilter === ALL_ITEM.value || fault.status === statusFilter) &&
+            (!distributionCenter || distributionCenter === ALL_ITEM.value || fault.distributionCenter === distributionCenter) &&
+            (!district || district === ALL_ITEM.value || fault.branch?.district === district)
+        ).sort(sortFault);
+    }, [filters, category, statusFilter, distributionCenter, district, sortBy]);
+
     return <div className="faults-area">
         <div className="faults-area-header">
-            <div className="label">
-                רשימת התקלות
-            </div>
-            <Hidden smUp>
-                <Button
-                    variant="outlined"
-                    color="secondary"
-                    onClick={() => { }}                >
-                    <FilterListIcon style={{ marginLeft: 5 }} />
-                        סינון ומיון
-                </Button>
-            </Hidden>
-            {isHamal(user) && <div className="numbers">
-                <div>{`סה״כ ${faults.length}`}</div>
-                <div>{`טרם טופלו ${faults.filter(f => f.status === "Todo").length}`}</div>
-            </div>}
+            <div className="label">רשימת התקלות</div>
+            <Button
+                variant="outlined"
+                color="secondary"
+                onClick={() => setFilterOpen(!isFilterOpen)}>
+                <FilterListIcon style={{ marginLeft: 5 }} />
+                <span>סינון ומיון</span>
+            </Button>
         </div>
-        <Hidden smDown>
-            <div className="faults-area-sort">
-                <Select title="מחוז" options={districts} value={districtFilter} onChange={setDistrictFilter} />
-                <Autocomplete disableClearable
-                    defaultValue={ALL_ITEM}
-                    onChange={(e: any, value: any) => { setDistributionCenterFilter(value?.value) }}
-                    getOptionLabel={(option) => option.label}
-                    options={distributionCenters}
-                    renderInput={(params: any) => (<TextField className="distribution-autocomplete" {...params} label="מרכז חלוקה" variant="outlined" />)} />
-                <Select title="קטגוריה" options={CATEGORY_FILTER} value={categoryFilter} onChange={setCategoryFilter} />
-                <Select title="סטטוס" options={STATUS_FILTER} value={statusFilter} onChange={setStatusFilter} />
-                <Select title="ממוין לפי" options={SORT_BY} value={sortBy} onChange={setSortBy} />
-            </div>
-        </Hidden>
+        <div className={classnames("faults-filter-container", { open: isFilterOpen })}>
+            <FaultsMenu filters={filters} onFilterChange={onFilterChange} onSortChange={setSortBy} />
+        </div>
         <div className="faults-area-body">
             {faults.length === 0 ?
                 <div className="empty-body">לא נמצאו תקלות</div> :

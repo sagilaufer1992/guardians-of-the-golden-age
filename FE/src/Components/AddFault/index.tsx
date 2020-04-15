@@ -2,7 +2,7 @@ import "./index.scss";
 import React, { useState, useContext, useMemo } from "react";
 import { Button } from "@material-ui/core";
 import TextField from "../Inputs/TextField";
-import Select from "../Inputs/Select";
+import DropDownInput from "../Inputs/DropDownInput";
 import UserProvider from "../../utils/UserProvider";
 import { categoryToText } from "../../utils/translations";
 import { toSelect } from "../../utils/inputs";
@@ -65,20 +65,20 @@ export default function AddFault(props: Props) {
         </div>
         <div className="fault-field">
           <label>נקודת חלוקה</label>
-          <Select
+          <DropDownInput
             onChange={setDistributionCenter}
             options={centers}
             title=""
-            value={distributionCenter}
+            defaultValue={distributionCenter}
           />
         </div>
         <div className="fault-field">
           <label>קטגוריה</label>
-          <Select
+          <DropDownInput
             onChange={value => setCategory(value as FaultCategory)}
             options={CATEGORY_OPTIONS}
             title=""
-            value={category}
+            defaultValue={category}
           />
         </div>
         <div className="fault-field">

@@ -49,13 +49,17 @@ $border-style: 1px solid rgb(189, 189, 189);
             }
         }
     }
-    .faults-area-sort {
-        padding: 8px;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        border-bottom: $border-style; 
-        align-items: center;
+    .faults-filter-container {
+        max-height: 0;
+        overflow: hidden;
+        transition: all 0.5s linear;
+        -webkit-transition: all 0.5s linear;
+        -moz-transition: all 0.5s linear;
+        -o-transition: all 0.5s linear;
+        -ms-transition: all 0.5s linear;
+        &.open {
+            max-height: 300px;
+        }
     }
     .faults-area-body {
         overflow-y: auto;
@@ -67,18 +71,5 @@ $border-style: 1px solid rgb(189, 189, 189);
             text-align: center;
             margin: 5px;
         }
-    }
-    .select-group {
-        width: 16%;
-    }
-    .MuiInputBase-root {
-        margin-top: 3px !important;
-        padding: 0 !important;
-    }
-    .distribution-autocomplete {
-        min-width: 200px !important;
-        direction: rtl !important;
-        height: 30px !important;
-        padding: 0 !important;
     }
 }

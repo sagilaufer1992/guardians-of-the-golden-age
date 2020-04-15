@@ -1,0 +1,30 @@
+.faults-filter {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 5px 10px;
+    padding-top: 15px;
+    .MuiInputBase-root {
+        width: 200px;
+        height: 30px !important;
+        margin: 10px 5px;
+        margin-top: 3px !important;
+        padding: 0 !important;
+        .MuiAutocomplete-input {
+            padding: 0 15px !important;
+        }
+    }
+}
+
+/* Extra small devices (phones, 600px and down) */
+@media only screen and (max-width: 600px) {
+    .faults-filter {
+        .MuiFormControl-root, .MuiAutocomplete-root {
+            width: 100% !important;
+            .MuiInputBase-root, .MuiAutocomplete-input {
+                width: 100% !important;
+            }
+        }
+    }
+}

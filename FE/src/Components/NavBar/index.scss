@@ -1,0 +1,16 @@
+$primary-color: #0099ff;
+
+.app-bar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+    text-align: right;
+    color: whitesmoke;
+    background-color: $primary-color;
+    box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.3);
+    .logo {
+      height: 30px;
+      margin-left: 10px;
+    }
+  }

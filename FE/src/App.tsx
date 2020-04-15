@@ -9,8 +9,8 @@ import Login from "./Components/Auth/Login";
 import FaultsArea from "./Components/FaultsArea";
 import DatePanel from "./Components/DatePanel";
 import AddFault from "./Components/AddFault";
+import NavBar from "./Components/NavBar";
 
-import logo from "./assets/logo.png";
 import { useMediaQuery, Theme } from '@material-ui/core';
 import { isVolunteer } from './utils/roles';
 import { useFaultManager } from './hooks/useFaultManager';
@@ -35,10 +35,7 @@ function App() {
   }
 
   return <div className={classnames("app", { "mobile": isMobile })}>
-    <div className="app-bar">
-      <img className="logo" src={logo} />
-      <span>משמרות הזהב - תקלות</span>
-    </div>
+    <NavBar />
     {authFailed ?
       <Login onLogin={_handleLogin} /> :
       !user ?
