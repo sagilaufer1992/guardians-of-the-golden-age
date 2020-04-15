@@ -25,7 +25,7 @@ export default function DropDownInput({ onChange, defaultValue, title, options }
             onChange={handleChange}
             label={title}>
             {options.map(option => (
-                <MenuItem value={option.value}>
+                <MenuItem key={option.value} value={option.value}>
                     {option.label}
                 </MenuItem>
             ))}

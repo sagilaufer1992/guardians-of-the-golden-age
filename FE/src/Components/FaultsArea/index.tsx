@@ -71,7 +71,7 @@ export default function FaultsArea(props: Props) {
             (!distributionCenter || distributionCenter === ALL_ITEM.value || fault.distributionCenter === distributionCenter) &&
             (!district || district === ALL_ITEM.value || fault.branch?.district === district)
         ).sort(sortFault);
-    }, [filters, category, statusFilter, distributionCenter, district, sortBy]);
+    }, [props.faults, category, statusFilter, distributionCenter, district, sortBy]);
 
     return <div className="faults-area">
         <div className="faults-area-header">
@@ -87,9 +87,12 @@ export default function FaultsArea(props: Props) {
         <div className={classnames("faults-filter-container", { open: isFilterOpen })}>
             <FaultsMenu filters={filters} onFilterChange={onFilterChange} onSortChange={setSortBy} />
         </div>
-        <div className="faults-area-body">
+        <div className="faults-list">
             {faults.length === 0 ?
-                <div className="empty-body">לא נמצאו תקלות</div> :
+                <div className="empty" >
+                    <div className="title">לא נמצאו תקלות</div>
+                    <div>או שסיננת את כולן...</div>
+                </div> :
                 faults.map(fault => <Fault key={fault._id}
                     fault={fault}
                     onStatusChange={props.onStatusChange}
