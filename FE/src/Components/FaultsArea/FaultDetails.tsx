@@ -1,16 +1,19 @@
 import "./FaultDetails.scss";
-
 import React, { useState, useEffect, useContext } from "react";
+import { useSnackbar } from "notistack";
+
 import FaultChat from "./FaultChat";
 import AddFaultMessage from "./AddFaultMessage";
-import { addMessage, getMessagesByFaultId } from "../utils/fetchMessageFunctions";
-import UserProvider from "../utils/UserProvider";
+import { addMessage, getMessagesByFaultId } from "../../utils/fetchMessageFunctions";
+import UserProvider from "../../utils/UserProvider";
+import { isHamal } from "../../utils/roles";
 
 interface Props {
     fault: Fault;
 }
 
 function FaultDetails({ fault }: Props) {
+    const { enqueueSnackbar } = useSnackbar();
     const user = useContext(UserProvider);
     const [messages, setMessages] = useState<Message[]>([]);
 
@@ -20,14 +23,14 @@ function FaultDetails({ fault }: Props) {
 
     async function fetchMessages() {
         const newMessages = await getMessagesByFaultId(user, fault._id) as Message[];
-        if (!newMessages) return alert("אירעה שגיאה בקבלת הודעות");
+        if (!newMessages) return enqueueSnackbar("אירעה שגיאה בקבלת הודעות", { variant: "error" });
 
         setMessages(newMessages);
     }
 
     async function _onAddMessage(name: string, content: string) {
         const message = await addMessage(user, fault._id, { content, author: { name } });
-        if (!message) return alert("אירעה שגיאה בהוספת הודעה");
+        if (!message) return enqueueSnackbar("אירעה שגיאה בהוספת הודעה", { variant: "error" });
 
         setMessages([...messages, message]);
         fetchMessages();
@@ -35,7 +38,7 @@ function FaultDetails({ fault }: Props) {
 
     return <div className="fault-details">
         <FaultChat fault={fault} messages={messages} />
-        {user.role === "hamal" && <AddFaultMessage addNewMessage={_onAddMessage} />}
+        {isHamal(user) && <AddFaultMessage addNewMessage={_onAddMessage} />}
     </div>;
 }
 

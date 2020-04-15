@@ -3,9 +3,11 @@ import "./FaultButtons.scss";
 import React, { useContext } from "react";
 import classnames from "classnames";
 import Button from "@material-ui/core/Button";
-import { MdClose } from "react-icons/md";
-import UserProvider from "../utils/UserProvider";
 import Tooltip from "@material-ui/core/Tooltip";
+import { MdClose } from "react-icons/md";
+
+import UserProvider from "../../utils/UserProvider";
+import { isHamal } from "../../utils/roles";
 
 interface Props {
     status: FaultStatus;
@@ -18,7 +20,7 @@ export default React.memo(function FaultButtons(props: Props) {
 
     const { status, onStatusChange, onFaultDelete } = props;
 
-    if (user.role === "hamal") {
+    if (isHamal(user)) {
         return <div className="fault-status-buttons">
             {status === "Complete" && <StateButton status="Todo" onStatusChange={onStatusChange} />}
             {status === "Todo" && <>

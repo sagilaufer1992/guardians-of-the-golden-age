@@ -2,7 +2,7 @@ import "./AddFaultMessage.scss";
 
 import React, { useState } from "react";
 import Button from "@material-ui/core/Button";
-import TextField from "./TextField";
+import TextField from "../Inputs/TextField";
 
 interface Props {
     addNewMessage: (name: string, content: string) => void;
@@ -23,23 +23,23 @@ export default function AddFaultMessage({ addNewMessage }: Props) {
     return <div className="add-message-panel">
         <div className="panel-label">פרטי הטיפול</div>
         <div className="panel-body">
-            <TextField 
+            <TextField
                 label="שם המדווח על הטיפול בתקלה"
                 onChange={(value, isValid) => {
                     setName(value);
                     setIsNameValid(isValid);
                 }}
-                value={name} 
-                className="panel-input"
+                value={name}
+                inputClassName="panel-input"
                 placeholder="השם המלא לצורך תיעוד" />
-            <TextField 
+            <TextField
                 label="אופן הטיפול"
                 onChange={(value, isValid) => {
                     setContent(value);
                     setIsContentValid(isValid);
                 }}
-                value={content} 
-                className="panel-input"
+                value={content}
+                inputClassName="panel-input"
                 placeholder="מה הצעדים שננקטו? שים לב, ההודעה תישלח למדווח הבעיה" />
             <Button disabled={!(isNameValid && isContentValid)} onClick={_onSumbit} className="panel-button" variant="contained" size="small" color="primary">פרסם</Button>
         </div>

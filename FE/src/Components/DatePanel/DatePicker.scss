@@ -1,42 +1,38 @@
-.date-panel{
-    direction: rtl;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width:300px;
-    font-size: 14px;
-}
-
-.date-panel .title{
+.date-picker {
+  direction: rtl;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 300px;
+  font-size: 14px;
+  .title {
     font-weight: bold;
-}
-
-.date-panel .value{
+  }
+  .value {
     width: 150px;
     text-align: center;
     display: inline-block;
     color: royalblue;
-}
-
-.right-arrow ,.left-arrow{
+  }
+  .right-arrow,
+  .left-arrow {
     cursor: pointer;
     border: solid black;
     border-width: 0 3px 3px 0;
     display: inline-block;
     padding: 3px;
-}
-
-.left-arrow.disabled{
+  }
+  .left-arrow.disabled {
     cursor: default;
     border-color: #dddddd;
     pointer-events: none;
-}
-
-.right-arrow {
+  }
+  .right-arrow {
     transform: rotate(-45deg);
     -webkit-transform: rotate(-45deg);
-}
-.left-arrow {
+  }
+  .left-arrow {
     transform: rotate(135deg);
     -webkit-transform: rotate(135deg);
+  }
 }

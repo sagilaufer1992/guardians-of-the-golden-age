@@ -1,7 +1,9 @@
 import * as express from "express";
 import * as jwt from "jsonwebtoken";
 
-const DEV_USER: gg.User = { token: "VERY_COOL_TOKEN", username: "dev-user", role: "hamal", authGroups: ["מתנס אבו גוש"] };
+export const DEV_USER: gg.User = { token: "VERY_COOL_TOKEN", username: "dev-user", role: "manager", authGroups: ["מתנס אבו גוש"] };
+export const JWT_ALGORITHM = "HS256";
+export const JWT_SECRET = process.env.USERS_TOKEN_SECRET;
 
 export const requireAuthMiddleware: express.RequestHandler = (req, res, next) => {
     const { authorization } = req.headers;
@@ -18,7 +20,7 @@ export const requireAuthMiddleware: express.RequestHandler = (req, res, next) =>
 
     try {
         token = authorization.split(" ")[1];
-        const { sub: username } = jwt.verify(token, process.env.USERS_TOKEN_SECRET, { algorithms: ["HS256"] });
+        const { sub: username } = jwt.verify(token, JWT_SECRET, { algorithms: [JWT_ALGORITHM] });
         req.username = username;
     }
     catch (err) {

@@ -1,7 +1,7 @@
 import * as express from "express";
 require('express-async-errors');
-
 import * as cors from "cors";
+
 import initDBConnections from "./cosmosdb";
 import { requireAuthMiddleware, userInfoMiddleware } from "./authMiddlewares";
 
@@ -16,8 +16,10 @@ if (env === "development")
     app.use(cors());
 
     app.get("/api/test", (req, res) => res.status(200).send("Server Is Up"));
-    
+
     await initDBConnections();
+
+    app.post("/api/login", require("./Auth/auth.controller").loginUser);
 
     app.use(requireAuthMiddleware);
 

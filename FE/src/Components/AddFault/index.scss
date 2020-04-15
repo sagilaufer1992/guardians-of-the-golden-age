@@ -9,37 +9,50 @@
     border-radius: 3px;
     background-color: white;
     box-sizing: content-box;
+    font-size: 14px;
     .title {
       text-align: right;
       font-weight: bold;
-      margin-bottom: 10px;
-      font-size: 20px;
+      font-size: 16px;
     }
     .fields {
       width: 100%;
       .fault-field {
-        margin: 5px;
         display: flex;
         flex-direction: column;
-        &.row {
-          flex-direction: row;
-          justify-content: space-between;
-        }
+        margin: 5px 0;
         label {
-          margin: 5px;
+          font-size: 12px;
+          margin: 2px;
         }
-        .inline-field input {
+        input {
           padding: 10px;
+        }
+      }
+      .user-details {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        .name-field {
+          width: 100%;
+        }
+        .phone-field {
+          margin-right: 5px;
+        }
+      }
+      .fault-content {
+        & > * {
+          font-size: 14px;
+          padding: 10px !important;
         }
       }
     }
     .buttons {
+      margin-top: 5px;
       display: flex;
       justify-content: flex-end;
-      & > * {
-        margin: 5px;
-      }
-      .cancel {
+      .clean-button {
+        margin-right: 5px;
         background-color: whitesmoke;
       }
     }

@@ -3,7 +3,7 @@ $reporter-color: #0099ff;
 $handler-color: #fabf01;
 
 .chat {
-    font-size: 14px;
+    font-size: 12px;
     background-color: white;
     padding: 10px;
     border-radius: 3px;
@@ -21,7 +21,7 @@ $handler-color: #fabf01;
         position: relative;
         .user-icon {
             margin-top: -10px;
-            font-size: 50px;
+            font-size: 40px;
         }
         .comment-bubble {
             position: relative;
@@ -29,7 +29,7 @@ $handler-color: #fabf01;
             border-radius: .4em;
             padding: 10px;
             min-width: 200px;
-            max-width: calc(100% - 60px);
+            max-width: calc(100% - 50px);
             box-sizing: border-box;
             .bubble-header {
                 display: flex;

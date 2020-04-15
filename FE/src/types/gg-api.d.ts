@@ -17,4 +17,9 @@ declare namespace gg {
     // example: מ"ח ת"א
     authGroups: string[];
   }
+
+  interface LoginResult extends UserInfo {
+    access_token: string;
+    authGroups: string[];
+  }
 }

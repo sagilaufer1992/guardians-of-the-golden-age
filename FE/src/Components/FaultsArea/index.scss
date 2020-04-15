@@ -1,3 +1,4 @@
+$primary-color: #0099ff;
 $border-style: 1px solid rgb(189, 189, 189);
 
 @mixin number($bg-color, $text-color) {
@@ -14,9 +15,6 @@ $border-style: 1px solid rgb(189, 189, 189);
 .faults-area {
     display: flex;
     flex-direction: column;
-    min-width: 680px;
-    max-width: 50vw;
-    max-height: 80vh;
     margin: 10px;
     position: relative;
     border: $border-style;
@@ -28,59 +26,50 @@ $border-style: 1px solid rgb(189, 189, 189);
         padding: 5px;
         display: flex;
         flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
         border-bottom: $border-style;
+        color: whitesmoke;
+        background-image: linear-gradient(to right, lighten($primary-color, 12), darken($primary-color, 5));
         .label {
-            font-size: 20px;
+            font-size: 18px;
             padding: 0 10px;
-            font-weight: bold;
-            border-left: $border-style;
         }
         .numbers {
             display: flex;
             flex-direction: row;
             align-items: center;
-            margin-bottom: 5px;
-            margin: 0 10px 0 0;
-            .number-label {
-                font-size: 17px;
-                padding: 3px 0 0 0;
-            }
-            .total-number {
-                @include number(rgb(236, 236, 236), black);
-            }
-            .active-number {
-                @include number(rgb(209, 40, 40), white);
+            * > & {
+                &:not(:last-child) {
+                    &::after {
+                      padding: 0 5px;
+                      content: "|";
+                    }
+                }
             }
         }
     }
-    .faults-area-sort {
-        padding: 8px;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        border-bottom: $border-style; 
-        align-items: center;
+    .faults-filter-container {
+        max-height: 0;
+        overflow: hidden;
+        transition: all 0.5s linear;
+        -webkit-transition: all 0.5s linear;
+        -moz-transition: all 0.5s linear;
+        -o-transition: all 0.5s linear;
+        -ms-transition: all 0.5s linear;
+        &.open {
+            max-height: 300px;
+        }
     }
     .faults-area-body {
         overflow-y: auto;
         background-color: whitesmoke;
         box-sizing: content-box;
         .empty-body {
+            color: gray;
+
             text-align: center;
             margin: 5px;
         }
-    }
-    .select-group {
-        width: 16%;
-    }
-    .MuiInputBase-root {
-        margin-top: 3px !important;
-        padding: 0 !important;
-    }
-    .distribution-autocomplete {
-        min-width: 200px !important;
-        direction: rtl !important;
-        height: 30px !important;
-        padding: 0 !important;
     }
 }

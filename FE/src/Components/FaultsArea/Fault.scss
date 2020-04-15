@@ -1,13 +1,13 @@
   .fault {
     margin: 8px;
-    border-radius: 3px;
+    font-size: 12px;
     background-color: darken($color: whitesmoke, $amount: 10);
     position: relative;
     display: flex;
     border: 1px solid darken($color: whitesmoke, $amount: 10);
     background-color: white;
     .status {
-      width: 15px;
+      width: 10px;
       &.Todo {
         background-color: red;
       }

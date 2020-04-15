@@ -3,8 +3,9 @@ import "./Fault.scss";
 import React, { useState, useContext } from "react";
 import classnames from "classnames";
 import moment from "moment";
+import { Card } from "@material-ui/core";
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
-import UserProvider from "../utils/UserProvider";
+import UserProvider from "../../utils/UserProvider";
 import FaultDetails from "./FaultDetails";
 import FaultButtons from "./FaultButtons";
 
@@ -25,7 +26,7 @@ export default React.memo(function Fault(props: Props) {
 
   return (
     <>
-      <div className="fault">
+      <Card className="fault">
         <div className={classnames("status", status)} />
         <div className="content">
           <div className="hierarchy">{branch ? `${branch.district} / ${branch.napa} / ${branch.municipalityName} ` : ""}</div>
@@ -46,7 +47,7 @@ export default React.memo(function Fault(props: Props) {
               )}
           </div>
         </div>
-      </div>
+      </Card>
       {isDetailsOpen && <FaultDetails fault={props.fault} />}
     </>
   );

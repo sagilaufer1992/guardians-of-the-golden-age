@@ -26,7 +26,7 @@ export async function getFaultById(req, res, next) {
     const fault = await Fault.findById(req.params.id);
 
     if (!fault) {
-        return res.status(404, `Fault not found with id of ${req.params.id}`);
+        return res.status(404).send(`Fault not found with id of ${req.params.id}`);
     }
 
     res.status(200).json(fault);
@@ -63,7 +63,7 @@ export async function updateFault(req, res, next) {
         res.status(200).json(fault);
     }
     catch {
-        return res.status(404, `Fault not found with id of ${req.params.id}`);
+        return res.status(404).send(`Fault not found with id of ${req.params.id}`);
     }
 }
 
@@ -77,7 +77,7 @@ export async function deleteFault(req, res, next) {
 
     if (role !== "manager" || !authGroups.includes(distributionCenter)) return res.status(403).json("Not Allowed");
 
-    if (status !== "Todo") return res.status(400).json("You can delete only when status is Todo");
+    if (status !== "Todo") return res.status(400).send("You can delete only when status is Todo");
 
     await Fault.findByIdAndRemove(req.params.id);
     res.status(200).json({});
