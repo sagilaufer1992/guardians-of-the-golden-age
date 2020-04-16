@@ -1,7 +1,8 @@
 import "./index.scss";
 
-import React from 'react';
+import React, { useState } from "react";
 
+import Initializer from "./Initializer";
 import DeliveryStatus from "./DeliveryStatus";
 import FaultsStatus from "./FaultsStatus";
 
@@ -81,9 +82,36 @@ const FAULTS_REPORTS: FaultsReport = {
 interface Props {
 }
 
-export default function Dashboard(props: Props) {
-    return <div className="dashboard">
+export default React.memo(function Dashboard(props: Props) {
+  const [date, setDate] = useState<Date>();
+  const [level, setLevel] = useState<string>("");
+  const [value, setValue] = useState<string>("");
+
+  return (
+    <div className="dashboard">
+      {date && level ? (
+        <>
         <DeliveryStatus reports={DELIVERY_REPORTS} />
         <FaultsStatus report={FAULTS_REPORTS} />
-    </div>;
+        </>
+      ) : (
+        <Initializer
+          onInitialize={(date, level, value) => {
+            setDate(date);
+            setLevel(level);
+            if (value) setValue(value);
+          }}
+        />
+      )}
+      }
+    </div>
+  );
+});
+
+function _createQueryString(date: Date, level: string, value?: string): string {
+  const basicQueryString = `level=${level}&date=${date
+    .toISOString()
+    .split("T")
+    .join(" ")}`;
+  return value ? basicQueryString + `&value=${value}` : basicQueryString;
 }
