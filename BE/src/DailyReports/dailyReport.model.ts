@@ -3,7 +3,7 @@ import { faultsDB } from "../cosmosdb";
 
 // TODO: RENAME ID TO BRANCH ID
 const DailyReportSchema = new mongoose.Schema({
-    id: {
+    branchId: {
         type: Number,
         required: true
     },

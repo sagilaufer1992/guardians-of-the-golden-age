@@ -36,7 +36,7 @@ export async function getFutureReports(req, res) {
     newBranches.forEach(async report => await Branch.create(report));
 
     newReports.forEach(async report =>
-        await dailyReportModel.create({ id: report.id, date: new Date(date), total: report.amount }));
+        await dailyReportModel.create({ branchId: report.id, date: new Date(date), total: report.amount }));
 
     res.status(201).json();
 }
@@ -53,7 +53,7 @@ export async function getDailyReport(req, res) {
 
     const dailyDate = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0);
 
-    const filter = { date: { $eq: dailyDate }, id: { $in: branchIds } };
+    const filter = { date: { $eq: dailyDate }, branchId: { $in: branchIds } };
     const reports = (await DailyReport.find(filter)).map(_ => _.toJSON());
 
     const groupedReports = _groupBy(level, branches as any, reports)
@@ -69,13 +69,13 @@ function _groupBy(level: be.Level, branches: be.Branch[], reports: be.dailyRepor
     const lowerLevelDisplayName = LOWER_LEVEL_DICTIONARY[level];
 
     reports.forEach(report => {
-        const branch = branchDictionary[report.id];
+        const branch = branchDictionary[report.branchId];
         const name = lowerLevelDisplayName(branch);
 
         if (!groupedReports[name]) groupedReports[name] = { name: name };
 
         const groupedReport = groupedReports[name];
-        
+
         groupedReports[name] = {
             ...groupedReport,
             total: report.total + (groupedReport.total || 0),

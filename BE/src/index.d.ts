@@ -82,7 +82,7 @@ declare namespace be {
   }
 
   interface dailyReport {
-    id: string;
+    branchId: string;
     date: Date;
     total: number;
     delivered: number;
