@@ -1,7 +1,7 @@
 import React from "react";
 import AddFault from "./Components/AddFault";
 import ManageFaults from "./Components/ManageFaults";
-import DeliveryStatus from "./Components/DeliveryStatus";
+import Dashboard from "./Components/Dashboard";
 import AssignmentTurnedInOutlinedIcon from '@material-ui/icons/AssignmentTurnedInOutlined';
 import { isHamal } from "./utils/roles";
 
@@ -18,7 +18,7 @@ export function useRoutes(user: gg.User | null, faultManager: any): Route[] {
 
     return isHamal(user) ?
         [
-            { icon: AssignmentTurnedInOutlinedIcon, name: "דאשבורד", path: "/", component: <DeliveryStatus reports={[]} />, exact: true },
+            { icon: AssignmentTurnedInOutlinedIcon, name: "דאשבורד", path: "/", component: <Dashboard />, exact: true },
             { icon: AssignmentTurnedInOutlinedIcon, name: "ניהול תקלות", path: "/faults", component: <ManageFaults faultManager={faultManager} />, exact: false, },
         ] :
         [
