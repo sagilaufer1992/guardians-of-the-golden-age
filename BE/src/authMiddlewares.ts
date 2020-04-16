@@ -8,13 +8,13 @@ export const JWT_SECRET = process.env.USERS_TOKEN_SECRET;
 export const requireAuthMiddleware: express.RequestHandler = (req, res, next) => {
     const { authorization } = req.headers;
 
-    if (!authorization?.startsWith("Bearer"))
-        return res.status(400).send("No authorization header in request headers");
-
     if (process.env.NODE_ENV === "development") {
         req.username = DEV_USER.username;
         return next();
     }
+
+    if (!authorization?.startsWith("Bearer"))
+        return res.status(400).send("No authorization header in request headers");
 
     let token: string = null;
 
@@ -35,7 +35,7 @@ export const userInfoMiddleware: express.RequestHandler = async (req, res, next)
         req.user = DEV_USER;
         return next();
     }
-    
+
     const User = require("./Auth/auth.model").default;
 
     const user = await User.findOne({ username: req.username });

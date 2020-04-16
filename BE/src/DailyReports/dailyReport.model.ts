@@ -1,17 +1,7 @@
 import * as mongoose from "mongoose";
 import { faultsDB } from "../cosmosdb";
 
-const ReseanSchema = new mongoose.Schema({
-    count: {
-        type: Number,
-        required: true
-    },
-    reason: {
-        type: String,
-        required: true
-    }
-});
-
+// TODO: RENAME ID TO BRANCH ID
 const DailyReportSchema = new mongoose.Schema({
     id: {
         type: Number,
