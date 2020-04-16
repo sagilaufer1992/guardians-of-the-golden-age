@@ -126,12 +126,15 @@ export default function FaultsStatus(props: Props) {
             switch (level) {
               case "all": {
                 onInitialize(date, "all");
+                break;
               }
               case "district": {
                 onInitialize(date, "district", selectedDistrict);
+                break;
               }
               case "napa": {
                 onInitialize(date, "napa", selectedNapa);
+                break;
               }
             }
           }}
