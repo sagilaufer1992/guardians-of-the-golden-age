@@ -15,6 +15,7 @@ export function useRoutes(user: gg.User | null, faultManager: any): Route[] {
     if (user) return [
         { icon: AssignmentTurnedInOutlinedIcon, name: "ניהול תקלות", path: "/", component: <Home user={user} faultManager={faultManager} />, exact: true, },
         { icon: AssignmentTurnedInOutlinedIcon, name: "תקלה חדשה", path: "/add", component: <AddFault onFaultAdded={faultManager.addFault} />, exact: false },
+        { icon: AssignmentTurnedInOutlinedIcon, name: "צפי מול ביצוע", path: "/dailyReport", component: <div>תשנה כאן</div>, exact: false },
     ]
 
     return [];
