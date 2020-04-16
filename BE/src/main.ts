@@ -12,7 +12,7 @@ if (env === "development")
 
 (async function () {
     const app = express();
-    app.use(express.json());
+    app.use(express.json({limit:'50mb'}));
     app.use(cors());
 
     app.get("/api/test", (req, res) => res.status(200).send("Server Is Up"));
@@ -28,7 +28,7 @@ if (env === "development")
     app.use("/api/faults", require("./Faults/fault.route").default);
     app.use("/api/branches", require("./Branches/branch.route").default);
     app.use("/api/messages", require("./Messages/message.route").default);
-
+    app.use("/api/dailyReports", require("./DailyReports/dailyReport.route").default);
     const { getDistricts, getNapas, getMunicipalities } = require("./Branches/branch.controller");
 
     app.get("/api/districts", userInfoMiddleware, getDistricts);

@@ -30,44 +30,56 @@ declare namespace be {
     author: AuthorInfo;
     distributionCenter: string;
     content: string;
-    category: FaultCategory;  
+    category: FaultCategory;
   }
-  
+
   type FaultStatus = "Todo" | "InProgress" | "Complete";
-  
+
   type FaultCategory = "food" | "drugs" | "other";
-  
+
   interface AuthorInfo {
     name: string;
     phone?: string;
   }
-  
+
   interface NewMessage {
     author: AuthorInfo; //מי כתב את ההודעה
     content: string; // תוכן ההודעה
   }
-  
+
   type ExtendItem<T> = Omit<T, "author"> & {
     _id: string;
     date: Date;
     author: AuthorInfo & gg.UserInfo;
   }
-  
+
   interface Fault extends ExtendItem<NewFault> {
     status: FaultStatus;
   }
-  
+
   interface Message extends ExtendItem<NewMessage> {
     faultId: string;
   }
 
   interface Branch {
-    id: string;
+    id: number;
     name: string; //שם נקודות החלוקה
     address: string; // כתובת
     napa: string; // נפה
     district: string; // מחוז
     municipalityName: string; // שם הרשות
     municipalitySymbol: number; // מזהה הרשות
+  }
+
+  interface FutureReport extends Branch {
+    amount: number;
+  }
+
+  interface dailyReport {
+    id: string;
+    date: Date;
+    total: number;
+    delivered: number;
+    deliveryFailed: number;
   }
 }
