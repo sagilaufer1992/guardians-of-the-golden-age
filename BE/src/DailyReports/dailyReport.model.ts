@@ -34,8 +34,9 @@ const DailyReportSchema = new mongoose.Schema({
         default: 0
     },
     deliveryFailReasons: {
-        type: [ReseanSchema],
-        default: []
+        type: Map,
+        of: Number,
+        default: {}
     }
 });
 

@@ -4,6 +4,10 @@ interface Dictionary<T> {
     [index: string]: T
 }
 
+interface FutureReport extends Branch {
+    amount: number;
+}
+
 const COLUMN_TO_KEY: Dictionary<string> = {
     A: "district",
     B: "municipalitySymbol",
@@ -26,8 +30,9 @@ export function extractDailyReports(file: File) {
             if (!workBook.Sheets["ריכוז"]) reject("הקובץ לא בפורמט הנכון");
 
             const data = XLSX.utils.sheet_to_json(workBook.Sheets["ריכוז"], { header: "A", raw: true, });
-
-            resolve(data.slice(1).map(_convertToReport).filter(_ => _.id));
+            const reports = data.slice(1).map(_convertToReport).filter(_ => _.id) as FutureReport[];
+            
+            resolve(_unionDuplicates(reports));
         }
 
         reader.addEventListener("error", reject);
@@ -35,6 +40,18 @@ export function extractDailyReports(file: File) {
         reader.readAsBinaryString(file);
     });
 
+}
+
+// מרכז יום חבל מודיעין מופיע פעמיים בקובץ
+function _unionDuplicates(reports: FutureReport[]) {
+    const dictionary: Dictionary<FutureReport> = {};
+
+    reports.forEach(report => {
+        if (dictionary[report.id]) dictionary[report.id].amount += report.amount;
+        else dictionary[report.id] = { ...report };
+    });
+
+    return Object.values(dictionary);
 }
 
 function _convertToReport(item: any) {

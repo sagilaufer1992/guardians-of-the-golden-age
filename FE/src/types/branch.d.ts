@@ -1,5 +1,5 @@
 interface Branch {
-    id: string;
+    id: number;
     name: string; //שם נקודות החלוקה
     address: string; // כתובת
     napa: string; // נפה

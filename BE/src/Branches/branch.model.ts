@@ -4,7 +4,7 @@ import { faultsDB } from "../cosmosdb";
 const BranchSchema = new mongoose.Schema({
     id: {
         type: Number,
-        unique:true,
+        unique: true,
         required: true
     },
     name: {
@@ -19,6 +19,10 @@ const BranchSchema = new mongoose.Schema({
         type: String
     },
     district: {
+        type: String,
+        required: true
+    },
+    homeFrontCommandDistrict: {
         type: String,
         required: true
     },

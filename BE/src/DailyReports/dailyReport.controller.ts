@@ -8,27 +8,21 @@ export async function getFutureReports(req, res) {
     if (role !== "hamal" && role !== "admin") res.status(403).json("אינך מורשה");
 
     const { date, reports } = req.body;
+
     const branches = await Branch.find();
+    const branchIdsDictionary = branches.map(_ => _.id).reduce((pv, v) => ({ ...pv, [v]: v }), {});
+    const newBranches = reports.filter(report => !branchIdsDictionary[report.id]);
 
-    reports.forEach(async report => {
-        if (!branches.some(branch => branch.id === report.id)) {
-            console.log(report);
-            await Branch.create(report);
-        }
+    const dailyReportFilter = { date: { $eq: new Date(date) } };
+    const dbDailyReports = await dailyReportModel.find(dailyReportFilter);
+    const dbReportsDictionary = dbDailyReports.map(_ => _.id).reduce((pv, v) => ({ ...pv, [v]: v }), {});
 
-        const filter = { id: { $eq: report.id }, date: { $eq: new Date(date) } };
+    const newReports = reports.filter(report => !dbReportsDictionary[report.id]);
 
-        // TODO: try to do it better.
-        if (!!await dailyReportModel.findOne(filter)) return;
+    newBranches.forEach(async report => await Branch.create(report));
 
-        await dailyReportModel.create({ id: report.id, date: new Date(date), total: report.amount });
-    })
+    newReports.forEach(async report =>
+        await dailyReportModel.create({ id: report.id, date: new Date(date), total: report.amount }));
 
     res.status(201).json();
-}
-
-function _removeDuplicates<T>(array: T[], getId: (item: T) => any = _ => _) {
-    return array.filter(
-        (thing, i, arr) => arr.findIndex(t => getId(t) === getId(thing)) === i
-    );
 }
