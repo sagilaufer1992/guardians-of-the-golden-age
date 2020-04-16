@@ -8,3 +8,9 @@ interface DeliveryReport {
 }
 
 type ReasonsDictionary = { [key: string]: number };
+
+interface FaultReport {
+    name: string;
+    total: number;
+    solved: number;
+}

@@ -1,6 +1,6 @@
 import "./DeliveryStatus.scss";
 import React from "react";
-import { Container, Tooltip, withStyles } from "@material-ui/core";
+import { Card, Tooltip, withStyles } from "@material-ui/core";
 import { PieChart, Pie, PieProps } from "recharts";
 
 interface Props {
@@ -31,7 +31,7 @@ export default function DeliveryStatus(props: Props) {
 
     const _convertToChartData = (data: any) => Object.keys(data).map(key => ({ name: key, value: data[key] }));
 
-    return (<Container className="delivery-status">
+    return (<Card className="delivery-status">
         {props.reports.map((report, index) => {
             const { name, total, delivered, deliveryFailed, deliveryFailReasons } = report;
             const deliveredStyle = { width: `${(delivered / total) * 100}%` };
@@ -57,5 +57,5 @@ export default function DeliveryStatus(props: Props) {
                 </div>
             </div>
         })}
-    </Container>);
+    </Card>);
 }
