@@ -1,8 +1,7 @@
 import "./FaultsMenu.scss";
 
-import React, { useContext } from "react";
+import React from "react";
 
-import UserProvider from "../../utils/UserProvider";
 import DropDownInput from "../Inputs/DropDownInput";
 import AutocompleteInput from "../Inputs/AutocompleteInput";
 
@@ -20,17 +19,15 @@ interface Props {
 }
 
 export default function FaultsMenu(props: Props) {
-    const user = useContext(UserProvider);
-
     const { filters, onFilterChange, onSortChange } = props;
 
     return <div className="faults-filter">
         {Object.entries(filters).map(([key, value]) => {
             if (value.type === "DropDown") {
-                return <DropDownInput {...value} onChange={(value) => onFilterChange(key, value)} />
+                return <DropDownInput key={key} {...value} onChange={(value) => onFilterChange(key, value)} />
             }
 
-            return <AutocompleteInput {...value} onChange={(value) => onFilterChange(key, value)} />
+            return <AutocompleteInput key={key} {...value} onChange={(value) => onFilterChange(key, value)} />
         })}
         <DropDownInput title="מיין לפי" defaultValue="time" options={SORT_BY_OPTIONS} onChange={onSortChange} />
     </div>;
