@@ -1,6 +1,6 @@
 import "./index.scss";
 import React, { useState, useContext, useMemo } from "react";
-import { Button } from "@material-ui/core";
+import { Container, Button } from "@material-ui/core";
 import TextField from "../Inputs/TextField";
 import DropDownInput from "../Inputs/DropDownInput";
 import UserProvider from "../../utils/UserProvider";
@@ -39,7 +39,7 @@ export default function AddFault(props: Props) {
   const cleanForm = () => setContent("");
 
   return (
-    <div className="add-fault">
+    <Container className="add-fault" maxWidth="sm">
       <div className="title">צור תקלה חדשה</div>
       <div className="fields">
         <div className="user-details fault-field row">
@@ -105,6 +105,6 @@ export default function AddFault(props: Props) {
         </Button>
         <Button className="clean-button" onClick={cleanForm}>נקה</Button>
       </div>
-    </div>
+    </Container>
   );
 }

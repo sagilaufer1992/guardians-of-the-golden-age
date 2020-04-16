@@ -4,9 +4,9 @@ import { useSnackbar } from "notistack";
 
 import FaultChat from "./FaultChat";
 import AddFaultMessage from "./AddFaultMessage";
-import { addMessage, getMessagesByFaultId } from "../../utils/fetchMessageFunctions";
-import UserProvider from "../../utils/UserProvider";
-import { isHamal } from "../../utils/roles";
+import { addMessage, getMessagesByFaultId } from "../../../utils/fetchMessageFunctions";
+import UserProvider from "../../../utils/UserProvider";
+import { isHamal } from "../../../utils/roles";
 
 interface Props {
     fault: Fault;

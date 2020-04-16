@@ -4,11 +4,11 @@ import React, { useState, useMemo, useContext, useEffect } from "react";
 import classnames from "classnames";
 
 import { useSnackbar } from "notistack";
-import { Button } from '@material-ui/core';
+import { Button, Container } from '@material-ui/core';
 import FilterListIcon from "@material-ui/icons/FilterList";
-import { ALL_ITEM } from "../../utils/inputs";
-import { getBranches } from "../../utils/fetchBranches";
-import UserProvider from "../../utils/UserProvider";
+import { ALL_ITEM } from "../../../utils/inputs";
+import { getBranches } from "../../../utils/fetchBranches";
+import UserProvider from "../../../utils/UserProvider";
 import Fault from "./Fault";
 import FaultsMenu from "./FaultsMenu";
 import getFilterDefinitions from "./filters";
@@ -74,7 +74,7 @@ const FaultsArea = (props: Props) => {
 
     const onFilterChange = (fieldName: string, value: string) => setFilters({ ...filters, [fieldName]: value });
 
-    return <div className="faults-area">
+    return <Container className="faults-area" maxWidth="md">
         <div className="faults-area-header">
             <div className="title">רשימת התקלות</div>
             <Button
@@ -102,7 +102,7 @@ const FaultsArea = (props: Props) => {
                     onStatusChange={props.onStatusChange}
                     onFaultDelete={props.onFaultDelete} />)}
         </div>
-    </div>
+    </Container>
 }
 
 export default React.memo(FaultsArea);

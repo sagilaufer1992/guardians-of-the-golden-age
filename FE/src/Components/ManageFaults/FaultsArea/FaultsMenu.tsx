@@ -2,8 +2,8 @@ import "./FaultsMenu.scss";
 
 import React from "react";
 
-import DropDownInput from "../Inputs/DropDownInput";
-import AutocompleteInput from "../Inputs/AutocompleteInput";
+import DropDownInput from "../../Inputs/DropDownInput";
+import AutocompleteInput from "../../Inputs/AutocompleteInput";
 
 const SORT_BY_OPTIONS = [
     { value: "time", label: "זמן" },

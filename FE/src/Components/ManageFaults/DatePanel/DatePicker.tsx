@@ -4,7 +4,7 @@ import React, { useState, useMemo } from "react";
 import classnames from "classnames";
 
 import moment from "moment";
-import './node_modules/moment/locale/he'
+import 'moment/locale/he'
 moment.locale("he");
 
 

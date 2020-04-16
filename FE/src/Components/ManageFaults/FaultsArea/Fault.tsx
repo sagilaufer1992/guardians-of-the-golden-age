@@ -5,7 +5,7 @@ import classnames from "classnames";
 import moment from "moment";
 import { Card } from "@material-ui/core";
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
-import UserProvider from "../../utils/UserProvider";
+import UserProvider from "../../../utils/UserProvider";
 import FaultDetails from "./FaultDetails";
 import FaultButtons from "./FaultButtons";
 
