@@ -45,8 +45,7 @@ $failed-color: #ff4848;
                 font-size: 12px;
                 font-weight: bold;
                 .delivered {
-                    color: darken($delivered-color, 10);
-                    margin-left: 15px;
+                    color: darken($delivered-color, 10);                    
                 }
                 .failed {
                     color: darken($failed-color, 10);

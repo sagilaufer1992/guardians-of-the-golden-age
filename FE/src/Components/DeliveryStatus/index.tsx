@@ -49,8 +49,9 @@ export default function DeliveryStatus(props: Props) {
                         </PieChartTooltip>
                     </div>
                     <div className="text-info">
-                        <span className="delivered">חולקו {`${delivered}/${total}`}</span>
-                        <span className="failed">נתקלנו בבעיה {`${deliveryFailed}/${total}`}</span>
+                        <span>סה"כ - {total} </span>|
+                        <span className="delivered"> חולקו - {delivered} </span>|
+                        <span className="failed"> נתקלנו בבעיה - {deliveryFailed}</span>
                     </div>
                 </div>
             </div>
