@@ -26,12 +26,18 @@ declare namespace gg {
 }
 
 declare namespace be {
+  interface Dictionary<T> {
+    [index: string]: T
+  }
+
   interface NewFault {
     author: AuthorInfo;
     distributionCenter: string;
     content: string;
     category: FaultCategory;
   }
+
+  type Level = "national" | "district" | "napa" | "municipality";
 
   type FaultStatus = "Todo" | "InProgress" | "Complete";
 
@@ -81,5 +87,6 @@ declare namespace be {
     total: number;
     delivered: number;
     deliveryFailed: number;
+    deliveryFailReasons: Dictionary<number>;
   }
 }
