@@ -83,6 +83,75 @@ export async function deleteFault(req, res, next) {
     res.status(200).json({});
 }
 
+export async function faultsStatus(req, res, next) {
+    try {
+        const { level, value, date } = req.query;
+        const query: MongooseFilterQuery<be.Fault> = {};
+
+        console.log(`${level}  ${value}  ${date}`);
+
+        if (date) {
+            const end = new Date(date).getTime() + 24 * 60 * 60 * 1000;
+            query.date = { "$gte": new Date(date), "$lt": new Date(end) };
+        }
+
+        if (level && level !== "national") query[`branch.${level}`] = value;
+
+        console.log(query)
+
+        const total = await Fault.countDocuments(query);
+        const open = await Fault.countDocuments({ ...query, status: { $ne: "Complete" } });
+
+        const aggregationQuery = [
+            { $match: query },
+            {
+                "$group": {
+                    "_id": {
+                        "category": "$category"
+                    },
+                    "open": {
+                        "$sum": {
+                            "$switch": {
+                                "branches": [
+                                    {
+                                        "case": { "$ne": ["$status", "Complete"] },
+                                        "then": 1
+                                    }
+                                ],
+                                "default": 0
+                            }
+                        }
+                    },
+                    "closed": {
+                        "$sum": {
+                            "$switch": {
+                                "branches": [
+                                    {
+                                        "case": { "$eq": ["$status", "Complete"] },
+                                        "then": 1
+                                    }
+                                ],
+                                "default": 0
+                            }
+                        }
+                    }
+                }
+            }, {
+                "$project": {
+                    _id: 0,
+                    category: "$_id.category",
+                    open: 1, closed: 1
+                }
+            }
+        ];
+
+        const reasons = await Fault.aggregate(aggregationQuery);
+        res.status(200).json({ total, open, reasons });
+    } catch {
+        return res.status(500);
+    }
+}
+
 async function _getBranch(name: string) {
     if (!name) return null;
 
