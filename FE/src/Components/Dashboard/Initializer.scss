@@ -1,0 +1,39 @@
+.dashboard-initializer {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .inititalizer-form {
+    width: 50%;
+    max-width: 350px;
+    display: flex;
+    flex-direction: column;
+    & > * {
+      margin: 5px;
+    }
+    .radio-group {
+      & > * {
+        margin: 5px;
+      }
+      .radio-with-text-field {
+        display: flex;
+        justify-content: space-between;
+        .autocomplete {
+          width: 60%;
+          max-width: 250px;
+        }
+      }
+    }
+    .calendar-wrapper {
+      direction: ltr;
+      text-align: center;
+      .react-calendar {
+        direction: rtl;
+      }
+    }
+    .initialize {
+      width: fit-content;
+      align-self: center;
+    }
+  }
+}
