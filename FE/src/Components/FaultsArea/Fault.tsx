@@ -5,14 +5,14 @@ import classnames from "classnames";
 import moment from "moment";
 import { Card } from "@material-ui/core";
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
-import UserProvider from "../../../utils/UserProvider";
+import UserProvider from "../../utils/UserProvider";
 import FaultDetails from "./FaultDetails";
 import FaultButtons from "./FaultButtons";
 
 interface Props {
   fault: Fault;
-  onStatusChange: (faultId: string, status: FaultStatus) => void;
-  onFaultDelete: (id: string) => void;
+  onStatusChange?: (faultId: string, status: FaultStatus) => void;
+  onFaultDelete?: (id: string) => void;
 }
 
 export default React.memo(function Fault(props: Props) {
@@ -21,8 +21,8 @@ export default React.memo(function Fault(props: Props) {
 
   const { _id, category, status, author, distributionCenter, date, branch } = props.fault;
 
-  const _onStatusChange = (status: FaultStatus) => props.onStatusChange(_id, status);
-  const _onFaultDelete = () => props.onFaultDelete(_id);
+  const _onStatusChange = (status: FaultStatus) => props.onStatusChange?.(_id, status);
+  const _onFaultDelete = () => props.onFaultDelete?.(_id);
 
   return (
     <>

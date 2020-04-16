@@ -2,7 +2,7 @@ import "./AddFaultMessage.scss";
 
 import React, { useState } from "react";
 import Button from "@material-ui/core/Button";
-import TextField from "../../Inputs/TextField";
+import TextField from "../Inputs/TextField";
 
 interface Props {
     addNewMessage: (name: string, content: string) => void;

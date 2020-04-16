@@ -6,7 +6,7 @@ import { getFaultsByDate, updateFault, addFault, deleteFault } from "../utils/fe
 
 const REFRESH_TIMEOUT: number = 20 * 1000;
 
-export function useFaultManager() {
+export function useFaultManager(): FaultManager {
     const { enqueueSnackbar } = useSnackbar();
     const [user, setUser] = useState<gg.User | null>(null);
     const [date, setDate] = useState<Date>(moment().startOf('day').toDate());

@@ -3,7 +3,7 @@ import React from "react";
 import classNames from "classnames";
 import { MdAccountCircle } from "react-icons/md";
 
-import { isHamal } from "../../../utils/roles";
+import { isHamal } from "../../utils/roles";
 
 interface Props {
     fault: Fault;

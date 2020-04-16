@@ -6,8 +6,8 @@ import Button from "@material-ui/core/Button";
 import Tooltip from "@material-ui/core/Tooltip";
 import { MdClose } from "react-icons/md";
 
-import UserProvider from "../../../utils/UserProvider";
-import { isHamal } from "../../../utils/roles";
+import UserProvider from "../../utils/UserProvider";
+import { isHamal } from "../../utils/roles";
 
 interface Props {
     status: FaultStatus;

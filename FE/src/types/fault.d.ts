@@ -2,7 +2,7 @@ interface NewFault {
   author: AuthorInfo;
   distributionCenter: string;
   content: string;
-  category: FaultCategory;  
+  category: FaultCategory;
 }
 
 type FaultStatus = "Todo" | "InProgress" | "Complete";
@@ -32,4 +32,15 @@ interface Fault extends ExtendItem<NewFault> {
 
 interface Message extends ExtendItem<NewMessage> {
   faultId: string;
+}
+
+interface FaultManager {
+  faults: Fault[];
+  isRefresh: boolean;
+  lastRefreshTime: Date | null;
+  setDate: (date: Date) => void;
+  setUser: (user: UserInfo) => void;
+  addFault: (fault: NewFault) => void;
+  deleteFault: (id: string) => void;
+  setFaultStatus: (faultId: string, status: FaultStatus) => void;
 }

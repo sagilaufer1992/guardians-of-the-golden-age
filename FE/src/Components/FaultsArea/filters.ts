@@ -1,4 +1,4 @@
-import { toSelect, ALL_ITEM } from "../../../utils/inputs";
+import { toSelect, ALL_ITEM } from "../../utils/inputs";
 
 export const statuses: Record<FaultStatus, string> = {
     Todo: "תקלות שנפתחו",

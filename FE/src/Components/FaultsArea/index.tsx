@@ -6,17 +6,17 @@ import classnames from "classnames";
 import { useSnackbar } from "notistack";
 import { Button, Container } from '@material-ui/core';
 import FilterListIcon from "@material-ui/icons/FilterList";
-import { ALL_ITEM } from "../../../utils/inputs";
-import { getBranches } from "../../../utils/fetchBranches";
-import UserProvider from "../../../utils/UserProvider";
+import { ALL_ITEM } from "../../utils/inputs";
+import { getBranches } from "../../utils/fetchBranches";
+import UserProvider from "../../utils/UserProvider";
 import Fault from "./Fault";
 import FaultsMenu from "./FaultsMenu";
 import getFilterDefinitions from "./filters";
 
 interface Props {
     faults: Fault[];
-    onFaultDelete: (id: string) => void;
-    onStatusChange: (faultId: string, status: FaultStatus) => void;
+    onFaultDelete?: (id: string) => void;
+    onStatusChange?: (faultId: string, status: FaultStatus) => void;
 }
 
 const FaultsArea = (props: Props) => {
