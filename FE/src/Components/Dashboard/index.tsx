@@ -81,7 +81,6 @@ export default React.memo(function Dashboard(props: Props) {
           }}
         />
       )}
-      }
     </div>
   );
 });
