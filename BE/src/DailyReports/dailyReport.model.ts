@@ -30,4 +30,4 @@ const DailyReportSchema = new mongoose.Schema({
     }
 });
 
-export default faultsDB.model<mongoose.Document & be.DailyReport>("DailyReport", DailyReportSchema, "dailyReports");
+export default faultsDB.model<mongoose.Document & be.DBDailyReport>("DailyReport", DailyReportSchema, "dailyReports");

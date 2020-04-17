@@ -70,7 +70,7 @@ export async function getDailyReport(req, res) {
     res.json(groupedReports);
 }
 
-function _groupBySubLevels(level: be.Level, branches: be.Branch[], reports: be.DailyReport[], jobs: gg.Job[]): be.DailyReport[] {
+function _groupBySubLevels(level: be.Level, branches: be.Branch[], reports: be.DBDailyReport[], jobs: gg.Job[]): be.DailyReport[] {
     const branchDictionary: Record<string, be.Branch> = branches.reduce((pv, v) => ({ ...pv, [v.id]: v }), {});
 
     const lowerLevelDisplayName = LOWER_LEVEL_DICTIONARY[level];
@@ -83,7 +83,7 @@ function _groupBySubLevels(level: be.Level, branches: be.Branch[], reports: be.D
 
         if (totals[name]) totals[name].total += total;
         else totals[name] = {
-            branchId: branch.id,
+            name: name,
             total,
             delivered: 0,
             deliveryFailed: 0,

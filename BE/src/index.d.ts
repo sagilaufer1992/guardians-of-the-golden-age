@@ -90,8 +90,16 @@ declare namespace be {
     amount: number;
   }
 
-  interface DailyReport {
+  // TODO: לתקן אחרי ראשון, שיסגרו מה נשמר במאגר שלנו ומה להביא מבחוץ
+  interface DBDailyReport {
     branchId: number;
+    total: number;
+    delivered: number;
+    deliveryFailed: number;
+  }
+
+  interface DailyReport {
+    name: string;
     total: number;
     delivered: number;
     deliveryFailed: number;
