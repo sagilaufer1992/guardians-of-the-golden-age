@@ -5,6 +5,7 @@ import AssignmentTurnedInOutlinedIcon from '@material-ui/icons/AssignmentTurnedI
 import AddFault from "./Components/AddFault";
 import Dashboard from "./Components/Dashboard";
 import FaultsArea from "./Components/FaultsArea";
+import DeliveryReport from "./Components/DeliveryReport";
 
 export interface AppRoute extends RouteProps {
     name: string;
@@ -38,4 +39,10 @@ export const managerRoutes: AppRoute[] = [{
     name: "צפיה בתקלות",
     component: FaultsArea,
     icon: AssignmentTurnedInOutlinedIcon
-}];
+}, {
+    icon: AssignmentTurnedInOutlinedIcon,
+    name: "טופס ידני",
+    path: "/delivetyReport",
+    component: DeliveryReport,
+    exact: false
+},];

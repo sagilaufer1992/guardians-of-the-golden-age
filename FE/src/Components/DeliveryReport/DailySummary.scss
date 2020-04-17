@@ -1,0 +1,21 @@
+.report {
+    .sucess-message {
+        color: green;
+        text-align: center;
+        font-size: 25px;
+    }
+    .summary-content {
+        margin-bottom: 9px;
+        .total-deliveries {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            .total-input {
+                width: 100%;
+            }
+            .total-button {
+                margin: 21px 5px 0 0;
+            }
+        }   
+    }
+}

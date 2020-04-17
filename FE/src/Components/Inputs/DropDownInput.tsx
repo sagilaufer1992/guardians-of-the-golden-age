@@ -4,6 +4,7 @@ import { FormControl, Select, MenuItem, InputLabel } from '@material-ui/core';
 interface Option {
     value: string;
     label: string;
+    disabled?: boolean;
 }
 
 interface Props {
@@ -25,7 +26,7 @@ export default function DropDownInput({ onChange, defaultValue, title, options }
             onChange={handleChange}
             label={title}>
             {options.map(option => (
-                <MenuItem key={option.value} value={option.value}>
+                <MenuItem key={option.value} value={option.value} disabled={option.disabled}>
                     {option.label}
                 </MenuItem>
             ))}

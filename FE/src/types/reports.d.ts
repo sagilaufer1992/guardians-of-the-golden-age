@@ -24,3 +24,14 @@ interface FaultReasonReport {
     open: number;
     closed: number;
 }
+
+interface DeliveryReportData {
+    branchId: number;
+    date: Date;
+    name: string;
+    total: number;
+    delivered: number;
+    deliveryFailed: number;
+    pendingDelivery: number;
+    deliveryFailReasons: ReasonsDictionary;
+}

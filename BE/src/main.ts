@@ -28,6 +28,7 @@ if (env === "development")
     app.use("/api/faults", require("./Faults/fault.route").default);
     app.use("/api/branches", require("./Branches/branch.route").default);
     app.use("/api/messages", require("./Messages/message.route").default);
+    app.use("/api/deliveryReport", require("./DeliveryReport/deliveryReport.route").default);
     app.use("/api/dailyReports", require("./DailyReports/dailyReport.route").default);
     const { getDistricts, getNapas, getMunicipalities } = require("./Branches/branch.controller");
 

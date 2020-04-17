@@ -1,0 +1,42 @@
+.reasons {
+    margin-bottom: 2px;
+    .reason {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        .reason-number {
+            margin: 0 8px 0 0;
+            min-width: 100px;
+        }
+        .fault-field {
+            margin: 5px 0;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            label {
+                font-size: 12px;
+                margin: 2px;
+            }
+            input {
+                padding: 10px;
+            }
+        }
+    }
+}
+    .reason-buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    .add-reason-button {
+        margin-right: 5px;
+    }
+}
+.remaining-deliveries {
+    margin: 10px;
+    text-align: center;
+    color: red;
+}
+.send-reasons {
+    text-align: center;
+}

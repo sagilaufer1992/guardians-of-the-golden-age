@@ -1,0 +1,15 @@
+.bar-content {
+    margin-bottom: 20px;
+    .precentage {
+        max-height: 20px;
+        margin: 3px 10px;
+        position: absolute;
+        display: flex;
+        text-align: left;
+        align-items: center;
+        z-index: 1;
+        &.white {
+            color: white
+        }
+    }
+}
