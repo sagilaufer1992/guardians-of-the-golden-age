@@ -16,25 +16,28 @@ interface Route {
 export function useRoutes(user: gg.User | null, faultManager: FaultManager): Route[] {
     if (!user) return [];
 
-    const { faults, addFault, deleteFault, setFaultStatus } = faultManager;
+    const { faults, addFault, deleteFault, setFaultStatus, level } = faultManager;
 
+    const hamalOptions = [
+        {
+            name: "דאשבורד",
+            path: "/",
+            component: <Dashboard faultsManager={faultManager} />,
+            exact: true,
+            icon: AssignmentTurnedInOutlinedIcon
+        }
+    ];
+
+    if (level) hamalOptions.push({
+        name: "ניהול תקלות",
+        path: "/faults",
+        component: <FaultsArea faults={faults} onStatusChange={setFaultStatus} />,
+        exact: false,
+        icon: AssignmentTurnedInOutlinedIcon
+    });
+    
     return isHamal(user) ?
-        [
-            {
-                name: "דאשבורד",
-                path: "/",
-                component: <Dashboard />,
-                exact: true,
-                icon: AssignmentTurnedInOutlinedIcon
-            },
-            {
-                name: "ניהול תקלות",
-                path: "/faults",
-                component: <FaultsArea faults={faults} onStatusChange={setFaultStatus} />,
-                exact: false,
-                icon: AssignmentTurnedInOutlinedIcon
-            },
-        ] :
+        hamalOptions :
         [
             {
                 icon: AssignmentTurnedInOutlinedIcon,

@@ -9,6 +9,8 @@ type FaultStatus = "Todo" | "InProgress" | "Complete";
 
 type FaultCategory = "food" | "drugs" | "other";
 
+type Level = "all" | "district" | "napa";
+
 interface AuthorInfo {
   name: string;
   phone?: string;
@@ -38,7 +40,10 @@ interface FaultManager {
   faults: Fault[];
   isRefresh: boolean;
   lastRefreshTime: Date | null;
+  level: Level | null;
   setDate: (date: Date) => void;
+  setLevel: (level: Level) => void;
+  setLevelValue: (levelValue: string) => void;
   setUser: (user: UserInfo) => void;
   addFault: (fault: NewFault) => void;
   deleteFault: (id: string) => void;
