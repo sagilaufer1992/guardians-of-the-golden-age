@@ -12,7 +12,7 @@ import AutocompleteInput from "../Inputs/AutocompleteInput";
 import { fetchBackend } from "../../utils/fetchHelpers";
 
 interface Props {
-  onInitialize: (level: Level, value?: string) => void;
+  onInitialize: (level: Level, value: string | null) => void;
 }
 
 export default function FaultsStatus(props: Props) {
@@ -111,7 +111,7 @@ export default function FaultsStatus(props: Props) {
             const { onInitialize } = props;
             switch (level) {
               case "all": {
-                onInitialize("all");
+                onInitialize("all", null);
                 break;
               }
               case "district": {
