@@ -1,0 +1,45 @@
+.dashboard-initializer {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  .inititalizer-form {
+    background-color: white;
+    padding: 5px;
+    margin: 5px;
+    border-radius: 5px;
+    width: 50%;
+    max-width: 350px;
+    display: flex;
+    flex-direction: column;
+    & > * {
+      margin: 5px;
+    }
+    .radio-group {
+      & > * {
+        margin: 5px;
+      }
+      .radio-with-text-field {
+        display: flex;
+        justify-content: space-between;
+        .autocomplete {
+          width: 60%;
+          max-width: 250px;
+        }
+      }
+    }
+    .calendar-wrapper {
+      direction: ltr;
+      // overflow-x: hidden;
+      text-align: center;
+      .react-calendar {
+        direction: rtl;
+      }
+    }
+    .initialize {
+      width: fit-content;
+      align-self: center;
+    }
+  }
+}
