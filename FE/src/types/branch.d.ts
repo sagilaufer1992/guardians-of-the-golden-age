@@ -4,7 +4,5 @@ interface Branch {
     address: string; // כתובת
     napa: string; // נפה
     district: string; // מחוז
-    homeFrontCommandDistrict: string; // מחוז פיקוד העורף
-    municipalityName: string; // שם הרשות
-    municipalitySymbol: number; // מזהה הרשות
+    municipality: string; // שם הרשות
   }
