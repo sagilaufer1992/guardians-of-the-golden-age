@@ -1,41 +1,35 @@
 import './App.scss';
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom"
+import { BrowserRouter, Switch, Route } from "react-router-dom";
 import moment from "moment";
 
 import { useFaultManager } from './hooks/useFaultManager';
-import Security from './Security';
 import NavBar from "./Components/NavBar";
-import DatePanel from "./Components/DatePanel";
-import { useRoutes } from './routesConfig';
-import { isHamal } from "./utils/roles";
+import { hamalRoutes, managerRoutes } from './routesConfig';
+import Security from './Security';
+import { isHamal } from './utils/roles';
 
 function App() {
   const [user, setUser] = useState<gg.User | null>(null);
-  const [authFailed, setAuthFailed] = useState<string | null>(null);
   const [date, setDate] = useState<Date>(moment().startOf('day').toDate());
   const faultManager = useFaultManager();
-  const routes = useRoutes(user, faultManager);
+
+  const routes = !user ? [] : isHamal(user) ? hamalRoutes : managerRoutes;
 
   useEffect(() => faultManager.setUser(user), [user]);
   useEffect(() => faultManager.setDate(date), [date]);
 
-  return <Router>
+  return <BrowserRouter>
     <div className="app">
       <NavBar routes={routes} />
-      <Security user={user} setUser={setUser} authFailed={authFailed} setAuthFailed={setAuthFailed}>
-        {user && <div className="app-content">
-          {isHamal(user) && <DatePanel isRefresh={faultManager.isRefresh} lastRefreshTime={faultManager.lastRefreshTime} onDateChanged={setDate} />}
-          <Switch>
-            {routes.map(route => <Route key={route.name} exact={route.exact} path={route.path}>
-              {route.component}
-            </Route>)}
-            <Route render={() => <Redirect to="/" />}/>
-          </Switch>
-        </div>}
+      {/* {isHamal(user) && <DatePanel isRefresh={faultManager.isRefresh} lastRefreshTime={faultManager.lastRefreshTime} onDateChanged={setDate} />} */}
+      <Security user={user} setUser={setUser}>
+        <Switch>
+          {routes.map(route => <Route key={route.name} {...route} />)}
+        </Switch>
       </Security>
     </div>
-  </Router >
+  </BrowserRouter>;
 }
 
 export default App;

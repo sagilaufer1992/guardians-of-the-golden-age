@@ -5,7 +5,7 @@ import { useSnackbar } from "notistack";
 import FaultChat from "./FaultChat";
 import AddFaultMessage from "./AddFaultMessage";
 import { addMessage, getMessagesByFaultId } from "../../utils/fetchMessageFunctions";
-import UserProvider from "../../utils/UserProvider";
+import { useUser } from "../../utils/UserProvider";
 import { isHamal } from "../../utils/roles";
 
 interface Props {
@@ -14,7 +14,7 @@ interface Props {
 
 function FaultDetails({ fault }: Props) {
     const { enqueueSnackbar } = useSnackbar();
-    const user = useContext(UserProvider);
+    const user = useUser();
     const [messages, setMessages] = useState<Message[]>([]);
 
     useEffect(() => {

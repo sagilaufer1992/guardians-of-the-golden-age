@@ -5,7 +5,7 @@ import classnames from "classnames";
 import moment from "moment";
 import { Card } from "@material-ui/core";
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
-import UserProvider from "../../utils/UserProvider";
+import { useUser } from "../../utils/UserProvider";
 import FaultDetails from "./FaultDetails";
 import FaultButtons from "./FaultButtons";
 
@@ -16,7 +16,7 @@ interface Props {
 }
 
 export default React.memo(function Fault(props: Props) {
-  const user = useContext(UserProvider);
+  const user = useUser();
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
 
   const { _id, category, status, author, distributionCenter, date, branch } = props.fault;

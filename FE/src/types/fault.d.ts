@@ -45,7 +45,6 @@ interface FaultManager {
   setLevel: (level: Level) => void;
   setLevelValue: (levelValue: string) => void;
   setUser: (user: UserInfo) => void;
-  addFault: (fault: NewFault) => void;
   deleteFault: (id: string) => void;
   setFaultStatus: (faultId: string, status: FaultStatus) => void;
 }

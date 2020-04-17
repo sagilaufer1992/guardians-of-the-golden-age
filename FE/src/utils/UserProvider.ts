@@ -1,5 +1,5 @@
-import React from 'react';
+import React, { useContext } from 'react';
 
-const UserProvider = React.createContext<gg.User>(null!);
+export const UserProvider = React.createContext<gg.User>(null!);
 
-export default UserProvider;
+export function useUser() { return useContext(UserProvider); }

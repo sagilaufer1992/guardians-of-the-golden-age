@@ -1,20 +1,21 @@
 import "./index.scss";
-import React, { useState, useContext, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import { Container, Button } from "@material-ui/core";
+import { useSnackbar } from "notistack";
+
 import TextField from "../Inputs/TextField";
 import DropDownInput from "../Inputs/DropDownInput";
-import UserProvider from "../../utils/UserProvider";
+import { useUser } from "../../utils/UserProvider";
 import { categoryToText } from "../../utils/translations";
 import { toSelect } from "../../utils/inputs";
+import { useApi } from "../../hooks/useApi";
 
 const CATEGORY_OPTIONS = toSelect(categoryToText);
 
-interface Props {
-  onFaultAdded: (fault: NewFault) => void;
-}
-
-export default function AddFault(props: Props) {
-  const user = useContext(UserProvider);
+export default function AddFault() {
+  const user = useUser();
+  const [fetchFaults] = useApi("/api/faults");
+  const { enqueueSnackbar } = useSnackbar();
   const [isName, setIsNameValid] = useState<boolean>(false);
   const [isPhoneValid, setIsPhoneValid] = useState<boolean>(false);
   const [isContentValid, setIsContentValid] = useState<boolean>(false);
@@ -26,13 +27,21 @@ export default function AddFault(props: Props) {
 
   const centers = useMemo(() => user.authGroups.map(c => ({ label: c, value: c })), [user]);
 
+  async function _addFault(newFault: NewFault) {
+    const fault = await fetchFaults("", "POST", newFault);
+    if (!fault) return enqueueSnackbar("חלה שגיאה בהוספת תקלה", { variant: "error" });
+
+    enqueueSnackbar("התקלה נוספה בהצלחה", { variant: "success" });
+  };
+
   const onAddFault = () => {
-    props.onFaultAdded({
+    _addFault({
       distributionCenter,
       category,
       content,
       author: { name, phone }
     });
+
     cleanForm();
   }
 

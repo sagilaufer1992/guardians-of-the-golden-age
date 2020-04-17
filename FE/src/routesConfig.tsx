@@ -1,57 +1,41 @@
 import React from "react";
-import AddFault from "./Components/AddFault";
-import FaultsArea from "./Components/FaultsArea";
-import Dashboard from "./Components/Dashboard";
+import { RouteProps } from "react-router-dom";
 import AssignmentTurnedInOutlinedIcon from '@material-ui/icons/AssignmentTurnedInOutlined';
-import { isHamal } from "./utils/roles";
 
-interface Route {
+import AddFault from "./Components/AddFault";
+import Dashboard from "./Components/Dashboard";
+import FaultsArea from "./Components/FaultsArea";
+
+export interface AppRoute extends RouteProps {
     name: string;
     path: string;
-    component: JSX.Element;
-    exact: boolean;
-    icon: any;
+    icon: React.ComponentType;
 }
 
-export function useRoutes(user: gg.User | null, faultManager: FaultManager): Route[] {
-    if (!user) return [];
+export const FAULTS_ROUTE = "/faults";
 
-    const { faults, addFault, deleteFault, setFaultStatus, level } = faultManager;
+export const hamalRoutes: AppRoute[] = [{
+    path: "/",
+    exact: true,
+    name: "דאשבורד",
+    component: Dashboard,
+    icon: AssignmentTurnedInOutlinedIcon
+}, {
+    path: FAULTS_ROUTE,
+    name: "ניהול תקלות",
+    component: FaultsArea,
+    icon: AssignmentTurnedInOutlinedIcon
+}];
 
-    const hamalOptions = [
-        {
-            name: "דאשבורד",
-            path: "/",
-            component: <Dashboard faultsManager={faultManager} />,
-            exact: true,
-            icon: AssignmentTurnedInOutlinedIcon
-        }
-    ];
-
-    if (level) hamalOptions.push({
-        name: "ניהול תקלות",
-        path: "/faults",
-        component: <FaultsArea faults={faults} onStatusChange={setFaultStatus} />,
-        exact: false,
-        icon: AssignmentTurnedInOutlinedIcon
-    });
-    
-    return isHamal(user) ?
-        hamalOptions :
-        [
-            {
-                icon: AssignmentTurnedInOutlinedIcon,
-                name: "תקלה חדשה",
-                path: "/",
-                component: <AddFault onFaultAdded={addFault} />,
-                exact: true
-            },
-            {
-                icon: AssignmentTurnedInOutlinedIcon,
-                name: "צפיה בתקלות",
-                path: "/faults",
-                component: <FaultsArea faults={faults} onFaultDelete={deleteFault} />,
-                exact: false,
-            },
-        ];
-}
+export const managerRoutes: AppRoute[] = [{
+    path: "/",
+    exact: true,
+    name: "תקלה חדשה",
+    component: AddFault,
+    icon: AssignmentTurnedInOutlinedIcon
+}, {
+    path: FAULTS_ROUTE,
+    name: "צפיה בתקלות",
+    component: FaultsArea,
+    icon: AssignmentTurnedInOutlinedIcon
+}];

@@ -44,8 +44,6 @@ export default function Login({ onLogin }: Props) {
         }
         catch (err) {
             setError(typeof err === "string" ? err : "אירעה שגיאה בהתחברות");
-        }
-        finally {
             setLoading(false);
         }
     }

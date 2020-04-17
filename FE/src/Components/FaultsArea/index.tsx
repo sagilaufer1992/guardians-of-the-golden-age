@@ -8,7 +8,7 @@ import { Button, Container } from '@material-ui/core';
 import FilterListIcon from "@material-ui/icons/FilterList";
 import { ALL_ITEM } from "../../utils/inputs";
 import { getBranches } from "../../utils/fetchBranches";
-import UserProvider from "../../utils/UserProvider";
+import { useUser } from "../../utils/UserProvider";
 import Fault from "./Fault";
 import FaultsMenu from "./FaultsMenu";
 import getFilterDefinitions from "./filters";
@@ -20,7 +20,7 @@ interface Props {
 }
 
 const FaultsArea = (props: Props) => {
-    const user = useContext(UserProvider);
+    const user = useUser();
     const { enqueueSnackbar } = useSnackbar();
 
     const [isFilterOpen, setFilterOpen] = useState<boolean>(false);

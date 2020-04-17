@@ -13,7 +13,6 @@ export function useFaultManager(): FaultManager {
     const [level, setLevel] = useState<Level | null>(null);
     const [levelValue, setLevelValue] = useState<string>();
     const [faults, setFaults] = useState<Fault[]>([]);
-    const [faultsReport, setFaultsReport] = useState<FaultsReport>();
     const [isRefresh, setIsRefresh] = useState<boolean>(false);
     const lastRefreshTime: React.MutableRefObject<Date | null> = useRef(null);
     const refreshTimeout: React.MutableRefObject<any | null> = useRef(null);
@@ -50,15 +49,6 @@ export function useFaultManager(): FaultManager {
         setIsRefresh(false);
     }
 
-    async function internalAddFault(newFault: NewFault) {
-        const fault = await addFault(user!, newFault);
-        if (!fault) return enqueueSnackbar("חלה שגיאה בהוספת תקלה", { variant: "error" });
-
-        enqueueSnackbar("התקלה נוספה בהצלחה", { variant: "success" });
-        setFaults([...faults, fault]);
-        _refreshFaults();
-    };
-
     async function internalDeleteFault(id: string) {
         const fault = await deleteFault(user!, id);
         if (!fault) return enqueueSnackbar("חלה שגיאה מחיקת תקלה", { variant: "error" });
@@ -85,7 +75,6 @@ export function useFaultManager(): FaultManager {
         setLevel,
         setLevelValue,
         setUser,
-        addFault: internalAddFault,
         deleteFault: internalDeleteFault,
         setFaultStatus
     }

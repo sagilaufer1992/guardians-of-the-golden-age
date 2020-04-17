@@ -6,7 +6,7 @@ import Button from "@material-ui/core/Button";
 import Tooltip from "@material-ui/core/Tooltip";
 import { MdClose } from "react-icons/md";
 
-import UserProvider from "../../utils/UserProvider";
+import { useUser } from "../../utils/UserProvider";
 import { isHamal } from "../../utils/roles";
 
 interface Props {
@@ -16,7 +16,7 @@ interface Props {
 }
 
 export default React.memo(function FaultButtons(props: Props) {
-    const user = useContext(UserProvider);
+    const user = useUser();
 
     const { status, onStatusChange, onFaultDelete } = props;
 

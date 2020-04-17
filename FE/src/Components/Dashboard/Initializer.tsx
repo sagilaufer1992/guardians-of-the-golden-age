@@ -8,7 +8,6 @@ import {
   Radio,
   Button,
 } from "@material-ui/core";
-import DatePicker from "react-date-picker";
 import AutocompleteInput from "../Inputs/AutocompleteInput";
 import { fetchBackend } from "../../utils/fetchHelpers";
 

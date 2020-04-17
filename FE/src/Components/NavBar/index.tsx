@@ -1,33 +1,23 @@
 import "./index.scss";
 
 import React, { useState } from 'react';
-import { useHistory } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import classnames from "classnames";
-
-import { useMediaQuery, Theme, AppBar, Toolbar, Typography, Button, Drawer, List, ListItem, ListItemIcon, ListItemText, IconButton } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
-import logo from "../../assets/logo.png";
+import { useMediaQuery, Theme, AppBar, Toolbar, Typography, Button, Drawer, List, ListItem, IconButton } from '@material-ui/core';
 
-interface Route {
-    path: string;
-    name: string;
-    icon: any;
-}
+import logo from "../../assets/logo.png";
+import { AppRoute } from "../../routesConfig";
 
 interface Props {
-    routes: Route[];
+    routes: AppRoute[];
 }
 
 export default function NavBar({ routes }: Props) {
-    const history = useHistory();
+    const { pathname } = useLocation();
     const [showDrawer, setShowDrawer] = useState<boolean>(false);
 
     const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down("sm"));
-    const currentPath = window.location.pathname;
-
-    const onPageClick = (path: string) => {
-        history.push(path);
-    }
 
     return <AppBar position="static">
         <Toolbar className="nav-bar">
@@ -39,10 +29,10 @@ export default function NavBar({ routes }: Props) {
                 <IconButton edge="end" color="inherit">
                     <MenuIcon onClick={() => setShowDrawer(!showDrawer)} />
                 </IconButton> :
-                <PagesContainer className="bar-pages" selected={currentPath} onSelect={onPageClick} routes={routes} />}
+                <PagesContainer className="bar-pages" selected={pathname} routes={routes} />}
         </Toolbar>
         <Drawer anchor="right" open={showDrawer} onClose={() => setShowDrawer(false)}>
-            <PagesContainer className="drawer-pages" selected={currentPath} onSelect={onPageClick} routes={routes} />
+            <PagesContainer className="drawer-pages" selected={pathname} routes={routes} />
         </Drawer>
     </AppBar >
 }
@@ -50,22 +40,21 @@ export default function NavBar({ routes }: Props) {
 interface PageContainerProps {
     selected: string;
     className?: string;
-    onSelect: (name: string) => void;
-    routes: Route[];
+    routes: AppRoute[];
 }
 
-const PagesContainer = ({ selected, className, onSelect, routes }: PageContainerProps) => {
+const PagesContainer = ({ selected, className, routes }: PageContainerProps) => {
     return <List className={classnames("pages", className || "")}>
-        {routes.map(({ name, path, icon: IconElement }) => {
-            const isSelected = selected === path;
-            return <ListItem key={name} className="page-item">
-                <Button
-                    className={classnames("page-button", { selected: isSelected })}
-                    onClick={() => onSelect(path)}>
-                    {<IconElement className="page-icon" />}
-                    {name}
-                </Button>
+        {routes.map(({ name, path, icon: IconElement }) =>
+            <ListItem key={name} className="page-item">
+                <Link to={path}>
+                    <Button
+                        className={classnames("page-button", { selected: selected === path })}>
+                        <IconElement />
+                        {name}
+                    </Button>
+                </Link>
             </ListItem>
-        })}
+        )}
     </List>;
 }
