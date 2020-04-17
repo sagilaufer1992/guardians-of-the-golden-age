@@ -1,7 +1,7 @@
 import * as express from "express";
 import * as jwt from "jsonwebtoken";
 
-export const DEV_USER: gg.User = { token: "VERY_COOL_TOKEN", username: "dev-user", role: "manager", authGroups: ["מתנס אבו גוש"] };
+export const DEV_USER: gg.User = { token: "VERY_COOL_TOKEN", username: "dev-user", role: "hamal", authGroups: ["מתנס אבו גוש"] };
 export const JWT_ALGORITHM = "HS256";
 export const JWT_SECRET = process.env.USERS_TOKEN_SECRET;
 

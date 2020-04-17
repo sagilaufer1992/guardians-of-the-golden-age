@@ -2,6 +2,7 @@ import Fault from "./fault.model";
 import Branch from "../Branches/branch.model";
 
 import { MongooseFilterQuery } from "mongoose";
+import { getRangeFromDate } from "../utils/dates";
 
 export async function getFaultsInDate(req, res, next) {
     const { date } = req.query;
@@ -13,8 +14,8 @@ export async function getFaultsInDate(req, res, next) {
         query.distributionCenter = { $in: authGroups };
 
     if (date) {
-        const end = new Date(date).getTime() + 24 * 60 * 60 * 1000;
-        query.date = { "$gte": new Date(date), "$lt": new Date(end) };
+        const { start, end } = getRangeFromDate(new Date(date));
+        query.date = { "$gte": start, "$lt": end };
     }
 
     const faults = await Fault.find(query);

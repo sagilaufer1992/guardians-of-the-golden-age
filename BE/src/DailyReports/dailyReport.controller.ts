@@ -1,22 +1,24 @@
 import DailyReport from "./dailyReport.model";
 import Branch from "../Branches/branch.model";
+import Job from "./job.model";
 import dailyReportModel from "./dailyReport.model";
+import { getRangeFromDate } from "../utils/dates";
 
-const LOWER_LEVEL_DICTIONARY: be.Dictionary<(branch: be.Branch) => string> = {
+const LOWER_LEVEL_DICTIONARY: Record<string, (branch: be.Branch) => string> = {
     "national": branch => branch.district,
     "district": branch => branch.napa,
     "napa": branch => branch.municipalityName,
     "municipality": branch => branch.name
 }
 
-const BRANCH_FILTER_DICTIONARY: be.Dictionary<any> = {
+const BRANCH_FILTER_DICTIONARY: Record<string, any> = {
     "national": () => { },
     "district": district => ({ district: { $eq: district } }),
     "napa": napa => ({ napa: { $eq: napa } }),
     "municipality": municipality => ({ municipalityName: { $eq: municipality } })
 }
 
-export async function getFutureReports(req, res) {
+export async function createFutureReports(req, res) {
     const { role } = req.user as gg.User;
 
     if (role !== "hamal" && role !== "admin") res.status(403).json("אינך מורשה");
@@ -42,58 +44,85 @@ export async function getFutureReports(req, res) {
 }
 
 export async function getDailyReport(req, res) {
-    const { date: isoDate, level, value } = req.query;
-    const date = new Date(isoDate);
+    const { date, level, value } = req.query;
 
     if (!level || !LOWER_LEVEL_DICTIONARY[level]) return res.status(400).json("רמת ההסתכלות אינה תקינה");
 
-    const branchFilter = { ...BRANCH_FILTER_DICTIONARY[level](value) };
-    const branches = await Branch.find(branchFilter);
+    const branches = await Branch.find(BRANCH_FILTER_DICTIONARY[level](value));
     const branchIds = branches.map(branch => branch.id);
 
-    const dailyDate = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0);
+    const { start, end } = getRangeFromDate(new Date(date));
+    const dateRange = { $gte: start, $lt: end };
 
-    const filter = { date: { $eq: dailyDate }, branchId: { $in: branchIds } };
-    const reports = (await DailyReport.find(filter)).map(_ => _.toJSON());
+    const totals = await DailyReport.find({
+        date: dateRange,
+        branchId: { $in: branchIds },
+    }, "branchId total");
 
-    const groupedReports = _groupBy(level, branches as any, reports)
+    const jobs = await Job.find({
+        city: { $in: branches.map(_ => _.name) },
+        date: dateRange
+    });
+
+    const groupedReports = _groupBySubLevels(level, branches, totals, jobs)
         .map((report: any) => ({ ...report, pendingDelivery: report.total - report.deliveryFailed }));
 
     res.json(groupedReports);
 }
 
-function _groupBy(level: be.Level, branches: be.Branch[], reports: be.dailyReport[]) {
-    const groupedReports = {}
-    const branchDictionary = branches.reduce((pv, v) => ({ ...pv, [v.id]: v }), {});
+function _groupBySubLevels(level: be.Level, branches: be.Branch[], reports: be.DailyReport[], jobs: gg.Job[]): be.DailyReport[] {
+    const branchDictionary: Record<string, be.Branch> = branches.reduce((pv, v) => ({ ...pv, [v.id]: v }), {});
 
     const lowerLevelDisplayName = LOWER_LEVEL_DICTIONARY[level];
 
-    reports.forEach(report => {
-        const branch = branchDictionary[report.branchId];
+    const totals: Record<string, be.DailyReport> = {};
+
+    for (const { branchId, total } of reports) {
+        const branch = branchDictionary[branchId];
         const name = lowerLevelDisplayName(branch);
 
-        if (!groupedReports[name]) groupedReports[name] = { name: name };
+        if (totals[name]) totals[name].total += total;
+        else totals[name] = {
+            branchId: branch.id,
+            total,
+            delivered: 0,
+            deliveryFailed: 0,
+            deliveryInProgress: 0,
+            deliveryFailReasons: { declined: 0, failed: 0 },
+            deliveryProgressStatuses: { unassigned: 0, notdone: 0 }
+        };
 
-        const groupedReport = groupedReports[name];
+        for (const { status, tasks } of jobs.filter(_ => _.city === branch.name)) {
+            if (status === "CANCELED") continue;
 
-        groupedReports[name] = {
-            ...groupedReport,
-            total: report.total + (groupedReport.total || 0),
-            delivered: report.delivered + (groupedReport.delivered || 0),
-            deliveryFailed: report.deliveryFailed + (groupedReport.deliveryFailed || 0),
-            deliveryFailReasons: (_unionFailedReasons(report.deliveryFailReasons, groupedReport.deliveryFailReasons || {}))
+            for (const { status: taskStatus, amount } of tasks) {
+                switch (taskStatus) {
+                    // delivered
+                    case "DELIVERED":
+                        totals[name].delivered += amount;
+                        break;
+                    // deliveryInProgress
+                    case "READY":
+                        totals[name].deliveryInProgress += amount;
+                        totals[name].deliveryProgressStatuses.unassigned += amount;
+                        break;
+                    case "UNDELIVERED":
+                        totals[name].deliveryInProgress += amount;
+                        totals[name].deliveryProgressStatuses.notdone += amount;
+                        break;
+                    // deliveryFailed
+                    case "DECLINED":
+                        totals[name].deliveryFailed += amount;
+                        totals[name].deliveryFailReasons.declined += amount;
+                        break;
+                    case "FAILED":
+                        totals[name].deliveryFailed += amount;
+                        totals[name].deliveryFailReasons.failed += amount;
+                        break;
+                }
+            }
         }
-    });
+    }
 
-    return Object.values(groupedReports);
-}
-
-function _unionFailedReasons(first: be.Dictionary<number>, second: be.Dictionary<number>) {
-    const result = { ...first };
-
-    Object.keys(second).forEach(key => {
-        result[key] = (result[key] || 0) + second[key];
-    });
-
-    return result
+    return Object.values(totals);
 }

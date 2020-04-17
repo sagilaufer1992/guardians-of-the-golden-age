@@ -23,13 +23,22 @@ declare namespace gg {
     // example: מ"ח ת"א
     authGroups: string[];
   }
+
+  interface Task {
+    needType: "FOOD" | "DRUGS";
+    amount: number;
+    status: "READY" | "UNDELIVERED" | "DELIVERED" | "DECLINED" | "FAILED";
+  }
+
+  interface Job {
+    city: string;
+    date: Date;
+    status: "PENDING" | "DONE" | "CANCELED";
+    tasks: Task[];
+  }
 }
 
 declare namespace be {
-  interface Dictionary<T> {
-    [index: string]: T
-  }
-
   interface NewFault {
     author: AuthorInfo;
     distributionCenter: string;
@@ -81,12 +90,13 @@ declare namespace be {
     amount: number;
   }
 
-  interface dailyReport {
-    branchId: string;
-    date: Date;
+  interface DailyReport {
+    branchId: number;
     total: number;
     delivered: number;
     deliveryFailed: number;
-    deliveryFailReasons: Dictionary<number>;
+    deliveryInProgress: number;
+    deliveryFailReasons: Record<"declined" | "failed", number>;
+    deliveryProgressStatuses: Record<"unassigned" | "notdone", number>;
   }
 }

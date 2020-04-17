@@ -36,4 +36,4 @@ const BranchSchema = new mongoose.Schema({
     }
 });
 
-export default faultsDB.model("Branch", BranchSchema);
+export default faultsDB.model<mongoose.Document & be.Branch>("Branch", BranchSchema);
