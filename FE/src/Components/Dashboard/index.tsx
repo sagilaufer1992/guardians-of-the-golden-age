@@ -80,26 +80,25 @@ const FAULTS_REPORTS: FaultsReport = {
 }
 
 interface Props {
+  faultsManager: FaultManager;
 }
 
 export default React.memo(function Dashboard(props: Props) {
-  const [date, setDate] = useState<Date>();
-  const [level, setLevel] = useState<string>("");
-  const [value, setValue] = useState<string>("");
+  const { level, setLevel, setLevelValue } = props.faultsManager;
+
 
   return (
     <div className="dashboard">
-      {date && level ? (
+      { level ? (
         <>
         <DeliveryStatus reports={DELIVERY_REPORTS} />
         <FaultsStatus report={FAULTS_REPORTS} />
         </>
       ) : (
         <Initializer
-          onInitialize={(date, level, value) => {
-            setDate(date);
+          onInitialize={(level, value) => {
             setLevel(level);
-            if (value) setValue(value);
+            if (value) setLevelValue(value);
           }}
         />
       )}

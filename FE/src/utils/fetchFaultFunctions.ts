@@ -21,6 +21,11 @@ export async function getFaultsByDate({ token }: gg.User, date: Date): Promise<F
     return await _fetchFaultsApi(`?date=${date.toISOString()}`, { token }) as any;
 }
 
+export async function getFaultsByDateAndLevel({ token }: gg.User, date: Date, level: Level = "all", levelValue?: string): Promise<Fault[] | null> {
+    // TODO: not really working, needs BE
+    return await _fetchFaultsApi(`?date=${date.toISOString()}&level=${level}${levelValue && `&value=${levelValue}` || ""}`, { token }) as any;
+}
+
 export async function addFault({ token }: gg.User, fault: NewFault): Promise<Fault | null> {
     return await _fetchFaultsApi("", {
         method: "POST",

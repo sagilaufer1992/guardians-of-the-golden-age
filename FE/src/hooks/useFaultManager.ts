@@ -10,6 +10,8 @@ export function useFaultManager(): FaultManager {
     const { enqueueSnackbar } = useSnackbar();
     const [user, setUser] = useState<gg.User | null>(null);
     const [date, setDate] = useState<Date>(moment().startOf('day').toDate());
+    const [level, setLevel] = useState<Level | null>(null);
+    const [levelValue, setLevelValue] = useState<string>();
     const [faults, setFaults] = useState<Fault[]>([]);
     const [faultsReport, setFaultsReport] = useState<FaultsReport>();
     const [isRefresh, setIsRefresh] = useState<boolean>(false);
@@ -25,7 +27,7 @@ export function useFaultManager(): FaultManager {
 
     useEffect(() => {
         if (user) _refreshFaults();
-    }, [date, user]);
+    }, [date, level, user]);
 
     async function _refreshFaults() {
         // can't call _refreshFaults if already refreshing - can cause bugs (change date while refresh)
@@ -78,7 +80,10 @@ export function useFaultManager(): FaultManager {
         faults,
         isRefresh,
         lastRefreshTime: lastRefreshTime.current,
+        level,
         setDate,
+        setLevel,
+        setLevelValue,
         setUser,
         addFault: internalAddFault,
         deleteFault: internalDeleteFault,

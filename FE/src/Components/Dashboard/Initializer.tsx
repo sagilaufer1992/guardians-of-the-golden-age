@@ -12,10 +12,8 @@ import DatePicker from "react-date-picker";
 import AutocompleteInput from "../Inputs/AutocompleteInput";
 import { fetchBackend } from "../../utils/fetchHelpers";
 
-type Level = "all" | "district" | "napa";
-
 interface Props {
-  onInitialize: (date: Date, level: Level, value?: string) => void;
+  onInitialize: (level: Level, value?: string) => void;
 }
 
 export default function FaultsStatus(props: Props) {
@@ -102,17 +100,6 @@ export default function FaultsStatus(props: Props) {
       {loadingMessage}
       <div className="inititalizer-form">
         {radioGroup}
-        <div className="calendar-wrapper">
-          <DatePicker
-            onChange={(newDate: Date | Date[]) => setDate(newDate as Date)}
-            value={date}
-            maxDate={now}
-            required
-            locale="he-IL"
-            format="dd/MM/yyyy"
-            clearIcon={null}
-          />
-        </div>
         <Button
           className="initialize"
           color="primary"
@@ -125,15 +112,15 @@ export default function FaultsStatus(props: Props) {
             const { onInitialize } = props;
             switch (level) {
               case "all": {
-                onInitialize(date, "all");
+                onInitialize("all");
                 break;
               }
               case "district": {
-                onInitialize(date, "district", selectedDistrict);
+                onInitialize("district", selectedDistrict);
                 break;
               }
               case "napa": {
-                onInitialize(date, "napa", selectedNapa);
+                onInitialize("napa", selectedNapa);
                 break;
               }
             }
