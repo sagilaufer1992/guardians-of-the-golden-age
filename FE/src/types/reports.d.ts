@@ -9,8 +9,14 @@ interface DeliveryReport {
 
 type ReasonsDictionary = { [key: string]: number };
 
-interface FaultReport {
-    name: string;
+interface FaultsReport {
     total: number;
-    solved: number;
+    open: number;
+    reasons: FaultReasonReport[];
+}
+
+interface FaultReasonReport {
+    category: FaultCategory;
+    open: number;
+    closed: number;
 }

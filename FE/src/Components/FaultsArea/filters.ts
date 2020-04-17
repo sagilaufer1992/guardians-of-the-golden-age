@@ -1,16 +1,5 @@
 import { toSelect, ALL_ITEM } from "../../utils/inputs";
-
-export const statuses: Record<FaultStatus, string> = {
-    Todo: "תקלות שנפתחו",
-    InProgress: "תקלות בתהליך",
-    Complete: "תקלות שנסגרו"
-};
-
-export const categories: Record<FaultCategory, string> = {
-    food: "מחסור בסלי מזון",
-    drugs: "מחסור בתרופות",
-    other: "אחר"
-};
+import { statusToText, categoryToText } from "../../utils/translations";
 
 function getFilters(branches: Branch[]): Record<string, FilterDefinition> {
     const districts = Array.from(new Set(branches.map(b => b.district)));
@@ -35,14 +24,14 @@ function getFilters(branches: Branch[]): Record<string, FilterDefinition> {
             type: "DropDown",
             title: "סטטוס",
             defaultValue: ALL_ITEM.value,
-            options: [ALL_ITEM, ...toSelect(statuses)]
+            options: [ALL_ITEM, ...toSelect(statusToText)]
 
         },
         category: {
             type: "DropDown",
             title: "קטגוריה",
             defaultValue: ALL_ITEM.value,
-            options: [ALL_ITEM, ...toSelect(categories)]
+            options: [ALL_ITEM, ...toSelect(categoryToText)]
         }
     }
 }

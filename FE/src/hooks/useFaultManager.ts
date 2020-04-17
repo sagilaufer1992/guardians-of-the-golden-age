@@ -11,6 +11,7 @@ export function useFaultManager(): FaultManager {
     const [user, setUser] = useState<gg.User | null>(null);
     const [date, setDate] = useState<Date>(moment().startOf('day').toDate());
     const [faults, setFaults] = useState<Fault[]>([]);
+    const [faultsReport, setFaultsReport] = useState<FaultsReport>();
     const [isRefresh, setIsRefresh] = useState<boolean>(false);
     const lastRefreshTime: React.MutableRefObject<Date | null> = useRef(null);
     const refreshTimeout: React.MutableRefObject<any | null> = useRef(null);
