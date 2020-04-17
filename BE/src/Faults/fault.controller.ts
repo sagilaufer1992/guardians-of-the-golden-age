@@ -89,16 +89,12 @@ export async function faultsStatus(req, res, next) {
         const { level, value, date } = req.query;
         const query: MongooseFilterQuery<be.Fault> = {};
 
-        console.log(`${level}  ${value}  ${date}`);
-
         if (date) {
             const end = new Date(date).getTime() + 24 * 60 * 60 * 1000;
             query.date = { "$gte": new Date(date), "$lt": new Date(end) };
         }
 
         if (level && level !== "national") query[`branch.${level}`] = value;
-
-        console.log(query)
 
         const total = await Fault.countDocuments(query);
         const open = await Fault.countDocuments({ ...query, status: { $ne: "Complete" } });

@@ -1,39 +1,32 @@
 import "./Initializer.scss";
 
 import React, { useState, useEffect } from "react";
-import {
-  CircularProgress,
-  FormControlLabel,
-  RadioGroup,
-  Radio,
-  Button,
-} from "@material-ui/core";
+import { CircularProgress, FormControlLabel, RadioGroup, Radio, Button } from "@material-ui/core";
+
 import AutocompleteInput from "../Inputs/AutocompleteInput";
-import { fetchBackend } from "../../utils/fetchHelpers";
+import { useApi } from "../../hooks/useApi";
 
 interface Props {
   onInitialize: (level: Level, value: string | null) => void;
 }
 
 export default function FaultsStatus(props: Props) {
-  const [level, setLevel] = useState<Level>("all");
+  const [fetchApi] = useApi();
+  const [level, setLevel] = useState<Level>("national");
   const [districts, setDistricts] = useState<string[]>([]);
   const [selectedDistrict, setSelectedDistrict] = useState<string>("");
   const [napas, setNapas] = useState<string[]>([]);
   const [selectedNapa, setSelectedNapa] = useState<string>("");
-  const now = new Date();
-  const [date, setDate] = useState<Date>(now);
   const [isLoading, setIsloading] = useState<boolean>(true);
 
   useEffect(() => {
-    const districtsPromise = fetchBackend("/api/districts").then((res) =>
-      res.json()
-    );
-    const napasPromise = fetchBackend("/api/napas").then((res) => res.json());
+    const districtsPromise = fetchApi<string[]>({ route: "/api/districts" });
+    const napasPromise = fetchApi<Branch[]>({ route: "/api/napas" });
+
     Promise.all([districtsPromise, napasPromise]).then(
-      ([districtResults, napasResults]) => {
-        setNapas(napasResults.map((napa: { napa: string }) => napa.napa));
-        setDistricts(districtResults);
+      ([districtResult, napasResult]) => {
+        napasResult && setNapas(napasResult.map(_ => _.napa));
+        districtResult && setDistricts(districtResult);
         setIsloading(false);
       }
     );
@@ -55,8 +48,8 @@ export default function FaultsStatus(props: Props) {
         <FormControlLabel
           control={<Radio color="primary" />}
           label="ארצי"
-          value="all"
-          checked={level === "all"}
+          value="national"
+          checked={level === "national"}
         />
       </div>
       <div className="radio-with-text-field">
@@ -110,8 +103,8 @@ export default function FaultsStatus(props: Props) {
           onClick={() => {
             const { onInitialize } = props;
             switch (level) {
-              case "all": {
-                onInitialize("all", null);
+              case "national": {
+                onInitialize("national", null);
                 break;
               }
               case "district": {

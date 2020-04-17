@@ -1,7 +1,6 @@
 import "./index.scss";
 import React, { useState, useMemo } from "react";
 import { Container, Button } from "@material-ui/core";
-import { useSnackbar } from "notistack";
 
 import TextField from "../Inputs/TextField";
 import DropDownInput from "../Inputs/DropDownInput";
@@ -15,7 +14,6 @@ const CATEGORY_OPTIONS = toSelect(categoryToText);
 export default function AddFault() {
   const user = useUser();
   const [fetchFaults] = useApi("/api/faults");
-  const { enqueueSnackbar } = useSnackbar();
   const [isName, setIsNameValid] = useState<boolean>(false);
   const [isPhoneValid, setIsPhoneValid] = useState<boolean>(false);
   const [isContentValid, setIsContentValid] = useState<boolean>(false);
@@ -27,19 +25,17 @@ export default function AddFault() {
 
   const centers = useMemo(() => user.authGroups.map(c => ({ label: c, value: c })), [user]);
 
-  async function _addFault(newFault: NewFault) {
-    const fault = await fetchFaults("", "POST", newFault);
-    if (!fault) return enqueueSnackbar("חלה שגיאה בהוספת תקלה", { variant: "error" });
 
-    enqueueSnackbar("התקלה נוספה בהצלחה", { variant: "success" });
-  };
-
-  const onAddFault = () => {
-    _addFault({
-      distributionCenter,
-      category,
-      content,
-      author: { name, phone }
+  const onAddFault = async () => {
+    await fetchFaults({
+      method: "POST",
+      successMessage: "התקלה נוספה בהצלחה",
+      body: {
+        distributionCenter,
+        category,
+        content,
+        author: { name, phone }
+      },
     });
 
     cleanForm();
@@ -68,9 +64,7 @@ export default function AddFault() {
               setPhone(value);
             }}
             value={phone}
-            isValid={(value: string) => {
-              return !!value.match(/\d{10}/)?.length && value.length === 10 && value.startsWith("05")
-            }} />
+            isValid={/05\d{8}/.test} />
         </div>
         <div className="fault-field">
           <label>נקודת חלוקה</label>

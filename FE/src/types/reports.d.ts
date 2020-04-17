@@ -1,11 +1,15 @@
+type FailReason = "declined" | "failed";
+type ProgressStatus = "unassigned" | "notdone";
+
 interface DeliveryReport {
     name: string;
     total: number;
     delivered: number;
     deliveryFailed: number;
-    pendingDelivery: number;
-    deliveryFailReasons: ReasonsDictionary;
-}
+    deliveryInProgress: number;
+    deliveryFailReasons: Record<FailReason, number>;
+    deliveryProgressStatuses: Record<ProgressStatus, number>;
+  }
 
 type ReasonsDictionary = { [key: string]: number };
 

@@ -9,7 +9,7 @@ type FaultStatus = "Todo" | "InProgress" | "Complete";
 
 type FaultCategory = "food" | "drugs" | "other";
 
-type Level = "all" | "district" | "napa";
+type Level = "national" | "district" | "napa";
 
 interface AuthorInfo {
   name: string;
@@ -34,17 +34,4 @@ interface Fault extends ExtendItem<NewFault> {
 
 interface Message extends ExtendItem<NewMessage> {
   faultId: string;
-}
-
-interface FaultManager {
-  faults: Fault[];
-  isRefresh: boolean;
-  lastRefreshTime: Date | null;
-  level: Level | null;
-  setDate: (date: Date) => void;
-  setLevel: (level: Level) => void;
-  setLevelValue: (levelValue: string) => void;
-  setUser: (user: UserInfo) => void;
-  deleteFault: (id: string) => void;
-  setFaultStatus: (faultId: string, status: FaultStatus) => void;
 }

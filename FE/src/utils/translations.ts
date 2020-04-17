@@ -9,3 +9,13 @@ export const categoryToText: Record<FaultCategory, string> = {
     drugs: "מחסור בתרופות",
     other: "אחר"
 };
+
+export const failRasonToText: Record<FailReason, string> = {
+    declined: 'סורב ע"י הנזקק',
+    failed: "כישלון בחלוקה"
+};
+
+export const progressStatusToText: Record<ProgressStatus, string> = {
+    unassigned: "ללא מתנדב",
+    notdone: "בתהליך חלוקה"
+};
