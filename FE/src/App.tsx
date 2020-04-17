@@ -15,7 +15,6 @@ function App() {
   return <BrowserRouter>
     <div className="app">
       <NavBar routes={routes} />
-      {/* {isHamal(user) && <DatePanel isRefresh={faultManager.isRefresh} lastRefreshTime={faultManager.lastRefreshTime} onDateChanged={setDate} />} */}
       <Security user={user} setUser={setUser}>
         <Switch>
           {routes.map(route => <Route key={route.name} {...route} />)}
