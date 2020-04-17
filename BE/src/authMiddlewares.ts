@@ -9,15 +9,12 @@ export const requireAuthMiddleware: express.RequestHandler = (req, res, next) =>
     const { authorization } = req.headers;
 
     if (!authorization?.startsWith("Bearer"))
-        return res.status(401).send("No authorization header in request headers");
+        return res.status(400).send("לא נשלחו פרטי ההזדהות");
 
     if (process.env.NODE_ENV === "development") {
         req.username = DEV_USER.username;
         return next();
     }
-
-    if (!authorization?.startsWith("Bearer"))
-        return res.status(400).send("No authorization header in request headers");
 
     let token: string = null;
 
@@ -27,7 +24,7 @@ export const requireAuthMiddleware: express.RequestHandler = (req, res, next) =>
         req.username = username;
     }
     catch (err) {
-        return res.status(401).send("Invalid authorization token");
+        return res.status(401).send("פרטי ההזדהות אינם תקניים");
     }
 
     next();
@@ -43,7 +40,7 @@ export const userInfoMiddleware: express.RequestHandler = async (req, res, next)
 
     const user = await User.findOne({ username: req.username });
 
-    if (!user) return res.status(401).send("User not found");
+    if (!user) return res.status(401).send("המשתמש לא קיים במאגר");
 
     req.user = {
         token: req.headers.authorization.substring(7),

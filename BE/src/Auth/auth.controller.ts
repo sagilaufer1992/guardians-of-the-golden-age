@@ -13,14 +13,14 @@ export async function getUserByToken(req, res, next) {
 export async function loginUser(req, res, next) {
     const { username, password } = req.body;
 
-    if (!username || !password) return res.status(400).send("invalid username or password");
+    if (!username || !password) return res.status(400).send("שם המשתמש או הסיסמה אינם תקניים");
 
     if (process.env.NODE_ENV === "development")
         return res.status(200).json({ ...DEV_USER, access_token: DEV_USER.token });
 
     const user = await User.findOne({ username });
 
-    if (!user) return res.status(400).send("invalid username or password");
+    if (!user) return res.status(400).send("שם המשתמש או הסיסמה אינם תקניים");
 
     const { passwordHash, _id, ...userInfo } = user.toJSON();
 
@@ -33,6 +33,6 @@ export async function loginUser(req, res, next) {
         res.status(200).json({ access_token, token_type: "bearer", ...userInfo });
     }
     catch (err) {
-        return res.status(400).send("invalid username or password");
+        return res.status(400).send("שם המשתמש או הסיסמה אינם תקניים");
     }
 }

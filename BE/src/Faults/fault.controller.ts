@@ -27,7 +27,7 @@ export async function getFaultById(req, res, next) {
     const fault = await Fault.findById(req.params.id);
 
     if (!fault) {
-        return res.status(404).send(`Fault not found with id of ${req.params.id}`);
+        return res.status(404).send("לא נמצאה התקלה המבוקשת");
     }
 
     res.status(200).json(fault);
@@ -64,7 +64,7 @@ export async function updateFault(req, res, next) {
         res.status(200).json(fault);
     }
     catch {
-        return res.status(404).send(`Fault not found with id of ${req.params.id}`);
+        return res.status(404).send("אירעה שגיאה בעדכון התקלה");
     }
 }
 
@@ -72,13 +72,13 @@ export async function deleteFault(req, res, next) {
     const fault = await Fault.findById(req.params.id);
     const { authGroups, role } = req.user as gg.User;
 
-    if (!fault) return res.status(404).json(`Fault not found with id of ${req.params.id}`);
+    if (!fault) return res.status(404).json("לא נמצאה התקלה למחיקה");
 
     const { status, distributionCenter } = fault.toJSON() as be.Fault;
 
-    if (role !== "manager" || !authGroups.includes(distributionCenter)) return res.status(403).json("Not Allowed");
+    if (role !== "manager" || !authGroups.includes(distributionCenter)) return res.status(403).json("אין לך הרשאות למחוק תקלה זו");
 
-    if (status !== "Todo") return res.status(400).send("You can delete only when status is Todo");
+    if (status !== "Todo") return res.status(400).send("לא ניתן למחוק תקלה לאחר שהתחילו לטפל בה");
 
     await Fault.findByIdAndRemove(req.params.id);
     res.status(200).json({});
