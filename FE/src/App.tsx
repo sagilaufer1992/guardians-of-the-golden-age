@@ -1,6 +1,6 @@
 import './App.scss';
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom"
+import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom"
 import moment from "moment";
 
 import { useFaultManager } from './hooks/useFaultManager';
@@ -30,6 +30,7 @@ function App() {
             {routes.map(route => <Route key={route.name} exact={route.exact} path={route.path}>
               {route.component}
             </Route>)}
+            <Route render={() => <Redirect to="/" />}/>
           </Switch>
         </div>}
       </Security>
