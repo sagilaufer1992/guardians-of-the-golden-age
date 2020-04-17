@@ -22,18 +22,10 @@ const BranchSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    homeFrontCommandDistrict: {
+    municipality: {
         type: String,
-        required: true
-    },
-    municipalityName: {
-        type: String,
-        required: true
-    },
-    municipalitySymbol: {
-        type: Number,
         required: true
     }
 });
 
-export default faultsDB.model<mongoose.Document & be.Branch>("Branch", BranchSchema);
+export default faultsDB.model<mongoose.Document & be.Branch>("Branch", BranchSchema, "branches");

@@ -10,15 +10,16 @@ interface FutureReport extends Branch {
 
 const COLUMN_TO_KEY: Dictionary<string> = {
     A: "district",
-    B: "municipalitySymbol",
-    D: "municipalityName",
-    E: "homeFrontCommandDistrict",
-    F: "napa",
-    H: "id",
-    I: "name",
-    O: "address",
-    Q: "amount"
+    B: "napa",
+    C: "municipality",
+    D: "name",
+    E: "id",
+    F: "address",
+    I: "amount"
 }
+
+//TODO: לשנות לשם אמיתי שנתחיל לטעון קבצים ממשתמשים
+const SHEET_NAME ="פורמט טעינה";
 
 export function extractDailyReports(file: File) {
     return new Promise((resolve, reject) => {
@@ -27,9 +28,9 @@ export function extractDailyReports(file: File) {
             const binaryData = reader.result;
             const workBook = XLSX.read(binaryData, { type: 'binary' });
 
-            if (!workBook.Sheets["ריכוז"]) reject("הקובץ לא בפורמט הנכון");
+            if (!workBook.Sheets[SHEET_NAME]) reject("הקובץ לא בפורמט הנכון");
 
-            const data = XLSX.utils.sheet_to_json(workBook.Sheets["ריכוז"], { header: "A", raw: true, });
+            const data = XLSX.utils.sheet_to_json(workBook.Sheets[SHEET_NAME], { header: "A", raw: true, });
             const reports = data.slice(1).map(_convertToReport).filter(_ => _.id) as FutureReport[];
             
             resolve(_unionDuplicates(reports));

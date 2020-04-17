@@ -21,9 +21,9 @@ export async function getNapas(req, res, next) {
 
 export async function getMunicipalities(req, res, next) {
     const branches = await _getRelevantBranches(req.user);
-    const municipalities = branches.map(({ district, napa, municipalityName, municipalitySymbol }) => ({ district, napa, municipalityName, municipalitySymbol }));
+    const municipalities = branches.map(({ district, napa, municipality }) => ({ district, napa, municipality }));
 
-    res.status(200).json(_removeDuplicates(municipalities, item => item.municipalitySymbol));
+    res.status(200).json(_removeDuplicates(municipalities, item => item.municipality));
 }
 
 async function _getRelevantBranches({ role, authGroups }: gg.User) {

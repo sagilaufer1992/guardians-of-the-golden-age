@@ -82,8 +82,7 @@ declare namespace be {
     address: string; // כתובת
     napa: string; // נפה
     district: string; // מחוז
-    municipalityName: string; // שם הרשות
-    municipalitySymbol: number; // מזהה הרשות
+    municipality: string; // שם הרשות
   }
 
   interface FutureReport extends Branch {

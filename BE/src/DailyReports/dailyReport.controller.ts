@@ -7,7 +7,7 @@ import { getRangeFromDate } from "../utils/dates";
 const LOWER_LEVEL_DICTIONARY: Record<string, (branch: be.Branch) => string> = {
     "national": branch => branch.district,
     "district": branch => branch.napa,
-    "napa": branch => branch.municipalityName,
+    "napa": branch => branch.municipality,
     "municipality": branch => branch.name
 }
 
@@ -29,13 +29,14 @@ export async function createFutureReports(req, res) {
     const branchIdsDictionary = branches.map(_ => _.id).reduce((pv, v) => ({ ...pv, [v]: v }), {});
     const newBranches = reports.filter(report => !branchIdsDictionary[report.id]);
 
-    const dailyReportFilter = { date: { $eq: new Date(date) } };
-    const dbDailyReports = await dailyReportModel.find(dailyReportFilter);
-    const dbReportsDictionary = dbDailyReports.map(_ => _.id).reduce((pv, v) => ({ ...pv, [v]: v }), {});
-
+    const { start, end } = getRangeFromDate(new Date(date));
+    const dateRange = { $gte: start, $lt: end };
+    const dbDailyReports = await dailyReportModel.find({ date: dateRange });
+    
+    const dbReportsDictionary = dbDailyReports.map(_ => _.branchId).reduce((pv, v) => ({ ...pv, [v]: v }), {});
     const newReports = reports.filter(report => !dbReportsDictionary[report.id]);
 
-    newBranches.forEach(async report => await Branch.create(report));
+    newBranches.forEach(async branch => await Branch.create(branch));
 
     newReports.forEach(async report =>
         await dailyReportModel.create({ branchId: report.id, date: new Date(date), total: report.amount }));

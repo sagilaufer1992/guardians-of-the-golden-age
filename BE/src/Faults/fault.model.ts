@@ -53,11 +53,8 @@ const FaultSchema = new mongoose.Schema({
         district: {
             type: String,
         },
-        municipalityName: {
+        municipality: {
             type: String,
-        },
-        municipalitySymbol: {
-            type: Number,
         }
     }
 });

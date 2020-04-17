@@ -29,7 +29,7 @@ export default React.memo(function Fault(props: Props) {
       <Card className="fault">
         <div className={classnames("status", status)} />
         <div className="content">
-          <div className="hierarchy">{branch ? `${branch.district} / ${branch.napa} / ${branch.municipalityName} ` : ""}</div>
+          <div className="hierarchy">{branch ? `${branch.district} / ${branch.napa} / ${branch.municipality} ` : ""}</div>
           <div className="name">{branch ? `${branch.name} - ${branch.id}` : distributionCenter}</div>
           <div className="more-info">
             <span>{`נפתחה בשעה - ${moment(date).format("HH:mm")}`}</span>
