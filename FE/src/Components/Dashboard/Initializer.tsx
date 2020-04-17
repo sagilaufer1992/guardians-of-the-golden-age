@@ -40,9 +40,9 @@ export default function FaultsStatus(props: Props) {
   }, []);
 
   const loadingMessage = isLoading ? (
-    <div>
-      מביא את רשימת המחוזות והנפות...
-      <CircularProgress />
+    <div className="loading-message">
+      <CircularProgress className="loading" />
+      <div>מביא את רשימת המחוזות והנפות...</div>
     </div>
   ) : null;
 
