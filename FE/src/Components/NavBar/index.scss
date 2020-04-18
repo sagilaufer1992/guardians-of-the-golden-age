@@ -11,6 +11,14 @@ $primary-color: #007aff;
       margin-left: 10px;
     }
   }
+  .nav-left {
+    .logout-button {
+      color: white !important;
+      font-weight: normal;
+      font-size: 14px;
+      padding: 5px 15px;
+    }
+  }
 }
 .pages {
   display: flex;
@@ -32,13 +40,22 @@ $primary-color: #007aff;
     }
   }
 }
-.drawer-pages {
-  flex-direction: column;
-  .page-button {
-    &.selected {
-        color: white !important;
-        background-color: $primary-color;
+.nav-drawer {
+  .drawer-pages {
+    flex-direction: column;
+    .page-button {
+      &.selected {
+          color: white !important;
+          background-color: $primary-color;
+      }
     }
+  }
+  .logout-button {
+    color: $primary-color !important;
+    font-weight: normal;
+    font-size: 14px;
+    padding: 5px 15px;
+    margin-top: 5px;
   }
 }
 .bar-pages {

@@ -46,7 +46,7 @@ export default function FaultsStatus({ report }: Props) {
             </div>
             <div className="progress-list">
                 {report.reasons.map(({ category, open, closed }) => {
-                    return <div className="progress-item">
+                    return <div className="progress-item" key={category}>
                         <div className="category-progress">
                             <div className="category">{categoryToText[category]}</div>
                             <div className="progress-bar-container">

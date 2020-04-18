@@ -14,9 +14,14 @@ function App() {
 
   const routes = !user ? [] : isHamal(user) ? hamalRoutes : managerRoutes;
 
+  function _logOut() {
+    window.localStorage.clear();
+    window.location.reload();
+  }
+
   return <BrowserRouter>
     <div className="app">
-      <NavBar routes={routes} />
+      <NavBar user={user} routes={routes} onLogout={_logOut} />
       <Security user={user} setUser={setUser}>
         <Switch>
           {routes.map(({ component: Component, ...route }) => <Route key={route.name} {...route}

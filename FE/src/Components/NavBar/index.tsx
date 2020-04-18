@@ -4,16 +4,19 @@ import React, { useState } from 'react';
 import { useLocation, Link } from "react-router-dom";
 import classnames from "classnames";
 import MenuIcon from '@material-ui/icons/Menu';
-import { useMediaQuery, Theme, AppBar, Toolbar, Typography, Button, Drawer, List, ListItem, IconButton } from '@material-ui/core';
+import { useMediaQuery, Theme, AppBar, Toolbar, Typography, Button, Drawer, List, ListItem, IconButton, Divider } from '@material-ui/core';
 
 import logo from "../../assets/logo.png";
 import { AppRoute } from "../../routesConfig";
+import { MdExitToApp } from "react-icons/md";
 
 interface Props {
     routes: AppRoute[];
+    user: gg.User | null;
+    onLogout: () => void;
 }
 
-export default function NavBar({ routes }: Props) {
+export default function NavBar({ routes, user, onLogout }: Props) {
     const { pathname } = useLocation();
     const [showDrawer, setShowDrawer] = useState<boolean>(false);
 
@@ -25,14 +28,19 @@ export default function NavBar({ routes }: Props) {
                 <img className="logo" src={logo} height={isMobile ? 24 : 30} alt="logo" />
                 {"משמרות הזהב"}
             </Typography>
-            {isMobile ?
-                <IconButton edge="end" color="inherit">
-                    <MenuIcon onClick={() => setShowDrawer(!showDrawer)} />
-                </IconButton> :
-                <PagesContainer className="bar-pages" selected={pathname} routes={routes} />}
+            {!isMobile && <PagesContainer className="bar-pages" selected={pathname} routes={routes} />}
+            {user && <div className="nav-left">
+                {!isMobile ?
+                    <Button className="logout-button" startIcon={<MdExitToApp />} onClick={onLogout}>התנתק</Button> :
+                    <IconButton edge="end" color="inherit">
+                        <MenuIcon onClick={() => setShowDrawer(!showDrawer)} />
+                    </IconButton>}
+            </div>}
         </Toolbar>
-        <Drawer anchor="right" open={showDrawer} onClose={() => setShowDrawer(false)}>
+        <Drawer className="nav-drawer" anchor="right" open={showDrawer} onClose={() => setShowDrawer(false)}>
             <PagesContainer className="drawer-pages" selected={pathname} routes={routes} />
+            <Divider variant="middle" />
+            <Button className="logout-button" startIcon={<MdExitToApp />} onClick={onLogout}>התנתק</Button>
         </Drawer>
     </AppBar >
 }
@@ -49,8 +57,8 @@ const PagesContainer = ({ selected, className, routes }: PageContainerProps) => 
             <ListItem key={name} className="page-item">
                 <Link to={path}>
                     <Button
+                        startIcon={<IconElement />}
                         className={classnames("page-button", { selected: selected === path })}>
-                        <IconElement />
                         {name}
                     </Button>
                 </Link>
