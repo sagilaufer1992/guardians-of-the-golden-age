@@ -6,7 +6,8 @@ export const statusToText: Record<FaultStatus, string> = {
 
 export const categoryToText: Record<FaultCategory, string> = {
     food: "מחסור בסלי מזון",
-    drugs: "מחסור בתרופות",
+    supplier: "בעיה בספק",
+    volunteers: "בעיה במתנדבים",
     other: "אחר"
 };
 

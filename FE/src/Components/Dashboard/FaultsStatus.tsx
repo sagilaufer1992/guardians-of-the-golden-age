@@ -13,6 +13,8 @@ interface Props {
     report: FaultsReport,
 }
 
+const REASONS_ORDER: Record<FaultCategory, number> = { food: 1, supplier: 2, volunteers: 3, other: 4 }
+
 export default function FaultsStatus({ report }: Props) {
     const history = useHistory();
 
@@ -24,6 +26,12 @@ export default function FaultsStatus({ report }: Props) {
             return (currentTotal > prev) ? currentTotal : prev;
         }, 0)
     }, [report])
+
+    const sortedReasons = useMemo(() => {
+        return report.reasons.sort((first, second) => {
+            return (REASONS_ORDER[first.category] || 0) - (REASONS_ORDER[second.category] || 0)
+        })
+    }, [report]);
 
     return <Card className="panel faults-status-panel">
         <div className="panel-content">
@@ -45,7 +53,7 @@ export default function FaultsStatus({ report }: Props) {
                 </Card>
             </div>
             <div className="progress-list">
-                {report.reasons.map(({ category, open, closed }) => {
+                {sortedReasons.map(({ category, open, closed }) => {
                     return <div className="progress-item" key={category}>
                         <div className="category-progress">
                             <div className="category">{categoryToText[category]}</div>

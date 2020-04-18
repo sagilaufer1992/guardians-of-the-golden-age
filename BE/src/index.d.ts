@@ -50,7 +50,7 @@ declare namespace be {
 
   type FaultStatus = "Todo" | "InProgress" | "Complete";
 
-  type FaultCategory = "food" | "drugs" | "other";
+  type FaultCategory = "food" | "supplier" | "volunteers" | "other";
 
   interface AuthorInfo {
     name: string;

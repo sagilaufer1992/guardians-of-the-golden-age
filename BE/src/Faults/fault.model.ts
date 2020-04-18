@@ -22,7 +22,7 @@ const FaultSchema = new mongoose.Schema({
     category: {
         type: String,
         required: true,
-        enum: ['food', 'drugs', 'other']
+        enum: ["food", "supplier", "volunteers", "other"]
     },
     author: {
         name: {

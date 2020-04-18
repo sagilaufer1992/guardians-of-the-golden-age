@@ -7,7 +7,7 @@ interface NewFault {
 
 type FaultStatus = "Todo" | "InProgress" | "Complete";
 
-type FaultCategory = "food" | "drugs" | "other";
+type FaultCategory = "food" | "supplier" | "volunteers" | "other";
 
 type Level = "national" | "district" | "napa";
 
