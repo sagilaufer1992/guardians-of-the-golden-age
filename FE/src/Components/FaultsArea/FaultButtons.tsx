@@ -1,6 +1,6 @@
 import "./FaultButtons.scss";
 
-import React, { useContext } from "react";
+import React from "react";
 import classnames from "classnames";
 import Button from "@material-ui/core/Button";
 import Tooltip from "@material-ui/core/Tooltip";
@@ -15,10 +15,13 @@ interface Props {
     onFaultDelete: () => void;
 }
 
-export default React.memo(function FaultButtons(props: Props) {
+export default React.memo(function FaultButtons({ status, onStatusChange, onFaultDelete }: Props) {
     const user = useUser();
 
-    const { status, onStatusChange, onFaultDelete } = props;
+    function _deleteFault(e: React.MouseEvent<any>) {
+        e.stopPropagation();
+        onFaultDelete();
+    }
 
     if (isHamal(user)) {
         return <div className="fault-status-buttons">
@@ -38,7 +41,7 @@ export default React.memo(function FaultButtons(props: Props) {
     if (status !== "Todo") return null;
 
     return <Tooltip title="הסר תקלה" placement="right">
-        <div><MdClose className="delete-fault-button" onClick={onFaultDelete} /></div>
+        <div><MdClose className="delete-fault-button" onClick={_deleteFault} /></div>
     </Tooltip>;
 });
 
@@ -51,10 +54,12 @@ function StateButton({ onStatusChange: onChangeStatus, status }: ButtonProps) {
     const label = status === "Todo" ? "החזר ללא טופל" :
         status === "Complete" ? "סמן כטופל" : "סמן שבתהליך";
 
-    return <Button className={classnames("button", status)}
-        onClick={() => onChangeStatus(status)}
-        variant="outlined"
-        size="small">
+    function _onButtonClick(e: React.MouseEvent<any>) {
+        e.stopPropagation();
+        onChangeStatus(status);
+    }
+
+    return <Button className={classnames("button", status)} onClick={_onButtonClick} variant="outlined" size="small">
         {label}
     </Button>
 }

@@ -1,13 +1,10 @@
-html, body, #root {
-  height: 100%;
-}
 .snackbar-root {
   text-align: center;
 }
 .app {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  min-height: 100vh;
   background-color: whitesmoke;
   color: #282c34;
   direction: rtl;  

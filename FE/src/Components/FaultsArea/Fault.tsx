@@ -26,7 +26,7 @@ export default React.memo(function Fault(props: Props) {
 
   return (
     <>
-      <Card className="fault">
+      <Card className="fault" onClick={() => setIsDetailsOpen(!isDetailsOpen)}>
         <div className={classnames("status", status)} />
         <div className="content">
           <div className="hierarchy">{branch ? `${branch.district} / ${branch.napa} / ${branch.municipality} ` : ""}</div>
@@ -39,7 +39,7 @@ export default React.memo(function Fault(props: Props) {
         </div>
         <div className="left-side">
           <FaultButtons status={status} onStatusChange={_onStatusChange} onFaultDelete={_onFaultDelete} />
-          <div className="show-history" onClick={() => setIsDetailsOpen(!isDetailsOpen)}>
+          <div className="show-history">
             {isDetailsOpen ? (
               <><MdKeyboardArrowUp className="expander-arrow" />סגור פרטים</>
             ) : (
