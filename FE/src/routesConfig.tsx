@@ -40,9 +40,8 @@ export const managerRoutes: AppRoute[] = [{
     component: FaultsArea,
     icon: AssignmentTurnedInOutlinedIcon
 }, {
-    icon: AssignmentTurnedInOutlinedIcon,
+    path: "/deliveryReport",
     name: "טופס ידני",
-    path: "/delivetyReport",
     component: DeliveryReport,
-    exact: false
+    icon: AssignmentTurnedInOutlinedIcon
 },];

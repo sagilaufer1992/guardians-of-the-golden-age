@@ -74,7 +74,7 @@ const FaultsList = (props: Props) => {
 
     const onFilterChange = (fieldName: string, value: string) => setFilters({ ...filters, [fieldName]: value });
 
-    return <Container className="faults-area" maxWidth="md">
+    return <div className="faults-area">
         <div className="faults-area-header">
             <div className="title">רשימת התקלות</div>
             <Button
@@ -102,7 +102,7 @@ const FaultsList = (props: Props) => {
                     onStatusChange={props.onStatusChange}
                     onFaultDelete={props.onFaultDelete} />)}
         </div>
-    </Container>
+    </div>
 }
 
 export default React.memo(FaultsList);

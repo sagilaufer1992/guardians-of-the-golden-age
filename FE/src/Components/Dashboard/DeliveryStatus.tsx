@@ -37,7 +37,7 @@ export default function DeliveryStatus(props: Props) {
 
     const _convertToChartData = (data: any, translation: any) => Object.keys(data).map(key => ({ name: translation[key], value: data[key] }));
 
-    return (<Card className="delivery-status">
+    return (<Card className="panel delivery-status">
         {props.reports.length === 0 && <div className="no-reports">
             לא נמצאו דיווחים בזמן וההיררכיה המבוקשים
         </div>}

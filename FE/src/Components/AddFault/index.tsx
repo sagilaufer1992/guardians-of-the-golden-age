@@ -25,7 +25,6 @@ export default function AddFault() {
 
   const centers = useMemo(() => user.authGroups.map(c => ({ label: c, value: c })), [user]);
 
-
   const onAddFault = async () => {
     await fetchFaults({
       method: "POST",
@@ -64,7 +63,7 @@ export default function AddFault() {
               setPhone(value);
             }}
             value={phone}
-            isValid={/05\d{8}/.test} />
+            isValid={/^05\d{8}$/.test} />
         </div>
         <div className="fault-field">
           <label>נקודת חלוקה</label>

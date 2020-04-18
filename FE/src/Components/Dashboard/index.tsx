@@ -1,6 +1,7 @@
 import "./index.scss";
 
 import React, { useState } from "react";
+import { Container } from "@material-ui/core";
 
 import { useApi } from "../../hooks/useApi";
 import Initializer from "./Initializer";
@@ -71,7 +72,7 @@ export default React.memo(function Dashboard() {
         newDeliveryReports && setDeliveryReports(newDeliveryReports);
     }
 
-    return <div className="dashboard-container">
+    return <Container className="dashboard-container" maxWidth="xl">
         {level ? <>
             <DatePanel task={_refreshReports} interval={REFRESH_INTERVAL} />
             <div className="dashboard">
@@ -80,5 +81,5 @@ export default React.memo(function Dashboard() {
             </div>
         </> :
             <Initializer onInitialize={onInitialize} />}
-    </div>;
+    </Container>;
 });

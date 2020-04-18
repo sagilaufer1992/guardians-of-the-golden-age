@@ -3,5 +3,8 @@
     display: flex;
     justify-content: space-between;
     width: 100%;
+    .panel {
+      margin: 0 20px;
+    }
   }
 }

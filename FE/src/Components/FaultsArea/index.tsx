@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { Container } from '@material-ui/core';
 
 import { useApi } from '../../hooks/useApi';
 
@@ -35,8 +36,8 @@ export default function FaultsArea() {
         datePanelRef.current?.refresh();
     }
 
-    return <>
+    return <Container className="faults-area-container" maxWidth="md">
         <DatePanel ref={datePanelRef} task={_refreshFaults} interval={REFRESH_INTERVAL} />
         <FaultsList faults={faults} onFaultDelete={deleteFault} onStatusChange={setFaultStatus} />
-    </>;
+    </Container>;
 }

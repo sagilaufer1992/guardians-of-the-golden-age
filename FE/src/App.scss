@@ -10,18 +10,5 @@ html, body, #root {
   height: 100%;
   background-color: whitesmoke;
   color: #282c34;
-  direction: rtl;
-  .date-panel {
-    width: 90%;
-    margin: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    .last-fault-update {
-      display: inline;
-    }
-    .fault-fetch-progress {
-      margin-left: 10px;
-    }
-  }  
+  direction: rtl;  
 }

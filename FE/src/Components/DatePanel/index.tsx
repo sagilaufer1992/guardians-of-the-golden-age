@@ -1,3 +1,5 @@
+import "./index.scss";
+
 import React from "react";
 import moment from "moment";
 import { CircularProgress, Hidden } from '@material-ui/core';
@@ -66,11 +68,10 @@ export default class DatePanel extends React.PureComponent<Props, State> {
             this._lastRefreshTime = new Date();
         }
         catch { }
-        finally {
-            if (this._disposed) return;
-            
-            this._refreshTimeout = setTimeout(this.refresh, this.props.interval);
-            this.setState({ isRefresh: false });
-        }
+
+        if (this._disposed) return;
+
+        this._refreshTimeout = setTimeout(this.refresh, this.props.interval);
+        this.setState({ isRefresh: false });
     }
 }

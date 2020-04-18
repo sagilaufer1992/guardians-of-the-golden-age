@@ -25,7 +25,7 @@ export default function FaultsStatus({ report }: Props) {
         }, 0)
     }, [report])
 
-    return <Card className="faults-status-panel">
+    return <Card className="panel faults-status-panel">
         <div className="title">תקלות שנפתחו</div>
         <div className="status-container">
             <Card className="status">
