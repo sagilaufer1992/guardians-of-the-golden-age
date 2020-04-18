@@ -22,7 +22,7 @@ export async function getMessageById(req, res, next) {
 export async function addMessage(req, res, next) {
     if (!req.query.faultId) return res.status(400).send("שגיאה בהוספת תגובה - יש לציין את מזהה התקלה");
 
-    const { token, authGroups, ...baseUser } = req.user;
+    const { token, branches, municipalities, ...baseUser } = req.user;
 
     const fault = await Fault.findById(req.query.faultId);
 

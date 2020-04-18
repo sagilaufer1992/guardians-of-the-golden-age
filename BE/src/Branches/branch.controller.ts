@@ -26,12 +26,10 @@ export async function getMunicipalities(req, res, next) {
     res.status(200).json(_removeDuplicates(municipalities, item => item.municipality));
 }
 
-async function _getRelevantBranches({ role, authGroups }: gg.User) {
-    const branches = await Branch.find() as unknown as be.Branch[];
+async function _getRelevantBranches({ role, branches: userBranches }: gg.User) {
+    if (role === "hamal" || role === "admin") return await Branch.find();
 
-    if (role === "hamal" || role === "admin") return branches;
-
-    return branches.filter(item => authGroups.includes(item.name));
+    return await Branch.find({ name: { $in: userBranches } });
 }
 
 function _removeDuplicates<T>(array: T[], getId: (item: T) => any = _ => _) {

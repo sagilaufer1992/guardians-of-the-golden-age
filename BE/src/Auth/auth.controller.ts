@@ -2,6 +2,7 @@ import { compare } from "bcrypt";
 import * as jwt from "jsonwebtoken";
 
 import User from "./auth.model";
+import Branch from "../Branches/branch.model";
 import { DEV_USER, JWT_SECRET, JWT_ALGORITHM } from "../authMiddlewares";
 
 const EXP_TIME = 24 * 60 * 60 * 1000;
@@ -22,7 +23,11 @@ export async function loginUser(req, res, next) {
 
     if (!user) return res.status(400).send("שם המשתמש או הסיסמה אינם תקניים");
 
-    const { passwordHash, _id, ...userInfo } = user.toJSON();
+    const { passwordHash, _id, authGroups, ...userInfo } = user.toJSON();
+
+    let branches = [];
+    if (user.role !== "hamal" && user.role !== "admin")
+        branches = await Branch.find({ municipality: { $in: authGroups } });
 
     try {
         const result = await compare(password, passwordHash);
@@ -30,7 +35,13 @@ export async function loginUser(req, res, next) {
 
         const access_token = jwt.sign({ sub: username, exp: Date.now() + EXP_TIME }, JWT_SECRET, { algorithm: JWT_ALGORITHM });
 
-        res.status(200).json({ access_token, token_type: "bearer", ...userInfo });
+        res.status(200).json({
+            access_token,
+            token_type: "bearer",
+            municipalities: authGroups,
+            branches: branches.map(_ => _.name),
+            ...userInfo
+        });
     }
     catch (err) {
         return res.status(400).send("שם המשתמש או הסיסמה אינם תקניים");

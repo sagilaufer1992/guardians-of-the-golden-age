@@ -18,10 +18,8 @@ declare namespace gg {
 
   interface User extends UserInfo {
     token: string;
-
-    // list of distribution centers that a user is authorized to see
-    // example: מ"ח ת"א
-    authGroups: string[];
+    municipalities: string[];
+    branches: string[];
   }
 
   interface Task {

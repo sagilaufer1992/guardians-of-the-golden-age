@@ -1,3 +1,9 @@
+const env = process.env.NODE_ENV = process.env.NODE_ENV || "development";
+
+if (env === "development")
+    require("dotenv").config({ path: `.env.${env}` });
+
+
 import * as express from "express";
 require('express-async-errors');
 import * as cors from "cors";
@@ -5,14 +11,9 @@ import * as cors from "cors";
 import initDBConnections from "./cosmosdb";
 import { requireAuthMiddleware, userInfoMiddleware } from "./authMiddlewares";
 
-const env = process.env.NODE_ENV = process.env.NODE_ENV || "development";
-
-if (env === "development")
-    require("dotenv").config({ path: `.env.${env}` });
-
 (async function () {
     const app = express();
-    app.use(express.json({limit:'50mb'}));
+    app.use(express.json({ limit: '50mb' }));
     app.use(cors());
 
     app.get("/api/test", (req, res) => res.status(200).send("Server Is Up"));

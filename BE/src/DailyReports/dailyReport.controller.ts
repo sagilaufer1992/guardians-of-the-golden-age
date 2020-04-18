@@ -61,7 +61,7 @@ export async function getDailyReport(req, res) {
     }, "branchId total");
 
     const jobs = await Job.find({
-        city: { $in: branches.map(_ => _.name) },
+        city: { $in: branches.map(_ => _.municipality) },
         date: dateRange
     });
 
@@ -93,7 +93,7 @@ function _groupBySubLevels(level: be.Level, branches: be.Branch[], reports: be.D
             deliveryProgressStatuses: { unassigned: 0, notdone: 0 }
         };
 
-        for (const { status, tasks } of jobs.filter(_ => _.city === branch.name)) {
+        for (const { status, tasks } of jobs.filter(_ => _.city === branch.municipality)) {
             if (status === "CANCELED") continue;
 
             for (const { status: taskStatus, amount } of tasks) {

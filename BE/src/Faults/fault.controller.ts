@@ -6,12 +6,12 @@ import { getRangeFromDate } from "../utils/dates";
 
 export async function getFaultsInDate(req, res, next) {
     const { date } = req.query;
-    const { role, authGroups } = req.user;
+    const { role, branches } = req.user;
 
     const query: MongooseFilterQuery<be.Fault> = {};
 
     if (role === "manager" || role === "volunteer")
-        query.distributionCenter = { $in: authGroups };
+        query.distributionCenter = { $in: branches };
 
     if (date) {
         const { start, end } = getRangeFromDate(new Date(date));
@@ -34,7 +34,7 @@ export async function getFaultById(req, res, next) {
 }
 
 export async function addFault(req, res, next) {
-    const { token, authGroups, ...baseUser } = req.user;
+    const { token, branches, municipalities, ...baseUser } = req.user;
     const distributionCenter = req.body.distributionCenter;
 
     let newFault = {
@@ -70,13 +70,13 @@ export async function updateFault(req, res, next) {
 
 export async function deleteFault(req, res, next) {
     const fault = await Fault.findById(req.params.id);
-    const { authGroups, role } = req.user as gg.User;
+    const { branches, role } = req.user as gg.User;
 
     if (!fault) return res.status(404).json("לא נמצאה התקלה למחיקה");
 
     const { status, distributionCenter } = fault.toJSON() as be.Fault;
 
-    if (role !== "manager" || !authGroups.includes(distributionCenter)) return res.status(403).json("אין לך הרשאות למחוק תקלה זו");
+    if (role !== "manager" || !branches.includes(distributionCenter)) return res.status(403).json("אין לך הרשאות למחוק תקלה זו");
 
     if (status !== "Todo") return res.status(400).send("לא ניתן למחוק תקלה לאחר שהתחילו לטפל בה");
 
