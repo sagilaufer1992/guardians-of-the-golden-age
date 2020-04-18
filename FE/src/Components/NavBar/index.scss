@@ -17,6 +17,9 @@ $primary-color: #007aff;
   .page-item {
     width: fit-content;
     padding: 0 !important;
+    a {
+      text-decoration: none;
+    }
     .page-button {
       font-size: 14px;
       font-weight: normal;

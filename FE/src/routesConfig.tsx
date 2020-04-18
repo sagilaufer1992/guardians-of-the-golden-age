@@ -1,6 +1,6 @@
 import React from "react";
 import { RouteProps } from "react-router-dom";
-import AssignmentTurnedInOutlinedIcon from '@material-ui/icons/AssignmentTurnedInOutlined';
+import { Dashboard as DashboardIcon, AssignmentInd, PostAdd, Create } from "@material-ui/icons";
 
 import AddFault from "./Components/AddFault";
 import Dashboard from "./Components/Dashboard";
@@ -26,12 +26,12 @@ export const hamalRoutes: AppRoute[] = [{
     exact: true,
     name: "דאשבורד",
     component: Dashboard,
-    icon: AssignmentTurnedInOutlinedIcon
+    icon: DashboardIcon
 }, {
     path: FAULTS_ROUTE,
     name: "ניהול תקלות",
     component: FaultsArea,
-    icon: AssignmentTurnedInOutlinedIcon
+    icon: AssignmentInd
 }];
 
 export const managerRoutes: AppRoute[] = [{
@@ -39,15 +39,15 @@ export const managerRoutes: AppRoute[] = [{
     exact: true,
     name: "תקלה חדשה",
     component: AddFault,
-    icon: AssignmentTurnedInOutlinedIcon
+    icon: PostAdd
 }, {
     path: FAULTS_ROUTE,
     name: "צפיה בתקלות",
     component: FaultsArea,
-    icon: AssignmentTurnedInOutlinedIcon
+    icon: AssignmentInd
 }, {
     path: "/deliveryReport",
     name: "טופס ידני",
     component: DeliveryReport,
-    icon: AssignmentTurnedInOutlinedIcon
+    icon: Create
 },];
