@@ -10,10 +10,10 @@ import { UserProvider } from "../../utils/UserProvider";
 import DailySummary from "./DailySummary";
 import ManualFrom from "./ManualForm";
 
-const total = 1200;
 const branchId = 1111111;
 
 export default function DeliveryReport() {
+    const [total, setTotal] = useState<number>(0);
     const [delivered, setDelivered] = useState<number>(0);
     const [deliveryFailed, setDeliveryFailed] = useState<number>(0);
     const [isManualFormDone, setIsManualFormDone] = useState<boolean>(false);
@@ -56,6 +56,7 @@ export default function DeliveryReport() {
         const deliveryReport = await getDeliveryReport(user, branchId, date);
         if (!deliveryReport) return enqueueSnackbar("אירעה שגיאה בטעינת הטופס", { variant: "error" });
 
+        setTotal(deliveryReport.total);
         setDelivered(deliveryReport.delivered);
         setDeliveryFailed(deliveryReport.deliveryFailed);
 
