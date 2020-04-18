@@ -1,13 +1,13 @@
 import "./Fault.scss";
 
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import classnames from "classnames";
 import moment from "moment";
 import { Card } from "@material-ui/core";
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
-import { useUser } from "../../utils/UserProvider";
 import FaultDetails from "./FaultDetails";
 import FaultButtons from "./FaultButtons";
+import { categoryToText } from "../../utils/translations";
 
 interface Props {
   fault: Fault;
@@ -16,7 +16,6 @@ interface Props {
 }
 
 export default React.memo(function Fault(props: Props) {
-  const user = useUser();
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
 
   const { _id, category, status, author, distributionCenter, date, branch } = props.fault;
@@ -34,7 +33,7 @@ export default React.memo(function Fault(props: Props) {
           <div className="more-info">
             <span>{`נפתחה בשעה - ${moment(date).format("HH:mm")}`}</span>
             <span>{`על ידי ${author.name}`}</span>
-            <span>{`בקטגוריה ${category}`}</span>
+            <span>{`בקטגוריה ${categoryToText[category]}`}</span>
           </div>
         </div>
         <div className="left-side">

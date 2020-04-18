@@ -63,7 +63,7 @@ export default function AddFault() {
               setPhone(value);
             }}
             value={phone}
-            isValid={/^05\d{8}$/.test} />
+            isValid={x => !!x && !!/^05\d{8}$/.test(x)} />
         </div>
         <div className="fault-field">
           <label>נקודת חלוקה</label>
