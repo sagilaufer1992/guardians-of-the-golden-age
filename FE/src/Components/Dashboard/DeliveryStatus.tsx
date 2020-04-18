@@ -51,13 +51,13 @@ export default function DeliveryStatus(props: Props) {
                 <div className="location">{name}</div>
                 <div className="delivery-data">
                     <div className="status-bar">
-                        <span className="delivered" style={deliveredStyle}>{delivered}</span>
-                        <PieChartTooltip title={_generatePieChart(IN_PROGRESS_COLOR, _convertToChartData(deliveryProgressStatuses, progressStatusToText))}>
+                        {delivered > 0 && <span className="delivered" style={deliveredStyle}>{delivered}</span>}
+                        {deliveryInProgress > 0 && <PieChartTooltip title={_generatePieChart(IN_PROGRESS_COLOR, _convertToChartData(deliveryProgressStatuses, progressStatusToText))}>
                             <span className="in-progress" style={inProgressStyle}>{deliveryInProgress}</span>
-                        </PieChartTooltip>
-                        <PieChartTooltip title={_generatePieChart(FAILED_COLOR, _convertToChartData(deliveryFailReasons, failRasonToText))}>
+                        </PieChartTooltip>}
+                        {deliveryFailed > 0 && <PieChartTooltip title={_generatePieChart(FAILED_COLOR, _convertToChartData(deliveryFailReasons, failRasonToText))}>
                             <span className="failed" style={failedStyle}>{deliveryFailed}</span>
-                        </PieChartTooltip>
+                        </PieChartTooltip>}
                     </div>
                     <div className="text-info">
                         <span>סה"כ - {total} </span>|

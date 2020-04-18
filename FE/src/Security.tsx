@@ -21,7 +21,7 @@ export default function Security({ user, setUser, children }: Props) {
     }
 
     function _handleAuthFail(err: string) {
-        window.localStorage.removeItem(TOKEN_STORAGE_KEY);
+        window.localStorage.clear();
         setAuthFailed(err);
     }
 

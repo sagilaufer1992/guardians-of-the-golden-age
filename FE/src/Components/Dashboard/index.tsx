@@ -1,6 +1,6 @@
 import "./index.scss";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Container } from "@material-ui/core";
 
 import { useApi } from "../../hooks/useApi";
@@ -46,6 +46,9 @@ const TEST_DELIVERY_REPORTS: DeliveryReport[] = [{
 
 const REFRESH_INTERVAL: number = 30 * 1000;
 
+const LEVEL_KEY = "dashboard_level";
+const LEVEL_VALUE_KEY = "dashboard_level_value";
+
 export default React.memo(function Dashboard({ date, setDate }: AppRouteProps) {
     const [level, setLevel] = useState<Level | null>(null);
     const [levelValue, setLevelValue] = useState<string | null>(null);
@@ -55,9 +58,22 @@ export default React.memo(function Dashboard({ date, setDate }: AppRouteProps) {
     const [fetchFaultsReport] = useApi("/api/faults/status");
     const [fetchDeliveryReports] = useApi("/api/dailyReports");
 
+    useEffect(() => {
+        const level = window.localStorage.getItem(LEVEL_KEY);
+        if (level) setLevel(level as Level);
+
+        const levelValue = window.localStorage.getItem(LEVEL_VALUE_KEY);
+        if (levelValue) setLevelValue(levelValue);
+    }, [])
+
     const onInitialize = (level: Level, value: string | null) => {
-        if (value) setLevelValue(value);
+        if (value) {
+            setLevelValue(value);
+            window.localStorage.setItem(LEVEL_VALUE_KEY, value);
+        }
+
         setLevel(level);
+        window.localStorage.setItem(LEVEL_KEY, level);
     }
 
     async function _refreshReports(date: Date) {
