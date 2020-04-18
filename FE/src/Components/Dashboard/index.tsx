@@ -16,7 +16,7 @@ const TEST_DELIVERY_REPORTS: DeliveryReport[] = [{
     delivered: 234,
     deliveryFailed: 40,
     deliveryInProgress: 50,
-    deliveryFailReasons: { declined: 10, failed: 30 },
+    deliveryFailReasons: { declined: 10, unreachable: 15, address: 10, other: 5 },
     deliveryProgressStatuses: { unassigned: 20, notdone: 30 }
 }, {
     name: "מקום חשוב",
@@ -24,7 +24,7 @@ const TEST_DELIVERY_REPORTS: DeliveryReport[] = [{
     delivered: 234,
     deliveryFailed: 40,
     deliveryInProgress: 50,
-    deliveryFailReasons: { declined: 10, failed: 30 },
+    deliveryFailReasons: { declined: 10, unreachable: 15, address: 10, other: 5 },
     deliveryProgressStatuses: { unassigned: 20, notdone: 30 }
 }, {
     name: "מקום חשוב",
@@ -32,7 +32,7 @@ const TEST_DELIVERY_REPORTS: DeliveryReport[] = [{
     delivered: 234,
     deliveryFailed: 40,
     deliveryInProgress: 50,
-    deliveryFailReasons: { declined: 10, failed: 30 },
+    deliveryFailReasons: { declined: 10, unreachable: 15, address: 10, other: 5 },
     deliveryProgressStatuses: { unassigned: 20, notdone: 30 }
 }, {
     name: "מקום חשוב",
@@ -40,7 +40,7 @@ const TEST_DELIVERY_REPORTS: DeliveryReport[] = [{
     delivered: 234,
     deliveryFailed: 40,
     deliveryInProgress: 50,
-    deliveryFailReasons: { declined: 10, failed: 30 },
+    deliveryFailReasons: { declined: 10, unreachable: 15, address: 10, other: 5 },
     deliveryProgressStatuses: { unassigned: 20, notdone: 30 }
 }];
 

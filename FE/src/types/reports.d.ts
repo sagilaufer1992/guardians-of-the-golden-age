@@ -1,4 +1,4 @@
-type FailReason = "declined" | "failed";
+type FailReason = "declined" | "unreachable" | "address" | "other";
 type ProgressStatus = "unassigned" | "notdone";
 
 interface DeliveryReport {

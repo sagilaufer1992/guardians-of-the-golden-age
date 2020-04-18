@@ -19,6 +19,11 @@ const TaskSchema = new mongoose.Schema({
         type: String,
         required: true,
         enum: ["READY", "UNDELIVERED", "DELIVERED", "DECLINED", "FAILED"]
+    },
+    failureReason: {
+        type: String,
+        required: true,
+        enum: ["DECLINED", "UNREACHABLE", "ADDRESS", "OTHER"]
     }
 });
 

@@ -12,8 +12,10 @@ export const categoryToText: Record<FaultCategory, string> = {
 };
 
 export const failRasonToText: Record<FailReason, string> = {
-    declined: 'סורב ע"י הנזקק',
-    failed: "כישלון בחלוקה"
+    declined: "סירוב",
+    unreachable: "לא זמין",
+    address: "כתובת שגויה",
+    other: "אחר"
 };
 
 export const progressStatusToText: Record<ProgressStatus, string> = {

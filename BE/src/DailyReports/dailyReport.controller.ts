@@ -32,7 +32,7 @@ export async function createFutureReports(req, res) {
     const { start, end } = getRangeFromDate(new Date(date));
     const dateRange = { $gte: start, $lt: end };
     const dbDailyReports = await dailyReportModel.find({ date: dateRange });
-    
+
     const dbReportsDictionary = dbDailyReports.map(_ => _.branchId).reduce((pv, v) => ({ ...pv, [v]: v }), {});
     const newReports = reports.filter(report => !dbReportsDictionary[report.id]);
 
@@ -89,14 +89,14 @@ function _groupBySubLevels(level: be.Level, branches: be.Branch[], reports: be.D
             delivered: 0,
             deliveryFailed: 0,
             deliveryInProgress: 0,
-            deliveryFailReasons: { declined: 0, failed: 0 },
+            deliveryFailReasons: { declined: 0, address: 0, unreachable: 0, other: 0 },
             deliveryProgressStatuses: { unassigned: 0, notdone: 0 }
         };
 
         for (const { status, tasks } of jobs.filter(_ => _.city === branch.municipality)) {
             if (status === "CANCELED") continue;
 
-            for (const { status: taskStatus, amount } of tasks) {
+            for (const { status: taskStatus, failureReason, amount } of tasks) {
                 switch (taskStatus) {
                     // delivered
                     case "DELIVERED":
@@ -112,13 +112,11 @@ function _groupBySubLevels(level: be.Level, branches: be.Branch[], reports: be.D
                         totals[name].deliveryProgressStatuses.notdone += amount;
                         break;
                     // deliveryFailed
+                    case "FAILED":
                     case "DECLINED":
                         totals[name].deliveryFailed += amount;
-                        totals[name].deliveryFailReasons.declined += amount;
-                        break;
-                    case "FAILED":
-                        totals[name].deliveryFailed += amount;
-                        totals[name].deliveryFailReasons.failed += amount;
+                        const field = ["DECLINED", "UNREACHABLE", "ADDRESS"].includes(failureReason) ? failureReason.toLowerCase() : "other";
+                        totals[name].deliveryFailReasons[field] += amount;
                         break;
                 }
             }

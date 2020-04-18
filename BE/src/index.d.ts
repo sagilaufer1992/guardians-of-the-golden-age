@@ -26,6 +26,7 @@ declare namespace gg {
     needType: "FOOD" | "DRUGS";
     amount: number;
     status: "READY" | "UNDELIVERED" | "DELIVERED" | "DECLINED" | "FAILED";
+    failureReason: "DECLINED" | "UNREACHABLE" | "ADDRESS" | "OTHER";
   }
 
   interface Job {
@@ -101,7 +102,7 @@ declare namespace be {
     delivered: number;
     deliveryFailed: number;
     deliveryInProgress: number;
-    deliveryFailReasons: Record<"declined" | "failed", number>;
+    deliveryFailReasons: Record<"declined" | "unreachable" | "address" | "other", number>;
     deliveryProgressStatuses: Record<"unassigned" | "notdone", number>;
   }
 }
