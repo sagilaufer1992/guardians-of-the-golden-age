@@ -2,13 +2,14 @@ import React, { useState, useRef } from 'react';
 import { Container } from '@material-ui/core';
 
 import { useApi } from '../../hooks/useApi';
+import { AppRouteProps } from '../../routesConfig';
 
 import DatePanel from '../DatePanel';
 import FaultsList from './FaultsList';
 
 const REFRESH_INTERVAL: number = 20 * 1000;
 
-export default function FaultsArea() {
+export default function FaultsArea({ date, setDate }: AppRouteProps) {
     const [faultsApi] = useApi("/api/faults", { parseDate: true });
     const [faults, setFaults] = useState<Fault[]>([]);
     const datePanelRef = useRef<DatePanel>(null);
@@ -37,7 +38,7 @@ export default function FaultsArea() {
     }
 
     return <Container className="faults-area-container" maxWidth="md">
-        <DatePanel ref={datePanelRef} task={_refreshFaults} interval={REFRESH_INTERVAL} />
+        <DatePanel ref={datePanelRef} date={date} setDate={setDate} task={_refreshFaults} interval={REFRESH_INTERVAL} />
         <FaultsList faults={faults} onFaultDelete={deleteFault} onStatusChange={setFaultStatus} />
     </Container>;
 }

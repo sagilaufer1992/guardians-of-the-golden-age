@@ -26,44 +26,46 @@ export default function FaultsStatus({ report }: Props) {
     }, [report])
 
     return <Card className="panel faults-status-panel">
-        <div className="title">תקלות שנפתחו</div>
-        <div className="status-container">
-            <Card className="status">
-                <div className="status-type">
-                    <QuestionAnswerOutlinedIcon />
-                    <span>נפתחו היום</span>
-                </div>
-                <div className="status-number">{report.total}</div>
-            </Card>
-            <Card className="status warning">
-                <div className="status-type">
-                    <ErrorOutlineIcon />
-                    <span>טרם טופלו</span>
-                </div>
-                <div className="status-number">{report.open}</div>
-            </Card>
-        </div>
-        <div className="progress-list">
-            {report.reasons.map(({ category, open, closed }) => {
-                return <div className="progress-item">
-                    <div className="category-progress">
-                        <div className="category">{categoryToText[category]}</div>
-                        <div className="progress-bar-container">
-                            <LinearProgress className="progress-bar"
-                                variant="determinate"
-                                value={open / (open + closed) * 100}
-                                style={{ width: `${(open + closed) / maxFaultsForCategory * 100}%` }}
-                            />
-                        </div>
-                    </div >
-                    <div className="progress-details">
-                        <div>{`${open + closed} תקלות`}</div>
-                        {open === 0 ?
-                            <div className="solved">הכל טופל</div> :
-                            <div className="unsolved">{`${open} עדיין לא טופלו`}</div>}
+        <div className="panel-content">
+            <div className="title">תקלות שנפתחו</div>
+            <div className="status-container">
+                <Card className="status">
+                    <div className="status-type">
+                        <QuestionAnswerOutlinedIcon />
+                        <span>נפתחו היום</span>
                     </div>
-                </div>
-            })}
+                    <div className="status-number">{report.total}</div>
+                </Card>
+                <Card className="status warning">
+                    <div className="status-type">
+                        <ErrorOutlineIcon />
+                        <span>טרם טופלו</span>
+                    </div>
+                    <div className="status-number">{report.open}</div>
+                </Card>
+            </div>
+            <div className="progress-list">
+                {report.reasons.map(({ category, open, closed }) => {
+                    return <div className="progress-item">
+                        <div className="category-progress">
+                            <div className="category">{categoryToText[category]}</div>
+                            <div className="progress-bar-container">
+                                <LinearProgress className="progress-bar"
+                                    variant="determinate"
+                                    value={open / (open + closed) * 100}
+                                    style={{ width: `${(open + closed) / maxFaultsForCategory * 100}%` }}
+                                />
+                            </div>
+                        </div >
+                        <div className="progress-details">
+                            <div>{`${open + closed} תקלות`}</div>
+                            {open === 0 ?
+                                <div className="solved">הכל טופל</div> :
+                                <div className="unsolved">{`${open} עדיין לא טופלו`}</div>}
+                        </div>
+                    </div>
+                })}
+            </div>
         </div>
         <div className="show-all-faults" onClick={_showAllFaults}>
             {"עבור לכלל הבעיות של יום זה"}

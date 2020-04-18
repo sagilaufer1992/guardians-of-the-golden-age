@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { Container } from "@material-ui/core";
 
 import { useApi } from "../../hooks/useApi";
+import { AppRouteProps } from "../../routesConfig";
 import Initializer from "./Initializer";
 import DeliveryStatus from "./DeliveryStatus";
 import FaultsStatus from "./FaultsStatus";
@@ -45,7 +46,7 @@ const TEST_DELIVERY_REPORTS: DeliveryReport[] = [{
 
 const REFRESH_INTERVAL: number = 30 * 1000;
 
-export default React.memo(function Dashboard() {
+export default React.memo(function Dashboard({ date, setDate }: AppRouteProps) {
     const [level, setLevel] = useState<Level | null>(null);
     const [levelValue, setLevelValue] = useState<string | null>(null);
     const [faultsReport, setFaultsReport] = useState<FaultsReport | null>(null);
@@ -74,7 +75,7 @@ export default React.memo(function Dashboard() {
 
     return <Container className="dashboard-container" maxWidth="xl">
         {level ? <>
-            <DatePanel task={_refreshReports} interval={REFRESH_INTERVAL} />
+            <DatePanel date={date} setDate={setDate} task={_refreshReports} interval={REFRESH_INTERVAL} />
             <div className="dashboard">
                 {deliveryReports && <DeliveryStatus reports={deliveryReports} />}
                 {faultsReport && <FaultsStatus report={faultsReport} />}

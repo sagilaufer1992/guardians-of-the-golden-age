@@ -11,6 +11,12 @@ export interface AppRoute extends RouteProps {
     name: string;
     path: string;
     icon: React.ComponentType;
+    component: React.ComponentType<AppRouteProps>;
+}
+
+export interface AppRouteProps {
+    date: Date;
+    setDate: (date: Date) => void;
 }
 
 export const FAULTS_ROUTE = "/faults";
