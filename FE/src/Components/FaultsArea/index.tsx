@@ -9,7 +9,7 @@ import FaultsList from './FaultsList';
 const REFRESH_INTERVAL: number = 20 * 1000;
 
 export default function FaultsArea() {
-    const [faultsApi] = useApi("/api/faults");
+    const [faultsApi] = useApi("/api/faults", { parseDate: true });
     const [faults, setFaults] = useState<Fault[]>([]);
     const datePanelRef = useRef<DatePanel>(null);
 
