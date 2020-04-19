@@ -33,9 +33,9 @@ export default function DeliveryStatus(props: Props) {
 
     return (<Container className="delivery-status">
         {props.reports.map((report, index) => {
-            const { name, total, delivered, deliveryFailed, deliveryFailReasons } = report;
-            const deliveredStyle = { width: `${(delivered / total) * 100}%` };
-            const failedStyle = { width: `${(deliveryFailed / total) * 100}%` };
+            const { name, actual, delivered, deliveryFailed, deliveryFailReasons } = report;
+            const deliveredStyle = { width: `${(delivered / actual) * 100}%` };
+            const failedStyle = { width: `${(deliveryFailed / actual) * 100}%` };
 
             console.log(_convertToChartData(deliveryFailReasons));
 
@@ -49,7 +49,7 @@ export default function DeliveryStatus(props: Props) {
                         </PieChartTooltip>
                     </div>
                     <div className="text-info">
-                        <span>סה"כ - {total} </span>|
+                        <span>סה"כ - {actual} </span>|
                         <span className="delivered"> חולקו - {delivered} </span>|
                         <span className="failed"> נתקלנו בבעיה - {deliveryFailed}</span>
                     </div>

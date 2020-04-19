@@ -42,29 +42,36 @@ export default function DeliveryStatus(props: Props) {
             לא נמצאו דיווחים בזמן וההיררכיה המבוקשים
         </div>}
         {props.reports.map((report, index) => {
-            const { name, total, delivered, deliveryFailed, deliveryInProgress, deliveryFailReasons, deliveryProgressStatuses } = report;
-            const deliveredStyle = { width: `${(delivered / total) * 100}%` };
-            const failedStyle = { width: `${(deliveryFailed / total) * 100}%` };
-            const inProgressStyle = { width: `${(deliveryInProgress / total) * 100}%` };
+            const { name, actual, expected, delivered, deliveryFailed, deliveryInProgress, deliveryFailReasons, deliveryProgressStatuses } = report;
+            const max = Math.max(actual, expected); // לפעמים הערך בפועל גדול מזה המצופה
+
+            const deliveryPercent = (delivered / max) * 100;
+            const failedPercent = (deliveryFailed / max) * 100;
+            const inProgressPercent = Math.min((deliveryInProgress / max) * 100, 100 - failedPercent - deliveryPercent);
+
+            const deliveredStyle = { width: `${deliveryPercent}%`, };
+            const failedStyle = { width: `${failedPercent}%` };
+            const inProgressStyle = { width: `${inProgressPercent}%` };
 
             return <div className="report-container" key={index}>
                 <div className="location">{name}</div>
                 <div className="delivery-data">
+                    <div className="expected-text-info">צפי יומי - {expected} חבילות</div>
                     <div className="status-bar">
-                        {delivered > 0 && <span className="delivered" style={deliveredStyle}>{delivered}</span>}
-                        {deliveryInProgress > 0 && <PieChartTooltip title={_generatePieChart(IN_PROGRESS_COLOR, _convertToChartData(deliveryProgressStatuses, progressStatusToText))}>
-                            <span className="in-progress" style={inProgressStyle}>{deliveryInProgress}</span>
-                        </PieChartTooltip>}
-                        {deliveryFailed > 0 && <PieChartTooltip title={_generatePieChart(FAILED_COLOR, _convertToChartData(deliveryFailReasons, failRasonToText))}>
-                            <span className="failed" style={failedStyle}>{deliveryFailed}</span>
-                        </PieChartTooltip>}
+                        {delivered > 0 && <span className="delivered" style={deliveredStyle} />}
+                        {deliveryInProgress > 0 && <span className="in-progress" style={inProgressStyle} />}
+                        {deliveryFailed > 0 && <span className="failed" style={failedStyle} />}
                     </div>
-                    <div className="text-info">
-                        <span>סה"כ - {total} </span>|
+                    <div className="actual-text-info">
+                        <span>סה"כ בפועל- {actual} </span>|
                         <span className="delivered"> חולקו - {delivered} </span>|
-                        <span className="in-progress"> בתהליך חלוקה - {deliveryInProgress} </span>|
-                        <span className="failed"> נתקלנו בבעיה - {deliveryFailed}</span>
-
+                        {deliveryInProgress > 0 ? <PieChartTooltip title={_generatePieChart(IN_PROGRESS_COLOR, _convertToChartData(deliveryProgressStatuses, progressStatusToText))}>
+                            <span className="in-progress"> בתהליך חלוקה - {deliveryInProgress} </span>
+                        </PieChartTooltip> : <span className="in-progress zero"> בתהליך חלוקה - {deliveryInProgress} </span>}
+                        <span>|</span>
+                        {deliveryFailed > 0 ? <PieChartTooltip title={_generatePieChart(FAILED_COLOR, _convertToChartData(deliveryFailReasons, failRasonToText))}>
+                            <span className="failed"> נתקלנו בבעיה - {deliveryFailed}</span>
+                        </PieChartTooltip> : <span className="failed zero"> נתקלנו בבעיה - {deliveryFailed}</span>}
                     </div>
                 </div>
             </div>

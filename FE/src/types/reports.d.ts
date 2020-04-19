@@ -3,13 +3,14 @@ type ProgressStatus = "unassigned" | "notdone";
 
 interface DeliveryReport {
     name: string;
-    total: number;
+    expected: number;
+    actual: number;
     delivered: number;
     deliveryFailed: number;
     deliveryInProgress: number;
     deliveryFailReasons: Record<FailReason, number>;
     deliveryProgressStatuses: Record<ProgressStatus, number>;
-  }
+}
 
 type ReasonsDictionary = { [key: string]: number };
 
