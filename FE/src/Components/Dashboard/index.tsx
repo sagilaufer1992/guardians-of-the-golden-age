@@ -1,6 +1,5 @@
 import "./index.scss";
-
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Container, Dialog, DialogContent, DialogTitle, Button, DialogClassKey } from "@material-ui/core";
 
 import { useApi } from "../../hooks/useApi";
@@ -10,6 +9,7 @@ import DeliveryStatus from "./DeliveryStatus";
 import FaultsStatus from "./FaultsStatus";
 import DatePanel from "../DatePanel";
 import HierarchyNavigator from "../HierarchyNavigator";
+import { useUser } from "../../utils/UserProvider";
 
 const TEST_DELIVERY_REPORTS: DeliveryReport[] = [{
     name: "מקום חשוב",
@@ -56,10 +56,12 @@ const LEVEL_VALUE_KEY = "dashboard_level_value";
 
 export default React.memo(function Dashboard({ date, setDate }: AppRouteProps) {
     const [modalOpen, setModalOpen] = useState<boolean>(false);
+    const { role } = useUser();
     const [level, setLevel] = useState<Level | null>(null);
     const [levelValue, setLevelValue] = useState<string | null>(null);
     const [faultsReport, setFaultsReport] = useState<FaultsReport | null>(null);
     const [deliveryReports, setDeliveryReports] = useState<DeliveryReport[] | null>(null);
+    const datePanelRef = useRef<DatePanel>(null);
 
     const [fetchFaultsReport] = useApi("/api/faults/status");
     const [fetchDeliveryReports] = useApi("/api/dailyReports");
@@ -99,6 +101,10 @@ export default React.memo(function Dashboard({ date, setDate }: AppRouteProps) {
         newDeliveryReports && setDeliveryReports(newDeliveryReports);
     }
 
+    const onExpectedFileUploaded = () => {
+        datePanelRef?.current?.refresh();
+    }
+
     const handleModalOpen = () => setModalOpen(true);
     const handleModalClose = () => {
         if (!level) setLevel("national");
@@ -118,7 +124,13 @@ export default React.memo(function Dashboard({ date, setDate }: AppRouteProps) {
             <HierarchyNavigator level={level} levelValue={levelValue} />
         </div>
         {level && <>
-            <DatePanel date={date} setDate={setDate} task={_refreshReports} interval={REFRESH_INTERVAL} />
+            <DatePanel ref={datePanelRef}
+                date={date}
+                setDate={setDate}
+                task={_refreshReports}
+                interval={REFRESH_INTERVAL}
+                loadExpectedReports={["admin", "hamal"].includes(role) && !!deliveryReports && deliveryReports.length === 0}
+                onExpectedFileUploaded={onExpectedFileUploaded} />
             <div className="dashboard">
                 {deliveryReports && <DeliveryStatus reports={deliveryReports} />}
                 {faultsReport && <FaultsStatus report={faultsReport} />}

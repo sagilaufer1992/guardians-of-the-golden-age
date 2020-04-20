@@ -12,8 +12,6 @@ interface DeliveryReport {
     deliveryProgressStatuses: Record<ProgressStatus, number>;
 }
 
-type ReasonsDictionary = { [key: string]: number };
-
 interface FaultsReport {
     total: number;
     open: number;
@@ -29,10 +27,8 @@ interface FaultReasonReport {
 interface DeliveryReportData {
     branchId: number;
     date: Date;
-    name: string;
     total: number;
     delivered: number;
     deliveryFailed: number;
-    pendingDelivery: number;
-    deliveryFailReasons: ReasonsDictionary;
+    deliveryFailReasons: Record<FailReason, number>;
 }

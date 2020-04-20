@@ -1,4 +1,5 @@
 import Branch from "./branch.model";
+import { isHamal } from "../utils/users";
 
 export async function getBranches(req, res, next) {
     const branches = await _getRelevantBranches(req.user);
@@ -26,10 +27,10 @@ export async function getMunicipalities(req, res, next) {
     res.status(200).json(_removeDuplicates(municipalities, item => item.municipality));
 }
 
-async function _getRelevantBranches({ role, branches: userBranches }: gg.User) {
-    if (role === "hamal" || role === "admin") return await Branch.find();
+async function _getRelevantBranches(user: gg.User) {
+    if (isHamal(user)) return await Branch.find();
 
-    return await Branch.find({ name: { $in: userBranches } });
+    return await Branch.find({ name: { $in: user.branches } });
 }
 
 function _removeDuplicates<T>(array: T[], getId: (item: T) => any = _ => _) {

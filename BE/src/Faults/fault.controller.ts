@@ -3,14 +3,15 @@ import Branch from "../Branches/branch.model";
 
 import { MongooseFilterQuery } from "mongoose";
 import { getRangeFromDate } from "../utils/dates";
+import { isManager } from "../utils/users";
 
 export async function getFaultsInDate(req, res, next) {
     const { date } = req.query;
-    const { role, branches } = req.user;
+    const { branches } = req.user;
 
     const query: MongooseFilterQuery<be.Fault> = {};
 
-    if (role === "manager" || role === "volunteer")
+    if (isManager(req.user))
         query.distributionCenter = { $in: branches };
 
     if (date) {
