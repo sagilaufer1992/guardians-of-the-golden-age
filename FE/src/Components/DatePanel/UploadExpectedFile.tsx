@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "@material-ui/core";
 import { isNull } from "util";
-import { extractDailyReports } from "../../utils/extractDailyReports";
+import { extractDailyReports, getReportsFileExample } from "../../utils/expectedReports";
 import { useSnackbar } from "notistack";
 import { useApi } from "../../hooks/useApi";
 
@@ -51,6 +51,7 @@ export function UploadExpectedFile({ title, date, onUploaded }: Props) {
                 accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
             />
         </Button>
+        <span className="example-file-link" onClick={e=> getReportsFileExample("example")}>להורדת קובץ לדוגמה</span>
     </div>
 
 }
