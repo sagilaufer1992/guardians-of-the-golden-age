@@ -3,6 +3,7 @@ import Branch from "../Branches/branch.model";
 import Job from "./job.model";
 import dailyReportModel from "./dailyReport.model";
 import { getRangeFromDate } from "../utils/dates";
+import { isHamal } from "../utils/users";
 
 const LOWER_LEVEL_DICTIONARY: Record<string, (branch: be.Branch) => string> = {
     "national": branch => branch.district,
@@ -19,9 +20,7 @@ const BRANCH_FILTER_DICTIONARY: Record<string, any> = {
 }
 
 export async function createFutureReports(req, res) {
-    const { role } = req.user as gg.User;
-
-    if (role !== "hamal" && role !== "admin") res.status(403).json("אינך מורשה");
+    if (!isHamal(req.user)) res.status(403).json("אינך מורשה");
 
     const { date, reports } = req.body;
 
@@ -46,6 +45,8 @@ export async function createFutureReports(req, res) {
 
 export async function getDailyReport(req, res) {
     const { date, level, value } = req.query;
+
+    if (!isHamal(req.user)) res.status(403).json("אינך מורשה לצפות במידע");
 
     if (!level || !LOWER_LEVEL_DICTIONARY[level]) return res.status(400).json("רמת ההסתכלות אינה תקינה");
 
