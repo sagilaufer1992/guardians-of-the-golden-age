@@ -9,7 +9,8 @@ import DeliveryReasons from "./DeliveryReasons";
 
 interface Props {
     deliveryReport: DeliveryReportData | null;
-    setDeliveryReport: (deliveryReport: Partial<DeliveryReportData>) => void;
+    setDeliveryReport: (deliveryReport: Partial<DeliveryReportData>) => Promise<void>;
+    finishDeliveryReport: (deliveryReport: Partial<DeliveryReportData>) => void;
 }
 
 export default function DailySummary(props: Props) {
@@ -21,13 +22,16 @@ export default function DailySummary(props: Props) {
     </div>;
 }
 
-function DeliveryForm({ deliveryReport, setDeliveryReport }: Props) {
+function DeliveryForm({ deliveryReport, setDeliveryReport, finishDeliveryReport }: Props) {
     const [currentNumber, setCurrentNumber] = useState<number>(0);
     const [isApproved, setIsApproved] = useState<boolean>(false);
     const [isValid, setIsValid] = useState<boolean>(true);
 
     useEffect(() => {
-        if(deliveryReport) setCurrentNumber(deliveryReport.delivered);
+        if (deliveryReport) {
+            setCurrentNumber(deliveryReport.delivered);
+            setIsApproved(!!deliveryReport.deliveryFailReasons);
+        }
     }, [deliveryReport])
 
     function _onCurrentNumber() {
@@ -57,6 +61,7 @@ function DeliveryForm({ deliveryReport, setDeliveryReport }: Props) {
                     שנה
             </Button>}
         </div>
-        {isApproved && <DeliveryReasons deliveryReport={deliveryReport} setDeliveryReport={setDeliveryReport} />}
+        {deliveryReport?.deliveryFailReasons && <DeliveryReasons deliveryReport={deliveryReport}
+            finishDeliveryReport={!isApproved ? undefined : finishDeliveryReport} />}
     </div>
 }

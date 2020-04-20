@@ -2,6 +2,7 @@ import "./index.scss";
 import React, { useState, useEffect, useCallback } from "react";
 import { ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, CircularProgress, TextField } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import { useSnackbar } from "notistack";
 import moment from "moment";
 
 import DailySummary from "./DailySummary";
@@ -10,6 +11,7 @@ import Autocomplete from "@material-ui/lab/Autocomplete";
 import { useApi } from "../../hooks/useApi";
 
 export default function DeliveryReport() {
+    const { enqueueSnackbar } = useSnackbar();
     const [fetchDelivery] = useApi("/api/deliveryReport");
     const [fetchBranches] = useApi("/api/branches");
     const [branch, setBranch] = useState<Branch | null>(null);
@@ -40,6 +42,16 @@ export default function DeliveryReport() {
         if (result) setDeliveryReport(result);
     }
 
+    async function _finishDeliveryReport(body: Partial<DeliveryReportData>) {
+        await _updateDeliveryReport(body);
+
+        enqueueSnackbar("יום החלוקה הסתיים בהצלחה!", { variant: "success" });
+
+        setOpenForm(null);
+        setDeliveryReport(null);
+        setBranch(null);
+    }
+
     async function fetchReport({ id }: Branch) {
         const deliveryReport = await fetchDelivery<DeliveryReportData>({
             route: `/${id}/${date.toISOString()}`,
@@ -50,8 +62,7 @@ export default function DeliveryReport() {
 
         setDeliveryReport(deliveryReport);
 
-        if (deliveryReport.delivered + deliveryReport.deliveryFailed === deliveryReport.total)
-            setOpenForm("advanced");
+        if (deliveryReport.deliveryFailReasons) setOpenForm("advanced");
         else setOpenForm("manual");
     }
 
@@ -76,7 +87,7 @@ export default function DeliveryReport() {
                 <Autocomplete value={branch} options={branches} renderOption={_showBranch} onChange={_selectBranch}
                     filterOptions={_filterAutocomplete} getOptionLabel={b => b.name}
                     renderInput={(params: any) => (<TextField {...params} label="בחר מרכז חלוקה" variant="outlined" />)} />}
-            <ExpansionPanel disabled={!branch} expanded={!!branch && openForm === "manual"} onChange={(_, v) => setOpenForm(v ? "manual" : null)}>
+            <ExpansionPanel disabled={!branch || !!deliveryReport?.deliveryFailReasons} expanded={!!branch && openForm === "manual"} onChange={(_, v) => setOpenForm(v ? "manual" : null)}>
                 <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} style={{ backgroundColor: "#eee" }}>
                     <div className="title">
                         טופס ידני
@@ -93,7 +104,7 @@ export default function DeliveryReport() {
                     </div>
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails style={{ padding: 0 }}>
-                    <DailySummary deliveryReport={deliveryReport} setDeliveryReport={_updateDeliveryReport} />
+                    <DailySummary deliveryReport={deliveryReport} setDeliveryReport={_updateDeliveryReport} finishDeliveryReport={_finishDeliveryReport} />
                 </ExpansionPanelDetails>
             </ExpansionPanel>
         </div>

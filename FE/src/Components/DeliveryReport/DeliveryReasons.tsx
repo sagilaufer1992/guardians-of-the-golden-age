@@ -13,7 +13,7 @@ import { failRasonToText } from "../../utils/translations";
 
 interface Props {
     deliveryReport: DeliveryReportData | null;
-    setDeliveryReport: (deliveryReport: Partial<DeliveryReportData>) => void;
+    finishDeliveryReport?: (deliveryReport: Partial<DeliveryReportData>) => void;
 }
 
 interface Reason {
@@ -24,7 +24,7 @@ interface Reason {
 const DEFAULT_REASON: Reason = { value: "other", deliveries: 0 };
 const EXPLANATION_OPTIONS = toSelect(failRasonToText);
 
-export default function DeliveryReasons({ deliveryReport, setDeliveryReport }: Props) {
+export default function DeliveryReasons({ deliveryReport, finishDeliveryReport }: Props) {
     const [reasons, setReasons] = useState<Reason[]>([]);
 
     useEffect(() => {
@@ -56,9 +56,10 @@ export default function DeliveryReasons({ deliveryReport, setDeliveryReport }: P
         setReasons(newReasons);
     }
 
-    function _setDeliveryReport() {
+    async function _finishDeliveryReport() {
         const { delivered, total } = deliveryReport!;
-        setDeliveryReport({
+
+        finishDeliveryReport!({
             delivered,
             deliveryFailed: total - delivered,
             deliveryFailReasons: reasons.reduce((dict, { value, deliveries }) => ({
@@ -92,7 +93,7 @@ export default function DeliveryReasons({ deliveryReport, setDeliveryReport }: P
         </div>
         <div className="remaining-deliveries">סה״כ מנות שלא ידועות: {(deliveryReport?.total ?? 0) - sumDeliveries}</div>
         <div className="send-reasons">
-            <ColorButton disabled={!deliveryReport || sumDeliveries !== deliveryReport.total} onClick={_setDeliveryReport}>
+            <ColorButton disabled={!finishDeliveryReport || !deliveryReport || sumDeliveries !== deliveryReport.total} onClick={_finishDeliveryReport}>
                 סיום יום החלוקה
         </ColorButton>
         </div>
