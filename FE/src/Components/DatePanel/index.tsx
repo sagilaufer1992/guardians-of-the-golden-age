@@ -12,7 +12,9 @@ interface Props {
     interval: number;
     task: (date: Date) => Promise<void>;
     setDate: (date: Date) => void;
+
     loadExpectedReports?: boolean;
+    onExpectedFileUploaded?: () => void;
 }
 
 interface State {
@@ -43,15 +45,15 @@ export default class DatePanel extends React.PureComponent<Props, State> {
     }
 
     render() {
-        const { loadExpectedReports, date } = this.props;
+        const { loadExpectedReports, date, onExpectedFileUploaded } = this.props;
         const { isRefresh } = this.state;
 
         return <div className="date-panel">
             <div className="right-side">
                 <DatePicker initDate={date} onDateChanged={this.props.setDate} />
-                {loadExpectedReports &&
+                {loadExpectedReports && onExpectedFileUploaded && 
                     <Fragment>
-                        <UploadExpectedFile title="העלאת נתוני חלוקה עבור יום זה" date={date} />
+                        <UploadExpectedFile title="העלאת נתוני חלוקה עבור יום זה" date={date} onUploaded={onExpectedFileUploaded} />
                     </Fragment>
                 }
 

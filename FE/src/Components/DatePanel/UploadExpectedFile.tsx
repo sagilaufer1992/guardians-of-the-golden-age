@@ -1,7 +1,6 @@
 import React from "react";
 import { Button } from "@material-ui/core";
 import { isNull } from "util";
-import { fetchBackend } from "../../utils/fetchHelpers";
 import { extractDailyReports } from "../../utils/extractDailyReports";
 import { useSnackbar } from "notistack";
 import { useApi } from "../../hooks/useApi";
@@ -9,9 +8,10 @@ import { useApi } from "../../hooks/useApi";
 interface Props {
     title: string;
     date: Date;
+    onUploaded: () => void;
 }
 
-export function UploadExpectedFile({ title, date }: Props) {
+export function UploadExpectedFile({ title, date, onUploaded }: Props) {
     const [fetchApi] = useApi();
     const { enqueueSnackbar } = useSnackbar();
 
@@ -31,6 +31,8 @@ export function UploadExpectedFile({ title, date }: Props) {
                 },
                 successMessage: "הדיווחים נשלחו בהצלחה"
             });
+
+            onUploaded();
         }
         catch (e) {
             enqueueSnackbar(e.message, { variant: "error" });
