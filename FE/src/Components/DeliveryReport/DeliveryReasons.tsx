@@ -86,7 +86,7 @@ export default function DeliveryReasons({ deliveryReport, finishDeliveryReport }
                 הוסף סיבה
                 <AddIcon />
             </Fab>
-            <Fab className="add-reason-button" onClick={() => _onRemoveReason()} disabled={reasons.length === 1} size="small" color="primary" variant="extended">
+            <Fab className="add-reason-button" onClick={() => _onRemoveReason()} disabled={reasons.length < 1} size="small" color="primary" variant="extended">
                 הסר סיבה
                 <RemoveIcon />
             </Fab>

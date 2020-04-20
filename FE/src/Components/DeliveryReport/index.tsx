@@ -62,7 +62,8 @@ export default function DeliveryReport() {
 
         setDeliveryReport(deliveryReport);
 
-        if (deliveryReport.deliveryFailReasons) setOpenForm("advanced");
+        if (deliveryReport.deliveryFailReasons && Object.keys(deliveryReport.deliveryFailReasons).length > 0) 
+            setOpenForm("advanced");
         else setOpenForm("manual");
     }
 
@@ -76,6 +77,7 @@ export default function DeliveryReport() {
     }
 
     const _selectBranch = useCallback((_, branch) => { setBranch(branch) }, [setBranch]);
+    const isManualFormDisabled = !branch || (!!deliveryReport?.deliveryFailReasons && Object.keys(deliveryReport.deliveryFailReasons).length > 0)
 
     return <div className="delivery-report-container">
         <div className="delivery-report">
@@ -89,7 +91,8 @@ export default function DeliveryReport() {
                         filterOptions={_filterAutocomplete} getOptionLabel={b => b.name}
                         renderInput={(params: any) => (<TextField {...params} label="בחר מרכז חלוקה" variant="outlined" />)} />
                 </div>}
-            <ExpansionPanel disabled={!branch || !!deliveryReport?.deliveryFailReasons} expanded={!!branch && openForm === "manual"} onChange={(_, v) => setOpenForm(v ? "manual" : null)}>
+            <ExpansionPanel disabled={isManualFormDisabled} 
+                expanded={!!branch && openForm === "manual"} onChange={(_, v) => setOpenForm(v ? "manual" : null)}>
                 <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} style={{ backgroundColor: "#eee" }}>
                     <div className="title">
                         טופס ידני
