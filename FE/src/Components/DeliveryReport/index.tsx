@@ -69,10 +69,10 @@ export default function DeliveryReport() {
     const _filterAutocomplete = useCallback((branches: Branch[], { inputValue }) => branches.filter(_ => _.name.startsWith(inputValue)), []);
 
     function _showBranch({ name, napa, municipality, district }: Branch) {
-        return <>
+        return <div className="autocomplete-branch">
             <span className="autocomplete-branch-name">{name}</span>
-            <span className="autocomplete-branch-hierarchy">{district}/{napa}/{municipality}</span>
-        </>;
+            <span className="autocomplete-branch-hierarchy">{district} / {napa} / {municipality}</span>
+        </div>;
     }
 
     const _selectBranch = useCallback((_, branch) => { setBranch(branch) }, [setBranch]);
@@ -84,9 +84,11 @@ export default function DeliveryReport() {
                     <span>טוען רשימת מרכזי חלוקה</span>
                     <CircularProgress size={20} thickness={5} />
                 </div> :
-                <Autocomplete value={branch} options={branches} renderOption={_showBranch} onChange={_selectBranch}
-                    filterOptions={_filterAutocomplete} getOptionLabel={b => b.name}
-                    renderInput={(params: any) => (<TextField {...params} label="בחר מרכז חלוקה" variant="outlined" />)} />}
+                <div className="autocomplete-branch-input">
+                    <Autocomplete value={branch} options={branches} renderOption={_showBranch} onChange={_selectBranch}
+                        filterOptions={_filterAutocomplete} getOptionLabel={b => b.name}
+                        renderInput={(params: any) => (<TextField {...params} label="בחר מרכז חלוקה" variant="outlined" />)} />
+                </div>}
             <ExpansionPanel disabled={!branch || !!deliveryReport?.deliveryFailReasons} expanded={!!branch && openForm === "manual"} onChange={(_, v) => setOpenForm(v ? "manual" : null)}>
                 <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} style={{ backgroundColor: "#eee" }}>
                     <div className="title">

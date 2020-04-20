@@ -4,15 +4,11 @@
     
     .delivery-report{
         max-width: 800px;
-        padding-top: 10px;
 
-        .autocomplete-branch-name {
+        .autocomplete-branch-input {
+            margin: 15px 0;            
+        }
 
-        }
-        .autocomplete-branch-hierarchy {
-            color: red;
-            font-size: 5px;
-        }
         .report {
             padding: 10px;
             font-size: 14px;
@@ -22,5 +18,18 @@
             flex-direction: column;
             justify-content: space-between;
         }
+    }
+}
+
+.autocomplete-branch {
+    display: flex;
+    flex-direction: column;
+    .autocomplete-branch-name {
+        font-size: 15px;
+    }
+    .autocomplete-branch-hierarchy {
+        margin-right: 18px;
+        color: rgb(128, 128, 128);
+        font-size: 10px;
     }
 }
