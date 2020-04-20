@@ -32,6 +32,11 @@ export const hamalRoutes: AppRoute[] = [{
     name: "ניהול תקלות",
     component: FaultsArea,
     icon: AssignmentInd
+}, {
+    path: "/deliveryReport",
+    name: "טופס ידני",
+    component: DeliveryReport,
+    icon: Create
 }];
 
 export const managerRoutes: AppRoute[] = [{
@@ -45,11 +50,4 @@ export const managerRoutes: AppRoute[] = [{
     name: "צפיה בתקלות",
     component: FaultsArea,
     icon: AssignmentInd
-},
-// {
-//     path: "/deliveryReport",
-//     name: "טופס ידני",
-//     component: DeliveryReport,
-//     icon: Create
-// }
-];
+}];

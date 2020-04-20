@@ -1,6 +1,6 @@
 import "./DeliveryReasons.scss";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Fab } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import RemoveIcon from '@material-ui/icons/Remove';
@@ -8,81 +8,76 @@ import RemoveIcon from '@material-ui/icons/Remove';
 import DropDownInput from "../Inputs/DropDownInput";
 import NumberInput from "../Inputs/NumberInput";
 import { ColorButton } from "./utils";
+import { toSelect } from "../../utils/inputs";
+import { failRasonToText } from "../../utils/translations";
 
 interface Props {
-    total: number;
-    delivered: number;
-    getDeliveryReport: (deliveryReport: Partial<DeliveryReportData>) => void;
+    deliveryReport: DeliveryReportData | null;
+    setDeliveryReport: (deliveryReport: Partial<DeliveryReportData>) => void;
 }
 
 interface Reason {
-    index: number
-    value: string;
+    value: FailReason;
     deliveries: number;
 }
 
-const DEFAULT_REASON = { index: 0, value: "אחר", deliveries: 0 };
-const EXPLANATION_OPTIONS = [
-    { value: "כתובת לא נכונה", label: "כתובת לא נכונה" },
-    { value: "לא היו בבית", label: "לא היו בבית" },
-    { value: "סירבו לקבל", label: "סירבו לקבל" },
-    { value: "אחר", label: "אחר" },
-]
+const DEFAULT_REASON: Reason = { value: "other", deliveries: 0 };
+const EXPLANATION_OPTIONS = toSelect(failRasonToText);
 
-export default function DeliveryReasons({ total, delivered, getDeliveryReport }: Props) {
-    const [reasons, setReasons] = useState<Reason[]>([DEFAULT_REASON]);
+export default function DeliveryReasons({ deliveryReport, setDeliveryReport }: Props) {
+    const [reasons, setReasons] = useState<Reason[]>([]);
+
+    useEffect(() => {
+        if (!deliveryReport) return;
+
+        const { deliveryFailReasons } = deliveryReport;
+        const initialReasons = !deliveryFailReasons ? [DEFAULT_REASON] :
+            Object.entries(deliveryFailReasons).map(([value, deliveries]) => ({ value, deliveries })) as Reason[];
+
+        setReasons(initialReasons);
+    }, [deliveryReport]);
 
     function _onAddReason() {
-        const firstUnusedOption = EXPLANATION_OPTIONS.find(option =>
-            !reasons.find(r => r.value === option.value)
-        );
+        const firstUnusedOption = EXPLANATION_OPTIONS.find(option => !reasons.find(r => r.value === option.value));
+
         if (firstUnusedOption)
-            setReasons([...reasons, { index: reasons.length, value: firstUnusedOption.value, deliveries: 0 }]);
+            setReasons([...reasons, { value: firstUnusedOption.value, deliveries: 0 }]);
     }
 
     function _onRemoveReason() {
         if (reasons.length > 0) setReasons(reasons.slice(0, -1));
     }
 
-    function _onReasonChange({ index, value: explanation, deliveries }: Reason) {
-        setReasons(reasons.map(reason =>
-            reason.index === index ? { index, value: explanation, deliveries } : reason
-        ));
+    function _onReasonChange(old: Reason, newValue: Reason) {
+        const newReasons = [...reasons];
+        const index = newReasons.findIndex(_ => _ === old);
+        newReasons[index] = newValue;
+
+        setReasons(newReasons);
     }
 
-    function _getDeliveryReport() {
-        const deliveryReport = {
+    function _setDeliveryReport() {
+        const { delivered, total } = deliveryReport!;
+        setDeliveryReport({
             delivered,
-            pendingDelivery: 0,
             deliveryFailed: total - delivered,
-            deliveryFailReasons: reasons.reduce((dict, { value: explanation, deliveries }) => ({
-                ...dict, [explanation]: deliveries
-            }), {}),
-        }
-
-        getDeliveryReport(deliveryReport);
+            deliveryFailReasons: reasons.reduce((dict, { value, deliveries }) => ({
+                ...dict, [value]: deliveries
+            }), {} as Record<FailReason, number>),
+        });
     }
 
-    const sumDeliveries = delivered + reasons.reduce((sum, { deliveries }) => sum + (isNaN(deliveries) ? 0 : deliveries), 0);
-
-    function _calculateMaxDelivery(index: number) {
-        return total - sumDeliveries + reasons[index].deliveries
-    }
+    const sumDeliveries = !deliveryReport ? 0 :
+        deliveryReport.delivered + reasons.reduce((sum, { deliveries }) => sum + (isNaN(deliveries) ? 0 : deliveries), 0);
 
     return <>
         <div className="reasons">
-            {reasons.map(({ index, deliveries, value }) =>
-                <ReasonInput key={index}
-                    index={index}
-                    reasons={reasons}
-                    value={value}
-                    deliveries={deliveries}
-                    maxDeliveries={_calculateMaxDelivery(index)}
-                    getReason={_onReasonChange} />)}
+            {reasons.map(reason =>
+                <ReasonInput key={reason.value} reason={reason} reasons={reasons} setReason={_onReasonChange} />)}
         </div>
         <div className="reason-buttons">
             <Fab className="add-reason-button"
-                onClick={() => _onAddReason()}
+                onClick={_onAddReason}
                 disabled={EXPLANATION_OPTIONS.length === reasons.length}
                 size="small"
                 color="primary"
@@ -95,9 +90,9 @@ export default function DeliveryReasons({ total, delivered, getDeliveryReport }:
                 <RemoveIcon />
             </Fab>
         </div>
-        <div className="remaining-deliveries">סה״כ מנות שלא ידועות: {total - sumDeliveries}</div>
+        <div className="remaining-deliveries">סה״כ מנות שלא ידועות: {(deliveryReport?.total ?? 0) - sumDeliveries}</div>
         <div className="send-reasons">
-            <ColorButton  disabled={sumDeliveries !== total} onClick={_getDeliveryReport}>
+            <ColorButton disabled={!deliveryReport || sumDeliveries !== deliveryReport.total} onClick={_setDeliveryReport}>
                 סיום יום החלוקה
         </ColorButton>
         </div>
@@ -105,15 +100,12 @@ export default function DeliveryReasons({ total, delivered, getDeliveryReport }:
 }
 
 interface ReasonsProps {
-    index: number
-    maxDeliveries: number;
-    deliveries: number;
-    value: string;
+    reason: Reason;
     reasons: Reason[];
-    getReason: (reason: Reason) => void;
+    setReason: (oldReason: Reason, newValue: Reason) => void;
 }
 
-function ReasonInput({ maxDeliveries, index, deliveries, value, getReason, reasons }: ReasonsProps) {
+function ReasonInput({ reason, reasons, setReason }: ReasonsProps) {
     const options = EXPLANATION_OPTIONS.map(option => ({
         ...option,
         disabled: !!reasons.find(r => r.value === option.value)
@@ -123,16 +115,16 @@ function ReasonInput({ maxDeliveries, index, deliveries, value, getReason, reaso
         <div className="fault-field">
             <div className="label">למה נוצר הפער?</div>
             <DropDownInput
-                defaultValue={value}
+                defaultValue={reason.value}
                 options={options}
                 title=""
-                onChange={(explanation) => getReason({ value: explanation, deliveries, index })} />
+                onChange={explanation => setReason(reason, { value: explanation as FailReason, deliveries: reason.deliveries })} />
         </div>
         <NumberInput className="reason-number"
             label="מספר המנות"
-            onChange={(deliveries) => getReason({ value, deliveries, index })}
+            onChange={deliveries => setReason(reason, { value: reason.value, deliveries })}
             min={0}
-            max={maxDeliveries}
-            value={deliveries} />
+            max={Infinity}
+            value={reason.deliveries} />
     </div>
 }

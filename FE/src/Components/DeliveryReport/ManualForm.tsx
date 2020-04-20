@@ -1,8 +1,8 @@
 import "./ManualForm.scss";
 
 import React from "react";
-import { Fab } from '@material-ui/core';
 import moment from "moment";
+import { Fab } from '@material-ui/core';
 
 import { ColorButton, ProgressBar } from "./utils";
 
@@ -10,40 +10,23 @@ const INCREASE_VALUES = [100, 50, 10, 1];
 const DECREASE_VALUES = [1, 50];
 
 interface Props {
-    total: number;
-    delivered: number;
-    setDelivered: (value: number) => void;
+    date: Date;
+    deliveryReport: DeliveryReportData | null;
     setIsDone: (isDone: boolean) => void;
-    getReport: (report: Partial<DeliveryReportData>) => void;
+    updateDelivery: (report: Partial<DeliveryReportData>, increment: boolean) => void;
 }
 
-export default function ManualFrom({ total, delivered, setDelivered, setIsDone, getReport }: Props) {
-    const momentDate = moment(new Date());
+export default function ManualFrom({ date, deliveryReport, setIsDone, updateDelivery }: Props) {
+    const { delivered = 0, total = 100 } = deliveryReport || {};
 
-    function onIncrease(value: number) {
-        if (delivered + value <= total) {
-            setDelivered(delivered + value);
-            getReport({
-                delivered: delivered + value,
-                pendingDelivery: total - delivered - value,
-            })
-        }
-    }
-
-    function onDecrease(value: number) {
-        if (delivered - value >= 0) {
-            setDelivered(delivered - value);
-            getReport({
-                delivered: delivered - value,
-                pendingDelivery: total - delivered + value,
-            })
-        }
+    function onChange(value: number) {
+        updateDelivery({ delivered: value }, true);
     }
 
     return <div className="report">
         <div className="manual-form-header">
             <div className="date">
-                יום {momentDate.format('dddd')} {momentDate.format("DD/MM/YY")}
+                יום {moment(date).format('dddd')} {moment(date).format("DD/MM/YY")}
             </div>
             <ColorButton onClick={() => setIsDone(true)}>
                 סיים את החלוקה להיום
@@ -57,7 +40,7 @@ export default function ManualFrom({ total, delivered, setDelivered, setIsDone, 
                     size="small"
                     color="primary"
                     disabled={delivered + value > total}
-                    onClick={() => onIncrease(value)}>
+                    onClick={() => onChange(value)}>
                     {value}+
                 </Fab>)}
             </div>
@@ -66,7 +49,7 @@ export default function ManualFrom({ total, delivered, setDelivered, setIsDone, 
                     className="small-button"
                     size="small"
                     disabled={delivered - value < 0}
-                    onClick={() => onDecrease(value)}>
+                    onClick={() => onChange(-value)}>
                     {value}-
                 </Fab>)}
             </div>
