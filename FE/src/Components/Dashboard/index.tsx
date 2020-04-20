@@ -12,7 +12,8 @@ import DatePanel from "../DatePanel";
 
 const TEST_DELIVERY_REPORTS: DeliveryReport[] = [{
     name: "מקום חשוב",
-    total: 400,
+    expected: 400,
+    actual: 400,
     delivered: 234,
     deliveryFailed: 40,
     deliveryInProgress: 50,
@@ -20,7 +21,8 @@ const TEST_DELIVERY_REPORTS: DeliveryReport[] = [{
     deliveryProgressStatuses: { unassigned: 20, notdone: 30 }
 }, {
     name: "מקום חשוב",
-    total: 400,
+    expected: 400,
+    actual: 400,
     delivered: 234,
     deliveryFailed: 40,
     deliveryInProgress: 50,
@@ -28,7 +30,8 @@ const TEST_DELIVERY_REPORTS: DeliveryReport[] = [{
     deliveryProgressStatuses: { unassigned: 20, notdone: 30 }
 }, {
     name: "מקום חשוב",
-    total: 400,
+    expected: 400,
+    actual: 400,
     delivered: 234,
     deliveryFailed: 40,
     deliveryInProgress: 50,
@@ -36,7 +39,8 @@ const TEST_DELIVERY_REPORTS: DeliveryReport[] = [{
     deliveryProgressStatuses: { unassigned: 20, notdone: 30 }
 }, {
     name: "מקום חשוב",
-    total: 400,
+    expected: 400,
+    actual: 400,
     delivered: 234,
     deliveryFailed: 40,
     deliveryInProgress: 50,

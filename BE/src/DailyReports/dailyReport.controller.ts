@@ -82,10 +82,11 @@ function _groupBySubLevels(level: be.Level, branches: be.Branch[], reports: be.D
         const branch = branchDictionary[branchId];
         const name = lowerLevelDisplayName(branch);
 
-        if (totals[name]) totals[name].total += total;
+        if (totals[name]) totals[name].expected += total;
         else totals[name] = {
             name: name,
-            total,
+            expected: total,
+            actual: 0,
             delivered: 0,
             deliveryFailed: 0,
             deliveryInProgress: 0,
@@ -123,5 +124,5 @@ function _groupBySubLevels(level: be.Level, branches: be.Branch[], reports: be.D
         }
     }
 
-    return Object.values(totals);
+    return Object.values(totals).map(item => ({ ...item, actual: item.delivered + item.deliveryFailed + item.deliveryInProgress }));
 }

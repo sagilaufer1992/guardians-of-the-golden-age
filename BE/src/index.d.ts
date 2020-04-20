@@ -98,7 +98,8 @@ declare namespace be {
 
   interface DailyReport {
     name: string;
-    total: number;
+    expected: number;
+    actual: number;
     delivered: number;
     deliveryFailed: number;
     deliveryInProgress: number;

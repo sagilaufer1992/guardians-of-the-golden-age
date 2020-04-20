@@ -11,8 +11,7 @@ $failed-color: #f44336;
     padding: 10px;
     .report-container {
         display: flex;
-        flex-direction: row;
-        vertical-align: middle;
+        align-items: center;
         &:not(:last-child) {
             margin-bottom: 15px;
         }
@@ -26,7 +25,7 @@ $failed-color: #f44336;
         .delivery-data {
             width: 75%;
             .status-bar {
-                width: 100%;                
+                width: 100%;            
                 height: 20px;
                 border: 1px solid rgb(182, 182, 182);
                 background-color: white;
@@ -34,7 +33,6 @@ $failed-color: #f44336;
                 .delivered {
                     background: linear-gradient(to left, $delivered-color, lighten($delivered-color, 10));
                     width: 0;
-                    min-width: 30px;
                     height: 100%;
                     display: inline-block;
                     text-align: center;
@@ -42,6 +40,7 @@ $failed-color: #f44336;
                     line-height: 20px;
                     font-size: 12px;
                     color: white;
+                    cursor: auto;
                 }
                 .in-progress {
                     @extend .delivered;
@@ -52,17 +51,27 @@ $failed-color: #f44336;
                     background: linear-gradient(to left, $failed-color, lighten($failed-color, 10));
                 }
             }
-            .text-info {
+            .expected-text-info {
+                font-size: 13px;
+                font-weight: bold;
+            }
+            .actual-text-info {
                 font-size: 12px;
                 font-weight: bold;
                 .delivered {
+                    cursor: default;
                     color: darken($delivered-color, 5);
                 }
                 .in-progress {
+                    cursor: pointer;
                     color: darken($in-progress-color, 5);
                 }
                 .failed {
+                    cursor: pointer;
                     color: darken($failed-color, 5);
+                }
+                .zero{
+                    cursor: default !important;
                 }
             }
         }
