@@ -27,6 +27,7 @@ export function useApi(baseUrl: string = "", defaultOptions: ApiOptions = {}) {
             if (!result.ok) throw await result.json();
 
             let data = await result.json();
+            
             if (parseDate) data = Array.isArray(data) ? data.map(_parseDate) : _parseDate(data);
 
             if (successMessage) enqueueSnackbar(successMessage, { variant: "success" });

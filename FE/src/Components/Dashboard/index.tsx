@@ -9,6 +9,7 @@ import Initializer from "./Initializer";
 import DeliveryStatus from "./DeliveryStatus";
 import FaultsStatus from "./FaultsStatus";
 import DatePanel from "../DatePanel";
+import { useUser } from "../../utils/UserProvider";
 
 const TEST_DELIVERY_REPORTS: DeliveryReport[] = [{
     name: "מקום חשוב",
@@ -54,6 +55,7 @@ const LEVEL_KEY = "dashboard_level";
 const LEVEL_VALUE_KEY = "dashboard_level_value";
 
 export default React.memo(function Dashboard({ date, setDate }: AppRouteProps) {
+    const { role } = useUser();
     const [level, setLevel] = useState<Level | null>(null);
     const [levelValue, setLevelValue] = useState<string | null>(null);
     const [faultsReport, setFaultsReport] = useState<FaultsReport | null>(null);
@@ -95,7 +97,11 @@ export default React.memo(function Dashboard({ date, setDate }: AppRouteProps) {
 
     return <Container className="dashboard-container" maxWidth="xl">
         {level ? <>
-            <DatePanel date={date} setDate={setDate} task={_refreshReports} interval={REFRESH_INTERVAL} />
+            <DatePanel date={date}
+                setDate={setDate}
+                task={_refreshReports}
+                interval={REFRESH_INTERVAL}
+                loadExpectedReports={["admin", "hamal"].includes(role) && !!deliveryReports && deliveryReports.length === 0} />
             <div className="dashboard">
                 {deliveryReports && <DeliveryStatus reports={deliveryReports} />}
                 {faultsReport && <FaultsStatus report={faultsReport} />}
