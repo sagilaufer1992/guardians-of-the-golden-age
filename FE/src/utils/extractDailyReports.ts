@@ -19,8 +19,6 @@ const COLUMN_TO_KEY: Dictionary<string> = {
 }
 
 //TODO: לשנות לשם אמיתי שנתחיל לטעון קבצים ממשתמשים
-const SHEET_NAME ="פורמט טעינה";
-
 export function extractDailyReports(file: File) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -28,11 +26,10 @@ export function extractDailyReports(file: File) {
             const binaryData = reader.result;
             const workBook = XLSX.read(binaryData, { type: 'binary' });
 
-            if (!workBook.Sheets[SHEET_NAME]) reject("הקובץ לא בפורמט הנכון");
+            if (workBook.SheetNames.length === 0) reject("הקובץ שהועלה לא תקין, יש ליצור קובץ שמכיל גליון");
 
-            const data = XLSX.utils.sheet_to_json(workBook.Sheets[SHEET_NAME], { header: "A", raw: true, });
+            const data = XLSX.utils.sheet_to_json(workBook.Sheets[workBook.SheetNames[0]], { header: "A", raw: true });
             const reports = data.slice(1).map(_convertToReport).filter(_ => _.id) as FutureReport[];
-            
             resolve(_unionDuplicates(reports));
         }
 

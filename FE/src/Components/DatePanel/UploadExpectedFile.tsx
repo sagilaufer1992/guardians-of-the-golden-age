@@ -45,7 +45,11 @@ export function UploadExpectedFile({ title, date, onUploaded }: Props) {
             variant="contained"
             component="label">
             {title}
-            <input type="file" onChange={onFileUpload} style={{ display: "none" }} />
+            <input type="file"
+                onChange={onFileUpload}
+                style={{ display: "none" }}
+                accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+            />
         </Button>
     </div>
 
