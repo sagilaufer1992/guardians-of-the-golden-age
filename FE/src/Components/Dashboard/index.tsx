@@ -1,7 +1,7 @@
 import "./index.scss";
 
 import React, { useState, useEffect } from "react";
-import { Container } from "@material-ui/core";
+import { Container, Dialog, DialogContent, DialogTitle, Button, DialogClassKey } from "@material-ui/core";
 
 import { useApi } from "../../hooks/useApi";
 import { AppRouteProps } from "../../routesConfig";
@@ -9,6 +9,7 @@ import Initializer from "./Initializer";
 import DeliveryStatus from "./DeliveryStatus";
 import FaultsStatus from "./FaultsStatus";
 import DatePanel from "../DatePanel";
+import HierarchyNavigator from "../HierarchyNavigator";
 
 const TEST_DELIVERY_REPORTS: DeliveryReport[] = [{
     name: "מקום חשוב",
@@ -54,6 +55,7 @@ const LEVEL_KEY = "dashboard_level";
 const LEVEL_VALUE_KEY = "dashboard_level_value";
 
 export default React.memo(function Dashboard({ date, setDate }: AppRouteProps) {
+    const [modalOpen, setModalOpen] = useState<boolean>(false);
     const [level, setLevel] = useState<Level | null>(null);
     const [levelValue, setLevelValue] = useState<string | null>(null);
     const [faultsReport, setFaultsReport] = useState<FaultsReport | null>(null);
@@ -70,14 +72,18 @@ export default React.memo(function Dashboard({ date, setDate }: AppRouteProps) {
         if (levelValue) setLevelValue(levelValue);
     }, [])
 
+    useEffect(() => setModalOpen(!!!level), [level]);
+
     const onInitialize = (level: Level, value: string | null) => {
         if (value) {
             setLevelValue(value);
             window.localStorage.setItem(LEVEL_VALUE_KEY, value);
         }
 
-        setLevel(level);
-        window.localStorage.setItem(LEVEL_KEY, level);
+        const levelOrDefault = level || "national";
+
+        setLevel(levelOrDefault);
+        window.localStorage.setItem(LEVEL_KEY, levelOrDefault);
     }
 
     async function _refreshReports(date: Date) {
@@ -93,14 +99,31 @@ export default React.memo(function Dashboard({ date, setDate }: AppRouteProps) {
         newDeliveryReports && setDeliveryReports(newDeliveryReports);
     }
 
+    const handleModalOpen = () => setModalOpen(true);
+    const handleModalClose = () => {
+        if (!level) setLevel("national");
+        setModalOpen(false);
+    }
+
+    const InitModal = () => <Dialog open={modalOpen} onClose={handleModalClose} maxWidth="lg">
+        <DialogTitle>בחר היררכיה</DialogTitle>
+        <DialogContent style={{ width: 400 }}>
+            <Initializer onInitialize={onInitialize} />
+        </DialogContent>
+    </Dialog>;
+
     return <Container className="dashboard-container" maxWidth="xl">
-        {level ? <>
+        <div className="hierarchy-container">
+            <Button variant="contained" color="primary" onClick={handleModalOpen} className="modal-button">שנה היררכיה</Button>
+            <HierarchyNavigator level={level} levelValue={levelValue} />
+        </div>
+        {level && <>
             <DatePanel date={date} setDate={setDate} task={_refreshReports} interval={REFRESH_INTERVAL} />
             <div className="dashboard">
                 {deliveryReports && <DeliveryStatus reports={deliveryReports} />}
                 {faultsReport && <FaultsStatus report={faultsReport} />}
             </div>
-        </> :
-            <Initializer onInitialize={onInitialize} />}
+        </>}
+        <InitModal />
     </Container>;
 });

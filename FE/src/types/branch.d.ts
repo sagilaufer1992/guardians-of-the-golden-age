@@ -6,3 +6,9 @@ interface Branch {
     district: string; // מחוז
     municipality: string; // שם הרשות
   }
+
+  interface Hierarchy {
+    district: string;
+    napa: string;
+    municipality: string;
+  }
