@@ -70,6 +70,7 @@ export default function DeliveryReasons({ deliveryReport, finishDeliveryReport }
 
     const sumDeliveries = !deliveryReport ? 0 :
         deliveryReport.delivered + reasons.reduce((sum, { deliveries }) => sum + (isNaN(deliveries) ? 0 : deliveries), 0);
+    const deliveriesDifference = (deliveryReport?.total ?? 0) - sumDeliveries;
 
     return <>
         <div className="reasons">
@@ -86,12 +87,16 @@ export default function DeliveryReasons({ deliveryReport, finishDeliveryReport }
                 הוסף סיבה
                 <AddIcon />
             </Fab>
-            <Fab className="add-reason-button" onClick={() => _onRemoveReason()} disabled={reasons.length < 1} size="small" color="primary" variant="extended">
+            <Fab className="add-reason-button" onClick={_onRemoveReason} disabled={reasons.length < 1} size="small" color="primary" variant="extended">
                 הסר סיבה
                 <RemoveIcon />
             </Fab>
         </div>
-        <div className="remaining-deliveries">סה״כ מנות שלא ידועות: {(deliveryReport?.total ?? 0) - sumDeliveries}</div>
+        <div className="remaining-deliveries">
+            {deliveriesDifference < 0 ?
+                <span>מספר המנות גדול ב-{Math.abs(deliveriesDifference)} מהתכנון</span> :
+                <span>סה״כ מנות שלא ידועות: {deliveriesDifference}</span>}
+        </div>
         <div className="send-reasons">
             <ColorButton disabled={!finishDeliveryReport || !deliveryReport || sumDeliveries !== deliveryReport.total} onClick={_finishDeliveryReport}>
                 סיום יום החלוקה
