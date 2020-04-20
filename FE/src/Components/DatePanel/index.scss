@@ -3,6 +3,12 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  .right-side{
+    display: flex;
+    .upload-file-input{
+      margin-right: 10px;
+    }
+  }
   .last-fault-update {
     display: inline;
   }

@@ -7,7 +7,6 @@ import moment from "moment";
 import 'moment/locale/he'
 moment.locale("he");
 
-
 interface Props {
     initDate?: Date;
     onDateChanged: (date: Date) => void;
@@ -22,7 +21,7 @@ export default function DatePicker({ initDate, onDateChanged }: Props) {
         onDateChanged(newDate);
     }
 
-    const leftArrowClassName = classnames("left-arrow", { disabled: _isToday(date) });
+    const leftArrowClassName = classnames("left-arrow", { disabled: _getDiffInDays(date, new Date()) > 6 });
 
     return <div className="date-picker" >
         <div className="title">תמונת מצב ליום:</div>

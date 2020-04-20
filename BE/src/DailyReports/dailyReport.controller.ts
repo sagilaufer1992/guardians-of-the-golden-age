@@ -41,7 +41,7 @@ export async function createFutureReports(req, res) {
     newReports.forEach(async report =>
         await dailyReportModel.create({ branchId: report.id, date: new Date(date), total: report.amount }));
 
-    res.status(201).json();
+    res.status(201).json("");
 }
 
 export async function getDailyReport(req, res) {

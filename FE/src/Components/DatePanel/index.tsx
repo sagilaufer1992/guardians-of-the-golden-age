@@ -1,16 +1,20 @@
 import "./index.scss";
 
-import React from "react";
+import React, { Fragment } from "react";
 import moment from "moment";
 import { CircularProgress, Hidden } from '@material-ui/core';
 
 import DatePicker from "./DatePicker";
+import { UploadExpectedFile } from "./UploadExpectedFile";
 
 interface Props {
     date: Date;
     interval: number;
     task: (date: Date) => Promise<void>;
     setDate: (date: Date) => void;
+
+    loadExpectedReports?: boolean;
+    onExpectedFileUploaded?: () => void;
 }
 
 interface State {
@@ -41,10 +45,21 @@ export default class DatePanel extends React.PureComponent<Props, State> {
     }
 
     render() {
+        const { loadExpectedReports, date, onExpectedFileUploaded } = this.props;
         const { isRefresh } = this.state;
 
         return <div className="date-panel">
-            <DatePicker initDate={this.props.date} onDateChanged={this.props.setDate} />
+            <div className="right-side">
+                <DatePicker initDate={date} onDateChanged={this.props.setDate} />
+                {loadExpectedReports && onExpectedFileUploaded && 
+                    <Fragment>
+                        <UploadExpectedFile title="העלאת נתוני חלוקה עבור יום זה" date={date} onUploaded={onExpectedFileUploaded} />
+                    </Fragment>
+                }
+
+                <div>
+                </div>
+            </div>
             <Hidden smDown>
                 {isRefresh && <CircularProgress className="fault-fetch-progress" size={15} thickness={5} />}
                 {this._lastRefreshTime && <div className="last-fault-update">עודכן לאחרונה ב- {moment(this._lastRefreshTime).format("HH:mm DD/MM/YYYY")}</div>}
