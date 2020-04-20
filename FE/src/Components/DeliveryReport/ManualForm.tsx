@@ -20,7 +20,8 @@ export default function ManualFrom({ date, deliveryReport, setIsDone, updateDeli
     const { delivered = 0, total = 100 } = deliveryReport || {};
 
     function onChange(value: number) {
-        updateDelivery({ delivered: value }, true);
+        if (value + delivered <= total)
+            updateDelivery({ delivered: value, total }, true);
     }
 
     return <div className="report">

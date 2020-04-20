@@ -4,16 +4,16 @@ export async function incrementDeliveryReport(req, res) {
     try {
         const { date, branchId } = req.params;
 
-        const { delivered = 0, deliveryFailed = 0 } = req.body;
+        const { delivered = 0, total = 0 } = req.body;
 
         const update = {
             $inc: {
                 delivered,
-                deliveryFailed
             }
         };
 
-        const response = await DailyReport.findOneAndUpdate({ date, branchId }, update, { new: true });
+        const response = await DailyReport.findOneAndUpdate(
+            { date, branchId, delivered: { $lte: total - delivered } }, update, { new: true });
         res.status(200).json(response);
     } catch {
         res.status(500).send("אירעה שגיאה בעדכון הטופס הידני");
