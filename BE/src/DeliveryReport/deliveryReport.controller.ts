@@ -4,11 +4,11 @@ export async function incrementDeliveryReport(req, res) {
     try {
         const { date, branchId } = req.params;
 
-        const { delivery = 0, deliveryFailed = 0 } = req.body;
+        const { delivered = 0, deliveryFailed = 0 } = req.body;
 
         const update = {
             $inc: {
-                delivery,
+                delivered,
                 deliveryFailed
             }
         };

@@ -64,7 +64,7 @@ export default function DeliveryReport() {
         </>;
     }
 
-    const _selectBranch = useCallback((_, branch) => setBranch(branch[0]), [setBranch]);
+    const _selectBranch = useCallback((_, branch) => { setBranch(branch) }, [setBranch]);
 
     return <div className="delivery-report-container">
         <div className="delivery-report">
@@ -80,7 +80,7 @@ export default function DeliveryReport() {
                 <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} style={{ backgroundColor: "#eee" }}>
                     <div className="title">
                         טופס ידני
-                </div>
+                    </div>
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails style={{ padding: 0 }}>
                     <ManualFrom date={date} deliveryReport={deliveryReport} updateDelivery={_updateDeliveryReport} setIsDone={() => setOpenForm("advanced")} />
@@ -90,7 +90,7 @@ export default function DeliveryReport() {
                 <ExpansionPanelSummary style={{ backgroundColor: "#eee" }}>
                     <div className="title">
                         סיכום יום החלוקה
-                </div>
+                    </div>
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails style={{ padding: 0 }}>
                     <DailySummary deliveryReport={deliveryReport} setDeliveryReport={_updateDeliveryReport} />
