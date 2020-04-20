@@ -12,13 +12,16 @@ declare namespace gg {
 
   interface User extends UserInfo {
     token: string;
-    municipalities: string[];
-    branches: string[];
+    branches: BranchWithMunicipality[];
+  }
+
+  interface BranchWithMunicipality {
+    name: string; // שם נקודת החלוקה
+    municipality: string; // שם הרשות
   }
 
   interface LoginResult extends UserInfo {
     access_token: string;
-    municipalities: string[];
-    branches: string[];
+    branches: BranchWithMunicipality[];
   }
 }

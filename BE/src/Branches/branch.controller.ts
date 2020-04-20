@@ -30,7 +30,10 @@ export async function getMunicipalities(req, res, next) {
 async function _getRelevantBranches(user: gg.User) {
     if (isHamal(user)) return await Branch.find();
 
-    return await Branch.find({ name: { $in: user.branches } });
+    return await Branch.find({
+        name: { $in: user.branches.map(_ => _.name) },
+        municipality: { $in: user.branches.map(_ => _.municipality) }
+    });
 }
 
 function _removeDuplicates<T>(array: T[], getId: (item: T) => any = _ => _) {

@@ -36,6 +36,10 @@ const JobSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    distributionPoint: {
+        type: String,
+        required: true
+    },
     date: {
         type: Date,
         required: true

@@ -1,7 +1,8 @@
 import * as express from "express";
 import * as jwt from "jsonwebtoken";
+import { authGroupsToBranches } from "./utils/users";
 
-export const DEV_USER: gg.User = { token: "VERY_COOL_TOKEN", username: "dev-user", role: "hamal", municipalities: ["רחובות"], branches: ["מתנס אבו גוש"] };
+export const DEV_USER: gg.User = { token: "VERY_COOL_TOKEN", username: "dev-user", role: "hamal", branches: [{ name: "מתנס אבו גוש", municipality: "רחובות" }] };
 export const JWT_ALGORITHM = "HS256";
 export const JWT_SECRET = process.env.USERS_TOKEN_SECRET;
 
@@ -42,19 +43,11 @@ export const userInfoMiddleware: express.RequestHandler = async (req, res, next)
 
     if (!user) return res.status(401).send("המשתמש לא קיים במאגר");
 
-    let branches = [];
-
-    if (user.role !== "hamal" && user.role !== "admin") {
-        const Branch = require("./Branches/branch.model").default;
-        branches = await Branch.find({ municipality: { $in: user.authGroups } });
-    }
-
     req.user = {
         token: req.headers.authorization.substring(7),
         username: user.username,
         role: user.role,
-        municipalities: user.authGroups,
-        branches: branches.map(_ => _.name)
+        branches: authGroupsToBranches(user.authGroups)
     };
 
     next();

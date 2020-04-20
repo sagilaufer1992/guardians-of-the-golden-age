@@ -18,8 +18,12 @@ declare namespace gg {
 
   interface User extends UserInfo {
     token: string;
-    municipalities: string[];
-    branches: string[];
+    branches: BranchWithMunicipality[];
+  }
+
+  interface BranchWithMunicipality {
+    name: string; // שם נקודת החלוקה
+    municipality: string; // שם הרשות
   }
 
   interface Task {
@@ -31,6 +35,7 @@ declare namespace gg {
 
   interface Job {
     city: string;
+    distributionPoint: string;
     date: Date;
     status: "PENDING" | "DONE" | "CANCELED";
     tasks: Task[];
@@ -75,13 +80,11 @@ declare namespace be {
     faultId: string;
   }
 
-  interface Branch {
+  interface Branch extends gg.BranchWithMunicipality {
     id: number;
-    name: string; //שם נקודות החלוקה
     address: string; // כתובת
     napa: string; // נפה
     district: string; // מחוז
-    municipality: string; // שם הרשות
   }
 
   interface FutureReport extends Branch {
@@ -94,6 +97,7 @@ declare namespace be {
     total: number;
     delivered: number;
     deliveryFailed: number;
+    deliveryFailReasons: Record<"declined" | "unreachable" | "address" | "other", number>;
   }
 
   interface DailyReport {

@@ -1,6 +1,17 @@
 import * as mongoose from "mongoose";
 import { usersDB } from "../cosmosdb";
 
+const AuthGroupSchema = new mongoose.Schema({
+    city: {
+        type: String,
+        required: true
+    },
+    distributionPoints: {
+        type: [String],
+        require: true
+    }
+});
+
 const UserSchema = new mongoose.Schema({
     _id: {
         type: String,
@@ -16,7 +27,7 @@ const UserSchema = new mongoose.Schema({
         enum: ["hamal", "manager", "admin", "volunteer"]
     },
     authGroups: {
-        type: [String],
+        type: [AuthGroupSchema],
         required: true
     },
     passwordHash: {
@@ -24,4 +35,4 @@ const UserSchema = new mongoose.Schema({
     }
 });
 
-export default usersDB.model<mongoose.Document & gg.User>("User", UserSchema, "users");
+export default usersDB.model("User", UserSchema, "users");
