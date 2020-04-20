@@ -37,8 +37,6 @@ export default function DeliveryStatus(props: Props) {
             const deliveredStyle = { width: `${(delivered / actual) * 100}%` };
             const failedStyle = { width: `${(deliveryFailed / actual) * 100}%` };
 
-            console.log(_convertToChartData(deliveryFailReasons));
-
             return <div className="report-container" key={index}>
                 <div className="location">{name}</div>
                 <div className="delivery-data">

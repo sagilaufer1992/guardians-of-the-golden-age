@@ -3,7 +3,7 @@ import "./Initializer.scss";
 import React, { useState, useEffect } from "react";
 import { CircularProgress, FormControlLabel, RadioGroup, Radio, Button } from "@material-ui/core";
 
-import AutocompleteInput from "../Inputs/AutocompleteInput";
+import AutocompleteInput, { Option } from "../Inputs/AutocompleteInput";
 import { useApi } from "../../hooks/useApi";
 
 interface Props {
@@ -13,9 +13,9 @@ interface Props {
 export default function FaultsStatus(props: Props) {
   const [fetchApi] = useApi();
   const [level, setLevel] = useState<Level>("national");
-  const [districts, setDistricts] = useState<string[]>([]);
+  const [districts, setDistricts] = useState<Option[]>([]);
   const [selectedDistrict, setSelectedDistrict] = useState<string>("");
-  const [napas, setNapas] = useState<string[]>([]);
+  const [napas, setNapas] = useState<Option[]>([]);
   const [selectedNapa, setSelectedNapa] = useState<string>("");
   const [isLoading, setIsloading] = useState<boolean>(true);
 
@@ -25,8 +25,8 @@ export default function FaultsStatus(props: Props) {
 
     Promise.all([districtsPromise, napasPromise]).then(
       ([districtResult, napasResult]) => {
-        napasResult && setNapas(napasResult.map(_ => _.napa));
-        districtResult && setDistricts(districtResult);
+        napasResult && setNapas(napasResult.map(_ => ({ value: _.napa, label: _.napa })));
+        districtResult && setDistricts(districtResult.map(v => ({ value: v, label: v })));
         setIsloading(false);
       }
     );
@@ -63,7 +63,7 @@ export default function FaultsStatus(props: Props) {
           className="autocomplete"
           disabled={level !== "district"}
           onChange={setSelectedDistrict}
-          options={districts.map((_) => ({ value: _, label: _ }))}
+          options={districts}
           defaultValue=""
           title="בחר מחוז"
         />
@@ -79,7 +79,7 @@ export default function FaultsStatus(props: Props) {
           className="autocomplete"
           disabled={level !== "napa"}
           onChange={setSelectedNapa}
-          options={napas.map((_) => ({ value: _, label: _ }))}
+          options={napas}
           defaultValue=""
           title="בחר נפה"
         />

@@ -27,6 +27,15 @@ export async function getMunicipalities(req, res, next) {
     res.status(200).json(_removeDuplicates(municipalities, item => item.municipality));
 }
 
+export async function getBranchFromValue(req, res, next) {
+    const { level, value } = req.query;
+
+    const result = await Branch.findOne({ [level]: value });
+    if (!result) return res.status(404).send("לא נמצאו פרטי מרכז החלוקה");
+    
+    res.status(200).json(result);
+}
+
 async function _getRelevantBranches(user: gg.User) {
     if (isHamal(user)) return await Branch.find();
 

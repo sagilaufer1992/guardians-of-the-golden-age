@@ -35,7 +35,9 @@ export default function DeliveryStatus(props: Props) {
         <Pie data={data} dataKey="value" nameKey="name" direction="rtl" fill={color} animationDuration={850} labelLine={false} innerRadius={50} label={CustomizedLabel} />
     </PieChart>;
 
-    const _convertToChartData = (data: any, translation: any) => Object.keys(data).map(key => ({ name: translation[key], value: data[key] }));
+    const _convertToChartData = (data: any, translation: any) =>
+        Object.keys(data).map(key => ({ name: translation[key], value: data[key] }))
+            .filter(_ => _.value > 0);
 
     return (<Card className="panel delivery-status">
         {props.reports.length === 0 && <div className="no-reports">

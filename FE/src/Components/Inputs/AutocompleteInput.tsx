@@ -2,7 +2,7 @@ import React from "react";
 import { TextField } from '@material-ui/core';
 import Autocomplete from "@material-ui/lab/Autocomplete";
 
-interface Option {
+export interface Option {
     value: string;
     label: string;
 }
@@ -12,7 +12,6 @@ interface Props {
     defaultValue: string;
     options: Option[];
     onChange: (value: string) => void;
-
     disabled?: boolean;
     className?: string;
 }

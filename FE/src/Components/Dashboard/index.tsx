@@ -1,6 +1,6 @@
 import "./index.scss";
-import React, { useState, useEffect, useRef } from "react";
-import { Container, Dialog, DialogContent, DialogTitle, Button, DialogClassKey } from "@material-ui/core";
+import React, { useState, useRef, useEffect, useCallback } from "react";
+import { Container, Dialog, DialogContent, DialogTitle, Button } from "@material-ui/core";
 
 import { useApi } from "../../hooks/useApi";
 import { AppRouteProps } from "../../routesConfig";
@@ -8,8 +8,9 @@ import Initializer from "./Initializer";
 import DeliveryStatus from "./DeliveryStatus";
 import FaultsStatus from "./FaultsStatus";
 import DatePanel from "../DatePanel";
-import HierarchyNavigator from "../HierarchyNavigator";
+import HierarchyNavigator from "./HierarchyNavigator";
 import { useUser } from "../../utils/UserProvider";
+import { isHamal } from "../../utils/roles";
 
 const TEST_DELIVERY_REPORTS: DeliveryReport[] = [{
     name: "מקום חשוב",
@@ -49,46 +50,46 @@ const TEST_DELIVERY_REPORTS: DeliveryReport[] = [{
     deliveryProgressStatuses: { unassigned: 20, notdone: 30 }
 }];
 
+interface LevelAndValue {
+    level: Level;
+    value: string | null;
+}
+
 const REFRESH_INTERVAL: number = 30 * 1000;
 
 const LEVEL_KEY = "dashboard_level";
 const LEVEL_VALUE_KEY = "dashboard_level_value";
 
-export default React.memo(function Dashboard({ date, setDate }: AppRouteProps) {
-    const [modalOpen, setModalOpen] = useState<boolean>(false);
-    const { role } = useUser();
-    const [level, setLevel] = useState<Level | null>(null);
-    const [levelValue, setLevelValue] = useState<string | null>(null);
+export default function Dashboard({ date, setDate }: AppRouteProps) {
+    const user = useUser();
+    const [levelAndValue, setLevelAndValue] = useState<LevelAndValue>({
+        level: (window.localStorage.getItem(LEVEL_KEY) as Level) ?? "national",
+        value: window.localStorage.getItem(LEVEL_VALUE_KEY) ?? null
+    });
+
     const [faultsReport, setFaultsReport] = useState<FaultsReport | null>(null);
     const [deliveryReports, setDeliveryReports] = useState<DeliveryReport[] | null>(null);
+    const [modalOpen, setModalOpen] = useState<boolean>(false);
     const datePanelRef = useRef<DatePanel>(null);
 
     const [fetchFaultsReport] = useApi("/api/faults/status");
     const [fetchDeliveryReports] = useApi("/api/dailyReports");
 
-    useEffect(() => {
-        const level = window.localStorage.getItem(LEVEL_KEY);
-        if (level) setLevel(level as Level);
-
-        const levelValue = window.localStorage.getItem(LEVEL_VALUE_KEY);
-        if (levelValue) setLevelValue(levelValue);
-    }, [])
-
-    useEffect(() => setModalOpen(!!!level), [level]);
+    useEffect(() => { datePanelRef.current?.refresh() }, [levelAndValue]);
 
     const onInitialize = (level: Level, value: string | null) => {
-        if (value) {
-            setLevelValue(value);
-            window.localStorage.setItem(LEVEL_VALUE_KEY, value);
-        }
+        if (value) window.localStorage.setItem(LEVEL_VALUE_KEY, value);
+        else window.localStorage.removeItem(LEVEL_VALUE_KEY);
 
-        const levelOrDefault = level || "national";
+        window.localStorage.setItem(LEVEL_KEY, level);
 
-        setLevel(levelOrDefault);
-        window.localStorage.setItem(LEVEL_KEY, levelOrDefault);
+        setLevelAndValue({ level, value });
+
+        setModalOpen(false);
     }
 
-    async function _refreshReports(date: Date) {
+    const _refreshReports = useCallback(async (date: Date) => {
+        const { level, value: levelValue } = levelAndValue;
         const params = `?level=${level}${levelValue ? `&value=${levelValue}` : ""}&date=${date.toISOString()}`;
         const [newFaultsReport, newDeliveryReports] = await Promise.all([
             fetchFaultsReport<FaultsReport>({ route: params }),
@@ -99,43 +100,36 @@ export default React.memo(function Dashboard({ date, setDate }: AppRouteProps) {
 
         newFaultsReport && setFaultsReport(newFaultsReport);
         newDeliveryReports && setDeliveryReports(newDeliveryReports);
-    }
+    }, [date, levelAndValue]);
 
     const onExpectedFileUploaded = () => {
-        datePanelRef?.current?.refresh();
+        datePanelRef.current?.refresh();
     }
 
     const handleModalOpen = () => setModalOpen(true);
-    const handleModalClose = () => {
-        if (!level) setLevel("national");
-        setModalOpen(false);
-    }
-
-    const InitModal = () => <Dialog open={modalOpen} onClose={handleModalClose} maxWidth="lg">
-        <DialogTitle>בחר היררכיה</DialogTitle>
-        <DialogContent style={{ width: 400 }}>
-            <Initializer onInitialize={onInitialize} />
-        </DialogContent>
-    </Dialog>;
+    const handleModalClose = () => setModalOpen(false);
 
     return <Container className="dashboard-container" maxWidth="xl">
+        <Dialog open={modalOpen} onClose={handleModalClose} maxWidth="lg">
+            <DialogTitle>בחר היררכיה</DialogTitle>
+            <DialogContent style={{ width: 400 }}>
+                <Initializer onInitialize={onInitialize} />
+            </DialogContent>
+        </Dialog>
+        <DatePanel ref={datePanelRef}
+            date={date}
+            setDate={setDate}
+            task={_refreshReports}
+            interval={REFRESH_INTERVAL}
+            loadExpectedReports={isHamal(user) && !!deliveryReports && deliveryReports.length === 0}
+            onExpectedFileUploaded={onExpectedFileUploaded} />
         <div className="hierarchy-container">
             <Button variant="contained" color="primary" onClick={handleModalOpen} className="modal-button">שנה היררכיה</Button>
-            <HierarchyNavigator level={level} levelValue={levelValue} />
+            <HierarchyNavigator levelAndValue={levelAndValue} />
         </div>
-        {level && <>
-            <DatePanel ref={datePanelRef}
-                date={date}
-                setDate={setDate}
-                task={_refreshReports}
-                interval={REFRESH_INTERVAL}
-                loadExpectedReports={["admin", "hamal"].includes(role) && !!deliveryReports && deliveryReports.length === 0}
-                onExpectedFileUploaded={onExpectedFileUploaded} />
-            <div className="dashboard">
-                {deliveryReports && <DeliveryStatus reports={deliveryReports} />}
-                {faultsReport && <FaultsStatus report={faultsReport} />}
-            </div>
-        </>}
-        <InitModal />
+        <div className="dashboard">
+            {deliveryReports && <DeliveryStatus reports={deliveryReports} />}
+            {faultsReport && <FaultsStatus report={faultsReport} />}
+        </div>
     </Container>;
-});
+};
