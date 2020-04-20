@@ -2,75 +2,43 @@ import "./DailySummary.scss";
 
 import React, { useState, useEffect } from "react";
 import { Button } from '@material-ui/core';
-import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 
 import NumberInput from "../Inputs/NumberInput";
 import { ProgressBar } from "./utils";
 import DeliveryReasons from "./DeliveryReasons";
 
 interface Props {
-    total: number;
-    delivered: number;
-    deliveryFailed: number;
-    isManualFormDone: boolean;
-    setDelivered: (value: number) => void;
-    setIsDone: (isDone: boolean) => void; // CHANGE THIS
-    getDeliveryReport: (deliveryReport: Partial<DeliveryReportData>) => void;
+    deliveryReport: DeliveryReportData | null;
+    setDeliveryReport: (deliveryReport: Partial<DeliveryReportData>) => Promise<void>;
+    finishDeliveryReport: (deliveryReport: Partial<DeliveryReportData>) => void;
 }
 
 export default function DailySummary(props: Props) {
-    const { total, delivered, getDeliveryReport, isManualFormDone, deliveryFailed } = props;
-    const [isReportDone, setIsReportDone] = useState<boolean>(false); // CHANGE THIS
-
-    useEffect(() => {
-        if (isManualFormDone && delivered === total)
-            getDeliveryReport({
-                delivered,
-                deliveryFailed: 0,
-                name: "",
-                deliveryFailReasons: {},
-                pendingDelivery: 0,
-            });
-    }, [total, delivered, isManualFormDone])
-
-    function _getDeliveryReport(deliveryReport: Partial<DeliveryReportData>) {
-        setIsReportDone(true); // CHANGE THIS
-        getDeliveryReport(deliveryReport);
-    }
+    const report = props.deliveryReport;
 
     return <div className="report">
-        <ProgressBar total={total} current={delivered} />
-        {isReportDone || total === delivered + deliveryFailed ?
-            <DeliveryFullyCompleted {...props} /> :
-            <DeliveryForm {...props} getDeliveryReport={_getDeliveryReport} />
-        }
-    </div>
+        {report && <ProgressBar total={report.total} current={report.delivered} />}
+        <DeliveryForm {...props} />
+    </div>;
 }
 
-function DeliveryFullyCompleted({ setIsDone }: Props) {
-    useEffect(() => {
-        setIsDone(true); // CHANGE THIS
-    }, [])
-    return <div className="sucess-message">
-        <CheckCircleOutlineIcon />
-        סיימת את היום בהצלחה
-    </div>
-}
-
-function DeliveryForm({ total, delivered, setDelivered, getDeliveryReport }: Props) {
-    const [currentNumber, setCurrentNumber] = useState<number | null>(null);
+function DeliveryForm({ deliveryReport, setDeliveryReport, finishDeliveryReport }: Props) {
+    const [currentNumber, setCurrentNumber] = useState<number>(0);
     const [isApproved, setIsApproved] = useState<boolean>(false);
     const [isValid, setIsValid] = useState<boolean>(true);
 
     useEffect(() => {
-        setCurrentNumber(delivered);
-    }, [delivered])
+        if (deliveryReport) {
+            setCurrentNumber(deliveryReport.delivered);
+            setIsApproved(!!deliveryReport.deliveryFailReasons);
+        }
+    }, [deliveryReport])
 
     function _onCurrentNumber() {
-        if (isValid && currentNumber) {
-            setIsApproved(true);
-            setDelivered(currentNumber);
-        };
+        if (!isValid) return;
+
+        setIsApproved(true);
+        setDeliveryReport({ delivered: currentNumber });
     }
 
     return <div className="summary-content">
@@ -79,23 +47,21 @@ function DeliveryForm({ total, delivered, setDelivered, getDeliveryReport }: Pro
                 disabled={isApproved}
                 label='כמה מנות חולקו סה"כ?'
                 min={0}
-                max={total}
+                max={deliveryReport?.total ?? 0}
                 onChange={(value, isValid) => {
                     setIsValid(isValid);
                     setCurrentNumber(value);
                 }}
-                value={currentNumber ? currentNumber : delivered} />
+                value={currentNumber} />
             {!isApproved ?
-                <Button onClick={() => _onCurrentNumber()} className="total-button" disabled={!isValid} color="primary" size="small" variant="contained">
+                <Button onClick={_onCurrentNumber} className="total-button" disabled={!isValid} color="primary" size="small" variant="contained">
                     אשר
                 </Button> :
                 <Button onClick={() => setIsApproved(false)} className="total-button" color="primary" size="small" variant="outlined">
                     שנה
             </Button>}
         </div>
-        {isApproved &&
-            <DeliveryReasons total={total}
-                delivered={delivered}
-                getDeliveryReport={getDeliveryReport} />}
+        {deliveryReport?.deliveryFailReasons && <DeliveryReasons deliveryReport={deliveryReport}
+            finishDeliveryReport={!isApproved ? undefined : finishDeliveryReport} />}
     </div>
 }
