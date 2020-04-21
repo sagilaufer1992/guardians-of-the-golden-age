@@ -17,16 +17,20 @@ export default function FaultsStatus(props: Props) {
   const [selectedDistrict, setSelectedDistrict] = useState<string>("");
   const [napas, setNapas] = useState<Option[]>([]);
   const [selectedNapa, setSelectedNapa] = useState<string>("");
+  const [municipalities, setMunicipalities] = useState<Option[]>([]);
+  const [selectedMunicipality, setSelectedMunicipality] = useState<string>("");
   const [isLoading, setIsloading] = useState<boolean>(true);
 
   useEffect(() => {
     const districtsPromise = fetchApi<string[]>({ route: "/api/districts" });
     const napasPromise = fetchApi<Branch[]>({ route: "/api/napas" });
+    const municipalitiesPromise = fetchApi<Branch[]>({ route: "/api/municipalities" });
 
-    Promise.all([districtsPromise, napasPromise]).then(
-      ([districtResult, napasResult]) => {
-        napasResult && setNapas(napasResult.map(_ => ({ value: _.napa, label: _.napa })));
+    Promise.all([districtsPromise, napasPromise, municipalitiesPromise]).then(
+      ([districtResult, napasResult, municipalitiesResult]) => {
         districtResult && setDistricts(districtResult.map(v => ({ value: v, label: v })));
+        napasResult && setNapas(napasResult.map(_ => ({ value: _.napa, label: _.napa })));
+        municipalitiesResult && setMunicipalities(municipalitiesResult.map(_ => ({ value: _.municipality, label: _.municipality })));
         setIsloading(false);
       }
     );
@@ -84,6 +88,22 @@ export default function FaultsStatus(props: Props) {
           title="בחר נפה"
         />
       </div>
+      <div className="radio-with-text-field">
+        <FormControlLabel
+          control={<Radio color="primary" />}
+          label="רשות"
+          value="municipality"
+          checked={level === "municipality"}
+        />
+        <AutocompleteInput
+          className="autocomplete"
+          disabled={level !== "municipality"}
+          onChange={setSelectedMunicipality}
+          options={municipalities}
+          defaultValue=""
+          title="בחר רשות"
+        />
+      </div>
     </RadioGroup>
   );
 
@@ -97,8 +117,9 @@ export default function FaultsStatus(props: Props) {
           color="primary"
           variant="contained"
           disabled={
+            (level === "district" && selectedDistrict === "") ||
             (level === "napa" && selectedNapa === "") ||
-            (level === "district" && selectedDistrict === "")
+            (level === "municipality" && selectedMunicipality === "")
           }
           onClick={() => {
             const { onInitialize } = props;
@@ -113,6 +134,10 @@ export default function FaultsStatus(props: Props) {
               }
               case "napa": {
                 onInitialize("napa", selectedNapa);
+                break;
+              }
+              case "municipality": {
+                onInitialize("municipality", selectedMunicipality)
                 break;
               }
             }

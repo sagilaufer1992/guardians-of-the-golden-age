@@ -9,7 +9,7 @@ type FaultStatus = "Todo" | "InProgress" | "Complete";
 
 type FaultCategory = "food" | "supplier" | "volunteers" | "other";
 
-type Level = "national" | "district" | "napa";
+type Level = "national" | "district" | "napa" | "municipality";
 
 interface AuthorInfo {
   name: string;
