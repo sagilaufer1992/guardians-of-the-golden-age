@@ -129,7 +129,7 @@ export default function Dashboard({ date, setDate }: AppRouteProps) {
             <HierarchyNavigator levelAndValue={levelAndValue} onHierarchyChanged={onHierarchyChanged} />
         </div>
         <div className="dashboard">
-            {deliveryReports && <DeliveryStatus reports={TEST_DELIVERY_REPORTS} />}
+            {deliveryReports && <DeliveryStatus reports={deliveryReports} />}
             {faultsReport && <FaultsStatus report={faultsReport} />}
         </div>
     </Container>;
