@@ -77,7 +77,7 @@ export default function Dashboard({ date, setDate }: AppRouteProps) {
 
     useEffect(() => { datePanelRef.current?.refresh() }, [levelAndValue]);
 
-    const onInitialize = (level: Level, value: string | null) => {
+    const onHierarchyChanged = (level: Level, value: string | null) => {
         if (value) window.localStorage.setItem(LEVEL_VALUE_KEY, value);
         else window.localStorage.removeItem(LEVEL_VALUE_KEY);
 
@@ -113,7 +113,7 @@ export default function Dashboard({ date, setDate }: AppRouteProps) {
         <Dialog open={modalOpen} onClose={handleModalClose} maxWidth="lg">
             <DialogTitle>בחר היררכיה</DialogTitle>
             <DialogContent style={{ width: 400 }}>
-                <Initializer onInitialize={onInitialize} />
+                <Initializer onInitialize={onHierarchyChanged} />
             </DialogContent>
         </Dialog>
         <DatePanel ref={datePanelRef}
@@ -125,7 +125,7 @@ export default function Dashboard({ date, setDate }: AppRouteProps) {
             onExpectedFileUploaded={onExpectedFileUploaded} />
         <div className="hierarchy-container">
             <Button variant="contained" color="primary" onClick={handleModalOpen} className="modal-button">שנה היררכיה</Button>
-            <HierarchyNavigator levelAndValue={levelAndValue} />
+            <HierarchyNavigator levelAndValue={levelAndValue} onHierarchyChanged={onHierarchyChanged} />
         </div>
         <div className="dashboard">
             {deliveryReports && <DeliveryStatus reports={deliveryReports} />}
