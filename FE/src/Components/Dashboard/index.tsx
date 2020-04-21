@@ -1,6 +1,7 @@
 import "./index.scss";
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { Container, Dialog, DialogContent, DialogTitle, Button } from "@material-ui/core";
+import moment from "moment";
 
 import { useApi } from "../../hooks/useApi";
 import { AppRouteProps } from "../../routesConfig";
@@ -121,7 +122,7 @@ export default function Dashboard({ date, setDate }: AppRouteProps) {
             setDate={setDate}
             task={_refreshReports}
             interval={REFRESH_INTERVAL}
-            loadExpectedReports={isHamal(user) && !!deliveryReports && deliveryReports.length === 0}
+            loadExpectedReports={isHamal(user) && (!!deliveryReports && deliveryReports.length === 0 || _isFutureDate(date))}
             onExpectedFileUploaded={onExpectedFileUploaded} />
         <div className="hierarchy-container">
             <Button variant="contained" color="primary" onClick={handleModalOpen} className="modal-button">שנה היררכיה</Button>
@@ -133,3 +134,7 @@ export default function Dashboard({ date, setDate }: AppRouteProps) {
         </div>
     </Container>;
 };
+
+function _isFutureDate(date: Date) {
+    return moment(date).diff(new Date(), "days") > 0;
+}

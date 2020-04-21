@@ -51,11 +51,9 @@ export default class DatePanel extends React.PureComponent<Props, State> {
         return <div className="date-panel">
             <div className="right-side">
                 <DatePicker initDate={date} onDateChanged={this.props.setDate} />
-                {/* {loadExpectedReports && onExpectedFileUploaded && 
-                    <Fragment>
-                        <UploadExpectedFile title="העלאת נתוני חלוקה עבור יום זה" date={date} onUploaded={onExpectedFileUploaded} />
-                    </Fragment>
-                } */}
+                {loadExpectedReports && onExpectedFileUploaded &&
+                    <UploadExpectedFile title="העלאת נתוני חלוקה עבור יום זה" date={date} onUploaded={onExpectedFileUploaded} />
+                }
 
                 <div>
                 </div>

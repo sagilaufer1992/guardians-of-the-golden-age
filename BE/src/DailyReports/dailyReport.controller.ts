@@ -24,6 +24,9 @@ export async function createFutureReports(req, res) {
 
     const { date, reports } = req.body;
 
+    const error = _isValid(reports);
+    if (error) return res.status(400).json(error);
+
     const branches = await Branch.find();
     const branchIdsDictionary = branches.map(_ => _.id).reduce((pv, v) => ({ ...pv, [v]: v }), {});
     const newBranches = reports.filter(report => !branchIdsDictionary[report.id]);
@@ -32,15 +35,50 @@ export async function createFutureReports(req, res) {
     const dateRange = { $gte: start, $lt: end };
     const dbDailyReports = await dailyReportModel.find({ date: dateRange });
 
+    // update exist reports
+    dbDailyReports.forEach(async report => {
+        const newReport = reports.find(_ => _.id === report.branchId);
+        if (!newReport) return;
+        if (report.total === newReport.amount) return;
+
+        report.total = newReport.amount;
+        await report.save();
+    });
+
     const dbReportsDictionary = dbDailyReports.map(_ => _.branchId).reduce((pv, v) => ({ ...pv, [v]: v }), {});
     const newReports = reports.filter(report => !dbReportsDictionary[report.id]);
 
+    // add new branches
     newBranches.forEach(async branch => await Branch.create(branch));
 
+    // add new reports
     newReports.forEach(async report =>
         await dailyReportModel.create({ branchId: report.id, date: new Date(date), total: report.amount }));
 
     res.status(201).json("");
+}
+
+const _isValid = (reports: be.FutureReport[]) => {
+    for (let i = 0; i < reports.length; i++) {
+        const report = reports[i];
+
+        if (!report) return `דיווח אחד הדיווחים ריק`;
+
+        const { id, name, municipality, napa, district, amount } = report;
+
+        if (isNaN(id)) return `באחד הדיווחים המזהה נקודת החלוקה אינו מספר`;
+        if (_isEmptyString(name)) return `מרכז חלוקה ${id}: שם נקודת החלוקה אינו תקין`;
+        if (_isEmptyString(municipality)) return `מרכז חלוקה ${id}: שם הרשות אינו תקין`;
+        if (_isEmptyString(napa)) return `מרכז חלוקה ${id}: הנפה שהוזנה אינה תקין`;
+        if (_isEmptyString(district)) return `מרכז חלוקה ${id}: המחוז שהוזן  אינו תקין`;
+        if (isNaN(amount)) return `מרכז חלוקה ${id}: כמות המנות לחלוקה אינה תקינה`;
+    }
+
+    return null;
+}
+
+function _isEmptyString(value: string) {
+    return value.trim() === "";
 }
 
 export async function getDailyReport(req, res) {
@@ -69,6 +107,7 @@ export async function getDailyReport(req, res) {
     res.json(_groupBySubLevels(level, branches, reports, jobs));
 }
 
+//TODO: FIX THIS FUNCTION
 function _groupBySubLevels(level: be.Level, branches: be.Branch[], reports: be.DBDailyReport[], jobs: gg.Job[]): be.DailyReport[] {
     const branchIdDictionary: Record<string, be.Branch> = branches.reduce((pv, v) => ({ ...pv, [v.id]: v }), {});
     const branchInfoDictionary: Record<string, be.Branch> = branches.reduce((pv, v) => ({ ...pv, [`${v.municipality}|${v.name}`]: v }), {});
@@ -80,7 +119,9 @@ function _groupBySubLevels(level: be.Level, branches: be.Branch[], reports: be.D
     for (const { city, distributionPoint, status, tasks } of jobs) {
         if (status === "CANCELED") continue;
 
-        const branchId = branchInfoDictionary[`${city}|${distributionPoint}`].id;
+        const branchId = branchInfoDictionary[`${city}|${distributionPoint}`]?.id;
+
+        if (!branchId) continue;
 
         if (!totals[branchId]) totals[branchId] = {
             expected: 0,
@@ -147,8 +188,6 @@ function _groupBySubLevels(level: be.Level, branches: be.Branch[], reports: be.D
 }
 
 function _mergeAndFilterResults(name: string, acc: be.DailyReport, report: Omit<be.DailyReport, "name">): be.DailyReport {
-    if(!acc && report.actual === 0) return undefined;
-
     if (!acc) return { ...report, name };
 
     if (report.actual === 0) return acc;

@@ -17,8 +17,9 @@ export function UploadExpectedFile({ title, date, onUploaded }: Props) {
 
     const onFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (isNull(e)) return;
+        const target = e.target as any;
 
-        const file = (e as any).target.files[0] as File;
+        const file = target.files[0] as File;
         try {
             const reports = await extractDailyReports(file);
 
@@ -37,6 +38,9 @@ export function UploadExpectedFile({ title, date, onUploaded }: Props) {
         catch (e) {
             enqueueSnackbar(e.message, { variant: "error" });
         }
+        finally {
+            target.value = "";
+        }
     }
 
     return <div className="upload-file-input">
@@ -51,7 +55,7 @@ export function UploadExpectedFile({ title, date, onUploaded }: Props) {
                 accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
             />
         </Button>
-        <span className="example-file-link" onClick={e=> getReportsFileExample("example")}>להורדת קובץ לדוגמה</span>
+        <a className="example-file-link" href={process.env.PUBLIC_URL + "/example.xlsx"}>להורדת קובץ לדוגמה</a>
     </div>
 
 }

@@ -56,7 +56,6 @@ export function extractDailyReports(file: File) {
         const reader = new FileReader();
         reader.onload = event => {
             try {
-
                 const binaryData = reader.result;
                 const workBook = XLSX.read(binaryData, { type: 'binary' });
 
