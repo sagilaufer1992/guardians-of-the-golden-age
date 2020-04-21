@@ -1,5 +1,8 @@
+interface FutureReport extends Branch {
+    amount: number;
+}
+
 type FailReason = "declined" | "unreachable" | "address" | "other";
-type ProgressStatus = "unassigned" | "notdone";
 
 interface DeliveryReport {
     name: string;
@@ -9,7 +12,6 @@ interface DeliveryReport {
     deliveryFailed: number;
     deliveryInProgress: number;
     deliveryFailReasons: Record<FailReason, number>;
-    deliveryProgressStatuses: Record<ProgressStatus, number>;
 }
 
 interface FaultsReport {

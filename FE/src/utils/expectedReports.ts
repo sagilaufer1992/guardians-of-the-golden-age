@@ -1,13 +1,5 @@
 import * as XLSX from 'xlsx';
 
-interface Dictionary<T> {
-    [index: string]: T
-}
-
-interface FutureReport extends Branch {
-    amount: number;
-}
-
 const COLUMN_TO_TITEL: Record<string, string> = {
     A: "מחוז",
     B: "נפה",
@@ -22,7 +14,7 @@ const COLUMN_TO_TITEL: Record<string, string> = {
 
 const REQUIRED_KEYS = ["A", "B", "C", "D", "E", "F", "I"];
 
-const COLUMN_TO_KEY: Dictionary<string> = {
+const COLUMN_TO_KEY: Record<string, string> = {
     A: "district",
     B: "napa",
     C: "municipality",
@@ -32,26 +24,7 @@ const COLUMN_TO_KEY: Dictionary<string> = {
     I: "amount"
 }
 
-export function getReportsFileExample(fileName: string) {
-    const data = {
-        [COLUMN_TO_TITEL["A"]]: "מחוז לדוגמה",
-        [COLUMN_TO_TITEL["B"]]: "נפה לדוגמה",
-        [COLUMN_TO_TITEL["C"]]: "עיר לדוגמה",
-        [COLUMN_TO_TITEL["D"]]: "נקודת חלוקה 123",
-        [COLUMN_TO_TITEL["E"]]: 1234567,
-        [COLUMN_TO_TITEL["F"]]: "הכתובת שלי",
-        [COLUMN_TO_TITEL["G"]]: "חמגשית, על יסודי",
-        [COLUMN_TO_TITEL["H"]]: 100,
-        [COLUMN_TO_TITEL["I"]]: 200
-    };
-    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet([data], { header: Object.values(COLUMN_TO_TITEL) });
-    const wb: XLSX.WorkBook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'חבילות יומיות');
-
-    XLSX.writeFile(wb, `${fileName}.xlsx`);
-}
-
-export function extractDailyReports(file: File) {
+export function extractDailyReports(file: File): Promise<FutureReport[]> {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onload = event => {
@@ -83,13 +56,13 @@ export function extractDailyReports(file: File) {
 function _validator(headers: any) {
     if (!headers) throw new Error("הקובץ לא תקין");
 
-    if (REQUIRED_KEYS.some(key => headers[key]?.trim() != COLUMN_TO_TITEL[key].trim()))
+    if (REQUIRED_KEYS.some(key => headers[key]?.trim() !== COLUMN_TO_TITEL[key]))
         throw new Error("הקובץ אינו תקין, נא הורד קובץ לדוגמה")
 }
 
 // מרכז יום חבל מודיעין מופיע פעמיים בקובץ
 function _unionDuplicates(reports: FutureReport[]) {
-    const dictionary: Dictionary<FutureReport> = {};
+    const dictionary: Record<string, FutureReport> = {};
 
     reports.forEach(report => {
         if (dictionary[report.id]) dictionary[report.id].amount += report.amount;

@@ -1,0 +1,15 @@
+.upload-file-input {
+  float: left;
+  .upload-input-element {
+    display: none;
+  }
+  .example-file-link {
+    display: block;
+    text-align: center;
+    margin: 5px;
+    color: royalblue;
+    font-size: 13px;
+    font-weight: bold;
+    text-decoration: underline;
+  }
+}

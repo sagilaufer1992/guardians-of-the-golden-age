@@ -1,7 +1,6 @@
 import "./index.scss";
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { Container, Dialog, DialogContent, DialogTitle, Button } from "@material-ui/core";
-import moment from "moment";
 
 import { useApi } from "../../hooks/useApi";
 import { AppRouteProps } from "../../routesConfig";
@@ -10,8 +9,6 @@ import DeliveryStatus from "./DeliveryStatus";
 import FaultsStatus from "./FaultsStatus";
 import DatePanel from "../DatePanel";
 import HierarchyNavigator from "./HierarchyNavigator";
-import { useUser } from "../../utils/UserProvider";
-import { isHamal } from "../../utils/roles";
 
 const TEST_DELIVERY_REPORTS: DeliveryReport[] = [{
     name: "רחובות",
@@ -20,8 +17,7 @@ const TEST_DELIVERY_REPORTS: DeliveryReport[] = [{
     delivered: 234,
     deliveryFailed: 40,
     deliveryInProgress: 50,
-    deliveryFailReasons: { declined: 10, unreachable: 15, address: 10, other: 5 },
-    deliveryProgressStatuses: { unassigned: 20, notdone: 30 }
+    deliveryFailReasons: { declined: 10, unreachable: 15, address: 10, other: 5 }
 }, {
     name: "ראשון לציון - מערב",
     expected: 400,
@@ -29,8 +25,7 @@ const TEST_DELIVERY_REPORTS: DeliveryReport[] = [{
     delivered: 234,
     deliveryFailed: 40,
     deliveryInProgress: 50,
-    deliveryFailReasons: { declined: 10, unreachable: 15, address: 10, other: 5 },
-    deliveryProgressStatuses: { unassigned: 50, notdone: 0 }
+    deliveryFailReasons: { declined: 10, unreachable: 15, address: 10, other: 5 }
 }, {
     name: "מקום חשוב",
     expected: 400,
@@ -38,8 +33,7 @@ const TEST_DELIVERY_REPORTS: DeliveryReport[] = [{
     delivered: 234,
     deliveryFailed: 40,
     deliveryInProgress: 50,
-    deliveryFailReasons: { declined: 10, unreachable: 15, address: 10, other: 5 },
-    deliveryProgressStatuses: { unassigned: 1, notdone: 49 }
+    deliveryFailReasons: { declined: 10, unreachable: 15, address: 10, other: 5 }
 }, {
     name: "ירושלים והמרכז ומחוצה לו ולתמיד",
     expected: 400,
@@ -47,8 +41,7 @@ const TEST_DELIVERY_REPORTS: DeliveryReport[] = [{
     delivered: 334,
     deliveryFailed: 40,
     deliveryInProgress: 50,
-    deliveryFailReasons: { declined: 10, unreachable: 15, address: 10, other: 5 },
-    deliveryProgressStatuses: { unassigned: 20, notdone: 30 }
+    deliveryFailReasons: { declined: 10, unreachable: 15, address: 10, other: 5 }
 }];
 
 interface LevelAndValue {
@@ -62,7 +55,6 @@ const LEVEL_KEY = "dashboard_level";
 const LEVEL_VALUE_KEY = "dashboard_level_value";
 
 export default function Dashboard({ date, setDate }: AppRouteProps) {
-    const user = useUser();
     const [levelAndValue, setLevelAndValue] = useState<LevelAndValue>({
         level: (window.localStorage.getItem(LEVEL_KEY) as Level) ?? "national",
         value: window.localStorage.getItem(LEVEL_VALUE_KEY) ?? null
@@ -103,9 +95,7 @@ export default function Dashboard({ date, setDate }: AppRouteProps) {
         newDeliveryReports && setDeliveryReports(newDeliveryReports);
     }, [date, levelAndValue]);
 
-    const onExpectedFileUploaded = () => {
-        datePanelRef.current?.refresh();
-    }
+    const onExpectedFileUploaded = () => { datePanelRef.current?.refresh(); };
 
     const handleModalOpen = () => setModalOpen(true);
     const handleModalClose = () => setModalOpen(false);
@@ -121,20 +111,14 @@ export default function Dashboard({ date, setDate }: AppRouteProps) {
             date={date}
             setDate={setDate}
             task={_refreshReports}
-            interval={REFRESH_INTERVAL}
-            loadExpectedReports={isHamal(user) && (!!deliveryReports && deliveryReports.length === 0 || _isFutureDate(date))}
-            onExpectedFileUploaded={onExpectedFileUploaded} />
+            interval={REFRESH_INTERVAL} />
         <div className="hierarchy-container">
             <Button variant="contained" color="primary" onClick={handleModalOpen} className="modal-button">שנה היררכיה</Button>
             <HierarchyNavigator levelAndValue={levelAndValue} onHierarchyChanged={onHierarchyChanged} />
         </div>
         <div className="dashboard">
-            {deliveryReports && <DeliveryStatus reports={deliveryReports} />}
+            {deliveryReports && <DeliveryStatus date={date} reports={deliveryReports} onUploadReports={onExpectedFileUploaded} />}
             {faultsReport && <FaultsStatus report={faultsReport} />}
         </div>
     </Container>;
 };
-
-function _isFutureDate(date: Date) {
-    return moment(date).diff(new Date(), "days") > 0;
-}

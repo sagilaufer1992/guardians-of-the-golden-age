@@ -1,7 +1,6 @@
 import DailyReport from "./dailyReport.model";
 import Branch from "../Branches/branch.model";
 import Job from "./job.model";
-import dailyReportModel from "./dailyReport.model";
 import { getRangeFromDate } from "../utils/dates";
 import { isHamal } from "../utils/users";
 
@@ -20,49 +19,48 @@ const BRANCH_FILTER_DICTIONARY: Record<string, any> = {
 }
 
 export async function createFutureReports(req, res) {
-    if (!isHamal(req.user)) res.status(403).json("אינך מורשה");
+    if (!isHamal(req.user)) res.status(403).send("אינך מורשה");
 
-    const { date, reports } = req.body;
+    const { reports } = req.body;
+    const date = new Date(req.body.date);
 
     const error = _isValid(reports);
-    if (error) return res.status(400).json(error);
+    if (error) return res.status(400).send(error);
 
     const branches = await Branch.find();
-    const branchIdsDictionary = branches.map(_ => _.id).reduce((pv, v) => ({ ...pv, [v]: v }), {});
-    const newBranches = reports.filter(report => !branchIdsDictionary[report.id]);
+    const existingBranchIds = new Set(branches.map(_ => _.id))
+    const newBranches = reports.filter(report => !existingBranchIds.has(report.id));
 
-    const { start, end } = getRangeFromDate(new Date(date));
+    const { start, end } = getRangeFromDate(date);
     const dateRange = { $gte: start, $lt: end };
-    const dbDailyReports = await dailyReportModel.find({ date: dateRange });
+    const dbDailyReports = await DailyReport.find({ date: dateRange });
+
+    const existingReports = new Set();
 
     // update exist reports
     dbDailyReports.forEach(async report => {
         const newReport = reports.find(_ => _.id === report.branchId);
         if (!newReport) return;
-        if (report.total === newReport.amount) return;
 
-        report.total = newReport.amount;
-        await report.save();
+        existingReports.add(report.branchId);
+        await report.update({ total: newReport.amount });
     });
 
-    const dbReportsDictionary = dbDailyReports.map(_ => _.branchId).reduce((pv, v) => ({ ...pv, [v]: v }), {});
-    const newReports = reports.filter(report => !dbReportsDictionary[report.id]);
+    const newReports = reports.filter(report => !existingReports.has(report.id));
 
     // add new branches
-    newBranches.forEach(async branch => await Branch.create(branch));
-
+    await Branch.create(newBranches);
     // add new reports
-    newReports.forEach(async report =>
-        await dailyReportModel.create({ branchId: report.id, date: new Date(date), total: report.amount }));
+    await DailyReport.create(newReports.map(({ id, amount }) => ({ branchId: id, date, total: amount })));
 
-    res.status(201).json("");
+    res.status(201).json("הועלה בהצלחה");
 }
 
-const _isValid = (reports: be.FutureReport[]) => {
+function _isValid(reports: be.FutureReport[]) {
     for (let i = 0; i < reports.length; i++) {
         const report = reports[i];
 
-        if (!report) return `דיווח אחד הדיווחים ריק`;
+        if (!report) return `אחד הדיווחים ריק`;
 
         const { id, name, municipality, napa, district, amount } = report;
 
@@ -77,26 +75,23 @@ const _isValid = (reports: be.FutureReport[]) => {
     return null;
 }
 
-function _isEmptyString(value: string) {
-    return value.trim() === "";
-}
+function _isEmptyString(value: string) { return value.trim() === ""; }
 
 export async function getDailyReport(req, res) {
     const { date, level, value } = req.query;
 
-    if (!isHamal(req.user)) res.status(403).json("אינך מורשה לצפות במידע");
+    if (!isHamal(req.user)) res.status(403).send("אינך מורשה לצפות במידע");
 
-    if (!level || !LOWER_LEVEL_DICTIONARY[level]) return res.status(400).json("רמת ההסתכלות אינה תקינה");
+    if (!level || !LOWER_LEVEL_DICTIONARY[level]) return res.status(400).send("רמת ההסתכלות אינה תקינה");
 
     const branches = await Branch.find(BRANCH_FILTER_DICTIONARY[level](value));
-    const branchIds = branches.map(branch => branch.id);
 
     const { start, end } = getRangeFromDate(new Date(date));
     const dateRange = { $gte: start, $lt: end };
 
     const reports = await DailyReport.find({
         date: dateRange,
-        branchId: { $in: branchIds },
+        branchId: { $in: [...new Set(branches.map(_ => _.id))] },
     });
 
     const jobs = await Job.find({
@@ -104,7 +99,7 @@ export async function getDailyReport(req, res) {
         date: dateRange
     });
 
-    res.json(_groupBySubLevels(level, branches, reports, jobs));
+    res.status(200).json(_groupBySubLevels(level, branches, reports, jobs));
 }
 
 //TODO: FIX THIS FUNCTION
@@ -129,8 +124,7 @@ function _groupBySubLevels(level: be.Level, branches: be.Branch[], reports: be.D
             delivered: 0,
             deliveryFailed: 0,
             deliveryInProgress: 0,
-            deliveryFailReasons: { declined: 0, address: 0, unreachable: 0, other: 0 },
-            deliveryProgressStatuses: { unassigned: 0, notdone: 0 }
+            deliveryFailReasons: { declined: 0, address: 0, unreachable: 0, other: 0 }
         };
 
         for (const { status: taskStatus, failureReason, amount } of tasks) {
@@ -140,18 +134,11 @@ function _groupBySubLevels(level: be.Level, branches: be.Branch[], reports: be.D
                 case "DELIVERED":
                     totals[branchId].delivered += amount;
                     break;
-                // deliveryInProgress
-                case "READY":
-                    totals[branchId].deliveryInProgress += amount;
-                    totals[branchId].deliveryProgressStatuses.unassigned += amount;
-                    break;
                 case "UNDELIVERED":
                     totals[branchId].deliveryInProgress += amount;
-                    totals[branchId].deliveryProgressStatuses.notdone += amount;
                     break;
                 // deliveryFailed
                 case "FAILED":
-                case "DECLINED":
                     totals[branchId].deliveryFailed += amount;
                     const field = ["DECLINED", "UNREACHABLE", "ADDRESS"].includes(failureReason) ? failureReason.toLowerCase() : "other";
                     totals[branchId].deliveryFailReasons[field] += amount;
@@ -173,8 +160,7 @@ function _groupBySubLevels(level: be.Level, branches: be.Branch[], reports: be.D
                 address: (deliveryFailReasons as any).get("address") ?? 0,
                 unreachable: (deliveryFailReasons as any).get("unreachable") ?? 0,
                 other: (deliveryFailReasons as any).get("other") ?? 0
-            },
-            deliveryProgressStatuses: { unassigned: 0, notdone: 0 }
+            }
         };
     }
 
@@ -204,10 +190,6 @@ function _mergeAndFilterResults(name: string, acc: be.DailyReport, report: Omit<
             address: acc.deliveryFailReasons.address + report.deliveryFailReasons.address,
             unreachable: acc.deliveryFailReasons.unreachable + report.deliveryFailReasons.unreachable,
             other: acc.deliveryFailReasons.other + report.deliveryFailReasons.other
-        },
-        deliveryProgressStatuses: {
-            unassigned: acc.deliveryProgressStatuses.unassigned + report.deliveryProgressStatuses.unassigned,
-            notdone: acc.deliveryProgressStatuses.notdone + report.deliveryProgressStatuses.notdone
         }
     };
 }

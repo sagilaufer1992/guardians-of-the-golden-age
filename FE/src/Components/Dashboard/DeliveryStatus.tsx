@@ -1,20 +1,25 @@
 import "./DeliveryStatus.scss";
-import React from "react";
-import { Card, Tooltip, withStyles } from "@material-ui/core";
+import React, { useMemo } from "react";
+import { Card, Tooltip, withStyles, Hidden } from "@material-ui/core";
 import { PieChart, Pie } from "recharts";
 
-import { failRasonToText, progressStatusToText } from "../../utils/translations";
+import { failRasonToText } from "../../utils/translations";
+import UploadDeliveryFile from "./UploadDeliveryFile";
+import { dayDifference } from "../../utils/dates";
 
 interface Props {
+    date: Date;
     reports: DeliveryReport[];
+    onUploadReports: () => void;
 }
 
 const RADIAN = Math.PI / 180;
 
-const IN_PROGRESS_COLOR = "#ff9800";
 const FAILED_COLOR = "#f44336";
 
-export default function DeliveryStatus(props: Props) {
+export default function DeliveryStatus({ date, reports, onUploadReports }: Props) {
+    const isFutureDate = useMemo(() => dayDifference(date, new Date()) > 0, [date]);
+
     const PieChartTooltip = withStyles((theme) => ({
         tooltip: {
             backgroundColor: "white",
@@ -40,11 +45,16 @@ export default function DeliveryStatus(props: Props) {
             .filter(_ => _.value > 0);
 
     return (<Card className="panel delivery-status">
-        {props.reports.length === 0 && <div className="no-reports">
-            לא נמצאו דיווחים בזמן וההיררכיה המבוקשים
-        </div>}
-        {props.reports.map((report, index) => {
-            const { name, actual, expected, delivered, deliveryFailed, deliveryInProgress, deliveryFailReasons, deliveryProgressStatuses } = report;
+        {reports.length === 0 && <>
+            <div className="no-reports">
+                <span>לא נמצאו דיווחים בזמן וההיררכיה המבוקשים</span>
+                {isFutureDate && <Hidden smDown>
+                    <UploadDeliveryFile title="העלה נתוני חלוקה עבור יום זה" date={date} onUploaded={onUploadReports} />
+                </Hidden>}
+            </div>
+        </>}
+        {reports.map((report, index) => {
+            const { name, actual, expected, delivered, deliveryFailed, deliveryInProgress, deliveryFailReasons } = report;
             const max = Math.max(actual, expected); // לפעמים הערך בפועל גדול מזה המצופה
 
             const deliveryPercent = (delivered / max) * 100;
@@ -62,16 +72,14 @@ export default function DeliveryStatus(props: Props) {
                 <div className="delivery-data">
                     <div className="expected-text-info">צפי יומי - {expected} חבילות</div>
                     <div className="status-bar">
-                        {delivered > 0 && <div className="delivered" style={deliveredStyle} />}
-                        {deliveryInProgress > 0 && <div className="in-progress" style={inProgressStyle} />}
-                        {deliveryFailed > 0 && <div className="failed" style={failedStyle} />}
+                        <div className="delivered" style={deliveredStyle} />
+                        <div className="in-progress" style={inProgressStyle} />
+                        <div className="failed" style={failedStyle} />
                     </div>
                     <div className="actual-text-info">
                         <span>{actual} חבילות בפועל</span>
                         <span className="delivered">{delivered} חולקו</span>
-                        {deliveryInProgress > 0 ? <PieChartTooltip title={_generatePieChart(IN_PROGRESS_COLOR, _convertToChartData(deliveryProgressStatuses, progressStatusToText))}>
-                            <span className="in-progress">{deliveryInProgress} בתהליך חלוקה</span>
-                        </PieChartTooltip> : <span className="in-progress zero">{deliveryInProgress} בתהליך חלוקה</span>}
+                        <span className="in-progress zero">{deliveryInProgress} בתהליך חלוקה</span>
                         {deliveryFailed > 0 ? <PieChartTooltip title={_generatePieChart(FAILED_COLOR, _convertToChartData(deliveryFailReasons, failRasonToText))}>
                             <span className="failed">{deliveryFailed} נתקלו בבעיה</span>
                         </PieChartTooltip> : <span className="failed zero">{deliveryFailed} נתקלו בבעיה</span>}

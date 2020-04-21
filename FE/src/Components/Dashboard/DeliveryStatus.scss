@@ -34,7 +34,6 @@ $failed-color: #f44336;
         }
         .delivery-data {
             flex: 1;
-
             .status-bar {
                 display: flex;
                 height: 15px;
@@ -49,7 +48,6 @@ $failed-color: #f44336;
                     font-size: 12px;
                     color: white;
                     cursor: auto;
-                    min-width: 5px;
                     &:first-child {
                         border-radius: 0 5px 5px 0;
                     }

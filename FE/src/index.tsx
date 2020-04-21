@@ -1,6 +1,8 @@
 import './index.css';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import moment from "moment";
+import "moment/locale/he";
 import rtl from "jss-rtl";
 import { create } from "jss";
 import { SnackbarProvider } from "notistack";
@@ -9,6 +11,8 @@ import { createMuiTheme, ThemeProvider, Theme, StylesProvider, jssPreset } from 
 import App from './App';
 import { useMediaQuery, SnackbarOrigin } from '@material-ui/core';
 import * as serviceWorker from './serviceWorker';
+
+moment.locale("he");
 
 const theme: Theme = createMuiTheme({
   typography: {

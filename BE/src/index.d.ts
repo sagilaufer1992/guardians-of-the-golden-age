@@ -29,7 +29,7 @@ declare namespace gg {
   interface Task {
     needType: "FOOD" | "DRUGS";
     amount: number;
-    status: "READY" | "UNDELIVERED" | "DELIVERED" | "DECLINED" | "FAILED";
+    status: "UNDELIVERED" | "DELIVERED" | "FAILED";
     failureReason: "DECLINED" | "UNREACHABLE" | "ADDRESS" | "OTHER";
   }
 
@@ -108,6 +108,5 @@ declare namespace be {
     deliveryFailed: number;
     deliveryInProgress: number;
     deliveryFailReasons: Record<"declined" | "unreachable" | "address" | "other", number>;
-    deliveryProgressStatuses: Record<"unassigned" | "notdone", number>;
   }
 }

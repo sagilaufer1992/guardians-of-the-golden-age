@@ -17,8 +17,3 @@ export const failRasonToText: Record<FailReason, string> = {
     address: "כתובת שגויה",
     other: "אחר"
 };
-
-export const progressStatusToText: Record<ProgressStatus, string> = {
-    unassigned: "ללא מתנדב",
-    notdone: "בתהליך חלוקה"
-};
