@@ -28,7 +28,7 @@ export default function HierarchyNavigator({ levelAndValue, onHierarchyChanged }
             return setCurrentHierarchy({ district: branch.district, napa: levelValue });
 
         if (level === "municipality")
-            setCurrentHierarchy({ district: branch.district, napa: branch.napa, municipality: levelValue });
+            return setCurrentHierarchy({ district: branch.district, napa: branch.napa, municipality: levelValue });
     }
 
     const onNationalClick = () => onHierarchyChanged("national", null);

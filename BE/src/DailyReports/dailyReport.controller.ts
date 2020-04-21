@@ -16,7 +16,7 @@ const BRANCH_FILTER_DICTIONARY: Record<string, any> = {
     "national": () => { },
     "district": district => ({ district: { $eq: district } }),
     "napa": napa => ({ napa: { $eq: napa } }),
-    "municipality": municipality => ({ municipalityName: { $eq: municipality } })
+    "municipality": municipality => ({ municipality: { $eq: municipality } })
 }
 
 export async function createFutureReports(req, res) {
