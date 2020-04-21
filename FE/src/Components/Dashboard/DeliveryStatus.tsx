@@ -28,10 +28,10 @@ export default function DeliveryStatus(props: Props) {
         const x = cx + radius * Math.cos(-midAngle * RADIAN);
         const y = cy + radius * Math.sin(-midAngle * RADIAN);
 
-        return <text x={x} y={y} fill="black" fontSize={14} textAnchor="middle" dominantBaseline="central">{`${name} - ${value}`}</text>;
+        return <text x={x} y={y} fill="black" fontSize={11} textAnchor="middle" dominantBaseline="central">{`${name} - ${value}`}</text>;
     }
 
-    const _generatePieChart = (color: string, data: any[]) => <PieChart height={300} width={300}>
+    const _generatePieChart = (color: string, data: any[]) => <PieChart height={250} width={250}>
         <Pie data={data} dataKey="value" nameKey="name" direction="rtl" fill={color} animationDuration={850} labelLine={false} innerRadius={50} label={CustomizedLabel} />
     </PieChart>;
 
@@ -56,24 +56,25 @@ export default function DeliveryStatus(props: Props) {
             const inProgressStyle = { width: `${inProgressPercent}%` };
 
             return <div className="report-container" key={index}>
-                <div className="location">{name}</div>
+                <div className="location">
+                    <span>{name}</span>
+                </div>
                 <div className="delivery-data">
                     <div className="expected-text-info">צפי יומי - {expected} חבילות</div>
                     <div className="status-bar">
-                        {delivered > 0 && <span className="delivered" style={deliveredStyle} />}
-                        {deliveryInProgress > 0 && <span className="in-progress" style={inProgressStyle} />}
-                        {deliveryFailed > 0 && <span className="failed" style={failedStyle} />}
+                        {delivered > 0 && <div className="delivered" style={deliveredStyle} />}
+                        {deliveryInProgress > 0 && <div className="in-progress" style={inProgressStyle} />}
+                        {deliveryFailed > 0 && <div className="failed" style={failedStyle} />}
                     </div>
                     <div className="actual-text-info">
-                        <span>סה"כ בפועל- {actual} </span>|
-                        <span className="delivered"> חולקו - {delivered} </span>|
+                        <span>{actual} חבילות בפועל</span>
+                        <span className="delivered">{delivered} חולקו</span>
                         {deliveryInProgress > 0 ? <PieChartTooltip title={_generatePieChart(IN_PROGRESS_COLOR, _convertToChartData(deliveryProgressStatuses, progressStatusToText))}>
-                            <span className="in-progress"> בתהליך חלוקה - {deliveryInProgress} </span>
-                        </PieChartTooltip> : <span className="in-progress zero"> בתהליך חלוקה - {deliveryInProgress} </span>}
-                        <span>|</span>
+                            <span className="in-progress">{deliveryInProgress} בתהליך חלוקה</span>
+                        </PieChartTooltip> : <span className="in-progress zero">{deliveryInProgress} בתהליך חלוקה</span>}
                         {deliveryFailed > 0 ? <PieChartTooltip title={_generatePieChart(FAILED_COLOR, _convertToChartData(deliveryFailReasons, failRasonToText))}>
-                            <span className="failed"> נתקלנו בבעיה - {deliveryFailed}</span>
-                        </PieChartTooltip> : <span className="failed zero"> נתקלנו בבעיה - {deliveryFailed}</span>}
+                            <span className="failed">{deliveryFailed} נתקלו בבעיה</span>
+                        </PieChartTooltip> : <span className="failed zero">{deliveryFailed} נתקלו בבעיה</span>}
                     </div>
                 </div>
             </div>

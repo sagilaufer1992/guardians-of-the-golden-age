@@ -14,7 +14,7 @@ import { useUser } from "../../utils/UserProvider";
 import { isHamal } from "../../utils/roles";
 
 const TEST_DELIVERY_REPORTS: DeliveryReport[] = [{
-    name: "מקום חשוב",
+    name: "רחובות",
     expected: 400,
     actual: 400,
     delivered: 234,
@@ -23,14 +23,14 @@ const TEST_DELIVERY_REPORTS: DeliveryReport[] = [{
     deliveryFailReasons: { declined: 10, unreachable: 15, address: 10, other: 5 },
     deliveryProgressStatuses: { unassigned: 20, notdone: 30 }
 }, {
-    name: "מקום חשוב",
+    name: "ראשון לציון - מערב",
     expected: 400,
     actual: 400,
     delivered: 234,
     deliveryFailed: 40,
     deliveryInProgress: 50,
     deliveryFailReasons: { declined: 10, unreachable: 15, address: 10, other: 5 },
-    deliveryProgressStatuses: { unassigned: 20, notdone: 30 }
+    deliveryProgressStatuses: { unassigned: 50, notdone: 0 }
 }, {
     name: "מקום חשוב",
     expected: 400,
@@ -39,12 +39,12 @@ const TEST_DELIVERY_REPORTS: DeliveryReport[] = [{
     deliveryFailed: 40,
     deliveryInProgress: 50,
     deliveryFailReasons: { declined: 10, unreachable: 15, address: 10, other: 5 },
-    deliveryProgressStatuses: { unassigned: 20, notdone: 30 }
+    deliveryProgressStatuses: { unassigned: 1, notdone: 49 }
 }, {
-    name: "מקום חשוב",
+    name: "ירושלים והמרכז ומחוצה לו ולתמיד",
     expected: 400,
-    actual: 400,
-    delivered: 234,
+    actual: 500,
+    delivered: 334,
     deliveryFailed: 40,
     deliveryInProgress: 50,
     deliveryFailReasons: { declined: 10, unreachable: 15, address: 10, other: 5 },
@@ -129,7 +129,7 @@ export default function Dashboard({ date, setDate }: AppRouteProps) {
             <HierarchyNavigator levelAndValue={levelAndValue} onHierarchyChanged={onHierarchyChanged} />
         </div>
         <div className="dashboard">
-            {deliveryReports && <DeliveryStatus reports={deliveryReports} />}
+            {deliveryReports && <DeliveryStatus reports={TEST_DELIVERY_REPORTS} />}
             {faultsReport && <FaultsStatus report={faultsReport} />}
         </div>
     </Container>;

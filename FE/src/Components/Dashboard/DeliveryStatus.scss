@@ -1,3 +1,4 @@
+$primary-color: #007aff;
 $delivered-color: #4caf50;
 $in-progress-color: #ff9800;
 $failed-color: #f44336;
@@ -7,8 +8,8 @@ $failed-color: #f44336;
     display: flex;
     flex-direction: column;
     background-color: white;
-    margin: 10px;
-    padding: 10px;
+    padding: 15px;
+    color: black;
     .report-container {
         display: flex;
         align-items: center;
@@ -16,48 +17,78 @@ $failed-color: #f44336;
             margin-bottom: 15px;
         }
         .location {
-            width: 20%;
+            height: 100%;
+            width: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            margin-left: 15px;
             font-size: 14px;
+            color: darken($primary-color, 10);
+            border: 1px solid $primary-color;
+            border-radius: 3px;
             overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+            span {
+                margin: 5px 10px;
+            }
         }
         .delivery-data {
-            width: 75%;
+            flex: 1;
+
             .status-bar {
-                width: 100%;            
-                height: 20px;
-                border: 1px solid rgb(182, 182, 182);
-                background-color: white;
-                box-sizing: border-box;
-                .delivered {
-                    background: linear-gradient(to left, $delivered-color, lighten($delivered-color, 10));
+                display: flex;
+                height: 15px;
+                border-radius: 5px;
+                margin: 2px 0;
+                background-color: darken(whitesmoke, 5);
+                .status {
                     width: 0;
                     height: 100%;
-                    display: inline-block;
                     text-align: center;
                     overflow: hidden;
-                    line-height: 20px;
                     font-size: 12px;
                     color: white;
                     cursor: auto;
+                    min-width: 5px;
+                    &:first-child {
+                        border-radius: 0 5px 5px 0;
+                    }
+                    &:last-child {
+                        border-radius: 5px 0 0 5px;
+                    }
+                    &:only-child {
+                        border-radius: 5px;
+                    }
+                }
+                .delivered {
+                    @extend .status;
+                    background: $delivered-color;
                 }
                 .in-progress {
-                    @extend .delivered;
-                    background: linear-gradient(to left, $in-progress-color, lighten($in-progress-color, 10));
+                    @extend .status;
+                    background: $in-progress-color;
                 }
                 .failed {
-                    @extend .delivered;
-                    background: linear-gradient(to left, $failed-color, lighten($failed-color, 10));
+                    @extend .status;
+                    border-radius: 5px 0 0 5px;
+                    background: $failed-color;
                 }
             }
             .expected-text-info {
-                font-size: 13px;
-                font-weight: bold;
+                font-size: 11px;
             }
             .actual-text-info {
                 font-size: 12px;
-                font-weight: bold;
+                & > * {
+                    &:not(:last-child) {
+                        &:after{
+                            padding: 0 5px;
+                            content: "|";
+                            color: gray
+                        }
+                    }
+                }
                 .delivered {
                     cursor: default;
                     color: darken($delivered-color, 5);
@@ -70,7 +101,7 @@ $failed-color: #f44336;
                     cursor: pointer;
                     color: darken($failed-color, 5);
                 }
-                .zero{
+                .zero {
                     cursor: default !important;
                 }
             }
