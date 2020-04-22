@@ -5,12 +5,6 @@ import Branch from "../Branches/branch.model";
 import { getRangeFromDate } from "../utils/dates";
 import { isManager, getBranchIdentifier } from "../utils/users";
 
-// Fault.find((_, res) => res.forEach(f => {
-//     console.log(f.id);
-//     f.branch.identifier = getBranchIdentifier(f.branch);
-//     f.save();
-// }));
-
 export async function getFaultsInDate(req, res, next) {
     const { date } = req.query;
     const { branches } = req.user;
