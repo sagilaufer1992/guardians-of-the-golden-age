@@ -10,6 +10,11 @@ $failed-color: #f44336;
     background-color: white;
     padding: 15px;
     color: black;
+    .total {
+        .location{
+            font-weight: bold;
+        }
+    }
     .report-container {
         display: flex;
         align-items: center;
@@ -28,9 +33,11 @@ $failed-color: #f44336;
             border: 1px solid $primary-color;
             border-radius: 3px;
             overflow: hidden;
-            cursor: pointer;
             span {
                 margin: 5px 10px;
+            }
+            &.clickable {
+                cursor: pointer;
             }
         }
         .delivery-data {
