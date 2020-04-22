@@ -11,13 +11,14 @@ interface Props {
     date: Date;
     reports: DeliveryReport[];
     onUploadReports: () => void;
+    onDeliveryReportClick: (value: string) => void;
 }
 
 const RADIAN = Math.PI / 180;
 
 const FAILED_COLOR = "#f44336";
 
-export default function DeliveryStatus({ date, reports, onUploadReports }: Props) {
+export default function DeliveryStatus({ date, reports, onUploadReports, onDeliveryReportClick }: Props) {
     const isFutureDate = useMemo(() => dayDifference(date, new Date()) > 0, [date]);
 
     const PieChartTooltip = withStyles((theme) => ({
@@ -66,7 +67,7 @@ export default function DeliveryStatus({ date, reports, onUploadReports }: Props
             const inProgressStyle = { width: `${inProgressPercent}%` };
 
             return <div className="report-container" key={index}>
-                <div className="location">
+                <div className="location" onClick={() => onDeliveryReportClick(name)}>
                     <span>{name}</span>
                 </div>
                 <div className="delivery-data">

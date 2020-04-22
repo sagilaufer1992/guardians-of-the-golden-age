@@ -100,6 +100,16 @@ export default function Dashboard({ date, setDate }: AppRouteProps) {
     const handleModalOpen = () => setModalOpen(true);
     const handleModalClose = () => setModalOpen(false);
 
+    const onDeliveryReportClick = (value: string) => {
+        const { level } = levelAndValue;
+
+        if (level === "municipality") return;
+
+        if (level === "national") onHierarchyChanged("district", value);
+        else if (level === "district") onHierarchyChanged("napa", value);
+        else if (level === "napa") onHierarchyChanged("municipality", value);
+    }
+
     return <Container className="dashboard-container" maxWidth="xl">
         <Dialog open={modalOpen} onClose={handleModalClose} maxWidth="lg">
             <DialogTitle>בחר היררכיה</DialogTitle>
@@ -117,7 +127,7 @@ export default function Dashboard({ date, setDate }: AppRouteProps) {
             <HierarchyNavigator levelAndValue={levelAndValue} onHierarchyChanged={onHierarchyChanged} />
         </div>
         <div className="dashboard">
-            {deliveryReports && <DeliveryStatus date={date} reports={deliveryReports} onUploadReports={onExpectedFileUploaded} />}
+            {deliveryReports && <DeliveryStatus date={date} reports={deliveryReports} onUploadReports={onExpectedFileUploaded} onDeliveryReportClick={onDeliveryReportClick} />}
             {faultsReport && <FaultsStatus report={faultsReport} />}
         </div>
     </Container>;
