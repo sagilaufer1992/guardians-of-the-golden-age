@@ -46,7 +46,7 @@ export default React.memo(function DeliveryStatus({ date, reports, onUploadRepor
         Object.keys(data).map(key => ({ name: translation[key], value: data[key] }))
             .filter(_ => _.value > 0);
 
-    function singleReport(report:DeliveryReport, isClickable: boolean) {
+    function singleReport(report: DeliveryReport, isClickable: boolean) {
         const { name, actual, expected, delivered, deliveryFailed, deliveryInProgress, deliveryFailReasons } = report;
         const max = Math.max(actual, expected); // לפעמים הערך בפועל גדול מזה המצופה
 
@@ -58,10 +58,8 @@ export default React.memo(function DeliveryStatus({ date, reports, onUploadRepor
         const failedStyle = { width: `${failedPercent}%` };
         const inProgressStyle = { width: `${inProgressPercent}%` };
 
-        console.log("level: ", level, " isClick:", isClickable);
-
         return <div className="report-container" key={name}>
-            <div className={`location ${isClickable ? "clickable": ""}`} onClick={() => isClickable && onDeliveryReportClick(name)}>
+            <div className={`location ${isClickable ? "clickable" : ""}`} onClick={() => isClickable && onDeliveryReportClick(name)}>
                 <span>{name}</span>
             </div>
             <div className="delivery-data">
@@ -72,12 +70,12 @@ export default React.memo(function DeliveryStatus({ date, reports, onUploadRepor
                     {deliveryFailed > 0 && <span className="failed" style={failedStyle} />}
                 </div>
                 <div className="actual-text-info">
-                    <span>סה"כ בפועל- {actual} </span>
-                    <span className="delivered"> חולקו - {delivered} </span>
-                    <span className="in-progress zero"> בתהליך חלוקה - {deliveryInProgress} </span>
+                    <span>{actual} חבילות בפועל</span>
+                    <span className="delivered">{delivered} חולקו</span>
+                    <span className="in-progress zero">{deliveryInProgress} בתהליך חלוקה</span>
                     {deliveryFailed > 0 ? <PieChartTooltip title={_generatePieChart(FAILED_COLOR, _convertToChartData(deliveryFailReasons, failRasonToText))}>
-                        <span className="failed"> נתקלנו בבעיה - {deliveryFailed}</span>
-                    </PieChartTooltip> : <span className="failed zero"> נתקלנו בבעיה - {deliveryFailed}</span>}
+                        <span className="failed">{deliveryFailed} נתקלו בבעיה</span>
+                    </PieChartTooltip> : <span className="failed zero">{deliveryFailed} נתקלו בבעיה</span>}
                 </div>
             </div>
         </div>
@@ -85,35 +83,35 @@ export default React.memo(function DeliveryStatus({ date, reports, onUploadRepor
 
     function getTotalReport() {
         const initialReport: DeliveryReport = {
-          actual: 0,
-          delivered: 0,
-          deliveryFailReasons: {
-            address: 0,
-            declined: 0,
-            other: 0,
-            unreachable: 0,
-          },
-          deliveryFailed: 0,
-          deliveryInProgress: 0,
-          expected: 0,
-          name: "סך הכל",
+            actual: 0,
+            delivered: 0,
+            deliveryFailReasons: {
+                address: 0,
+                declined: 0,
+                other: 0,
+                unreachable: 0,
+            },
+            deliveryFailed: 0,
+            deliveryInProgress: 0,
+            expected: 0,
+            name: "סך הכל",
         };
 
         return reports.reduce((accumulated, current, index, []) => {
-          accumulated.actual += current.actual;
-          accumulated.expected += current.expected;
-          accumulated.delivered += current.delivered;
-          accumulated.deliveryFailed += current.deliveryFailed;
-          accumulated.deliveryInProgress += current.deliveryInProgress;
+            accumulated.actual += current.actual;
+            accumulated.expected += current.expected;
+            accumulated.delivered += current.delivered;
+            accumulated.deliveryFailed += current.deliveryFailed;
+            accumulated.deliveryInProgress += current.deliveryInProgress;
 
-          (Object.keys(current.deliveryFailReasons) as FailReason[]).forEach(
-            (reason) => {
-              accumulated.deliveryFailReasons[reason] +=
-                current.deliveryFailReasons[reason];
-            }
-          );
+            (Object.keys(current.deliveryFailReasons) as FailReason[]).forEach(
+                (reason) => {
+                    accumulated.deliveryFailReasons[reason] +=
+                        current.deliveryFailReasons[reason];
+                }
+            );
 
-          return accumulated;
+            return accumulated;
         }, initialReport);
     }
 

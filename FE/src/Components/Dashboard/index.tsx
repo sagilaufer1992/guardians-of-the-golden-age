@@ -54,6 +54,8 @@ const REFRESH_INTERVAL: number = 30 * 1000;
 const LEVEL_KEY = "dashboard_level";
 const LEVEL_VALUE_KEY = "dashboard_level_value";
 
+const HIERARCHY_LEVELS_ORDER: Level[] = ["national", "district", "napa", "municipality"]
+
 export default function Dashboard({ date, setDate }: AppRouteProps) {
     const [levelAndValue, setLevelAndValue] = useState<LevelAndValue>({
         level: (window.localStorage.getItem(LEVEL_KEY) as Level) ?? "national",
@@ -101,13 +103,11 @@ export default function Dashboard({ date, setDate }: AppRouteProps) {
     const handleModalClose = () => setModalOpen(false);
 
     const onDeliveryReportClick = (value: string) => {
-        const { level } = levelAndValue;
+        const levelIndex = HIERARCHY_LEVELS_ORDER.findIndex(level => level === levelAndValue.level);
 
-        if (level === "municipality") return;
+        if (levelIndex === -1 || levelIndex >= HIERARCHY_LEVELS_ORDER.length - 1) return;
 
-        if (level === "national") onHierarchyChanged("district", value);
-        else if (level === "district") onHierarchyChanged("napa", value);
-        else if (level === "napa") onHierarchyChanged("municipality", value);
+        onHierarchyChanged(HIERARCHY_LEVELS_ORDER[levelIndex + 1], value);
     }
 
     return <Container className="dashboard-container" maxWidth="xl">

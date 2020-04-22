@@ -12,6 +12,7 @@ $failed-color: #f44336;
     color: black;
     .total {
         .location{
+            border: 2px solid $primary-color !important;
             font-weight: bold;
         }
     }
@@ -33,6 +34,7 @@ $failed-color: #f44336;
             border: 1px solid $primary-color;
             border-radius: 3px;
             overflow: hidden;
+            cursor: default;
             span {
                 margin: 5px 10px;
             }
