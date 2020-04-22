@@ -1,10 +1,15 @@
 .dashboard-container {
-  .hierarchy-container {
-    margin-bottom: 10px;
+  .actions-container {
     display: flex;
-    align-items: center;
-    .modal-button {
-      margin: 0 20px;
+    justify-content: space-between;
+    width: 50%;
+    .hierarchy-container {
+      margin-bottom: 10px;
+      display: inline-flex;
+      align-items: center;
+      .modal-button {
+        margin: 0 20px;
+      }
     }
   }
   .dashboard {

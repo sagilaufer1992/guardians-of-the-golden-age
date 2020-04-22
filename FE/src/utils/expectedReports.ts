@@ -38,7 +38,7 @@ export function extractDailyReports(file: File): Promise<FutureReport[]> {
 
                 _validator(data[0]);
 
-                const reports = data.slice(1).map(_convertToReport).filter(_ => _.id) as FutureReport[];
+                const reports = data.slice(1).map(_convertToReport).filter(_ => _.id && _.napa !== "שם הנפה") as FutureReport[];
                 resolve(_unionDuplicates(reports));
             }
             catch (e) {

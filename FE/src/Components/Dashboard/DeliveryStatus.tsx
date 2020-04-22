@@ -1,20 +1,16 @@
 import "./DeliveryStatus.scss";
-import React, { useMemo } from "react";
-import { Card, Tooltip, withStyles, Hidden, Divider } from "@material-ui/core";
+import React from "react";
+import { Card, Tooltip, withStyles, Divider } from "@material-ui/core";
 import { PieChart, Pie } from "recharts";
 
 import { failRasonToText } from "../../utils/translations";
-import UploadDeliveryFile from "./UploadDeliveryFile";
-import { dayDifference } from "../../utils/dates";
 
 import logo from "../../assets/logo.png";
 import classNames from "classnames";
 
 interface Props {
-    date: Date;
     level: Level;
     reports: DeliveryReport[];
-    onUploadReports: () => void;
     onDeliveryReportClick: (value: string) => void;
 }
 
@@ -22,9 +18,7 @@ const RADIAN = Math.PI / 180;
 
 const FAILED_COLOR = "#f44336";
 
-export default function DeliveryStatus({ date, level, reports, onUploadReports, onDeliveryReportClick }: Props) {
-    const isFutureDate = useMemo(() => dayDifference(date, new Date()) > 0, [date]);
-
+export default function DeliveryStatus({ level, reports, onDeliveryReportClick }: Props) {
     const PieChartTooltip = withStyles((theme) => ({
         tooltip: {
             backgroundColor: "white",
@@ -124,9 +118,6 @@ export default function DeliveryStatus({ date, level, reports, onUploadReports, 
     return (<Card className="panel delivery-status">
         {reports.length === 0 && <div className="no-reports">
             לא נמצאו דיווחים בזמן וההיררכיה המבוקשים
-            {isFutureDate && <Hidden smDown>
-                <UploadDeliveryFile title="העלה נתוני חלוקה עבור יום זה" date={date} onUploaded={onUploadReports} />
-            </Hidden>}
         </div>}
         {reports.map(report => singleReport(report, level === "municipality"))}
         {(reports.length > 1) && <>

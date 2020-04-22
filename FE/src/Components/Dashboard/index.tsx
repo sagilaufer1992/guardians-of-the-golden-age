@@ -1,14 +1,17 @@
 import "./index.scss";
-import React, { useState, useRef, useEffect, useCallback } from "react";
-import { Container, Dialog, DialogContent, DialogTitle, Button } from "@material-ui/core";
+import React, { useState, useRef, useEffect, useCallback, useMemo } from "react";
+import { Container, Dialog, DialogContent, DialogTitle, Button, Hidden } from "@material-ui/core";
 
 import { useApi } from "../../hooks/useApi";
 import { AppRouteProps } from "../../routesConfig";
+import { dayDifference } from "../../utils/dates";
+
 import Initializer from "./Initializer";
 import DeliveryStatus from "./DeliveryStatus";
 import FaultsStatus from "./FaultsStatus";
 import DatePanel from "../DatePanel";
 import HierarchyNavigator from "./HierarchyNavigator";
+import UploadDeliveryFile from "./UploadDeliveryFile";
 
 const TEST_DELIVERY_REPORTS: DeliveryReport[] = [{
     name: "רחובות",
@@ -70,6 +73,8 @@ export default function Dashboard({ date, setDate }: AppRouteProps) {
     const [fetchFaultsReport] = useApi("/api/faults/status");
     const [fetchDeliveryReports] = useApi("/api/dailyReports");
 
+    const showUpload = useMemo(() => dayDifference(date, new Date()) >= 0, [date]);
+
     useEffect(() => { datePanelRef.current?.refresh() }, [levelAndValue]);
 
     const onHierarchyChanged = (level: Level, value: string | null) => {
@@ -122,12 +127,17 @@ export default function Dashboard({ date, setDate }: AppRouteProps) {
             setDate={setDate}
             task={_refreshReports}
             interval={REFRESH_INTERVAL} />
-        <div className="hierarchy-container">
-            <Button variant="contained" color="primary" onClick={handleModalOpen} className="modal-button">שנה היררכיה</Button>
-            <HierarchyNavigator levelAndValue={levelAndValue} onHierarchyChanged={onHierarchyChanged} />
+        <div className="actions-container">
+            <div className="hierarchy-container">
+                <Button variant="contained" color="primary" onClick={handleModalOpen} className="modal-button">שנה היררכיה</Button>
+                <HierarchyNavigator levelAndValue={levelAndValue} onHierarchyChanged={onHierarchyChanged} />
+            </div>
+            {showUpload && <Hidden smDown>
+                <UploadDeliveryFile title="העלה נתוני חלוקה עבור יום זה" date={date} onUploaded={onExpectedFileUploaded} />
+            </Hidden>}
         </div>
         <div className="dashboard">
-            {deliveryReports && <DeliveryStatus level={levelAndValue.level} date={date} reports={deliveryReports} onUploadReports={onExpectedFileUploaded} onDeliveryReportClick={onDeliveryReportClick} />}
+            {deliveryReports && <DeliveryStatus level={levelAndValue.level} reports={deliveryReports} onDeliveryReportClick={onDeliveryReportClick} />}
             {faultsReport && <FaultsStatus report={faultsReport} />}
         </div>
     </Container>;

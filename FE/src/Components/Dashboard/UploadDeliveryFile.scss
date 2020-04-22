@@ -1,12 +1,11 @@
 .upload-file-input {
-  float: left;
+  margin: 0 20px 10px 20px;
   .upload-input-element {
     display: none;
   }
   .example-file-link {
-    display: block;
     text-align: center;
-    margin: 5px;
+    margin-right: 10px;
     color: royalblue;
     font-size: 13px;
     font-weight: bold;
