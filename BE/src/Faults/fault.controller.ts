@@ -1,9 +1,15 @@
+import { MongooseFilterQuery } from "mongoose";
 import Fault from "./fault.model";
 import Branch from "../Branches/branch.model";
 
-import { MongooseFilterQuery } from "mongoose";
 import { getRangeFromDate } from "../utils/dates";
-import { isManager } from "../utils/users";
+import { isManager, getBranchIdentifier } from "../utils/users";
+
+// Fault.find((_, res) => res.forEach(f => {
+//     console.log(f.id);
+//     f.branch.identifier = getBranchIdentifier(f.branch);
+//     f.save();
+// }));
 
 export async function getFaultsInDate(req, res, next) {
     const { date } = req.query;
@@ -12,7 +18,7 @@ export async function getFaultsInDate(req, res, next) {
     const query: MongooseFilterQuery<be.Fault> = {};
 
     if (isManager(req.user))
-        query.distributionCenter = { $in: branches.map(_ => _.name) };
+        query["branch.identifier"] = { $in: branches.map(getBranchIdentifier) };
 
     if (date) {
         const { start, end } = getRangeFromDate(new Date(date));
@@ -27,27 +33,29 @@ export async function getFaultsInDate(req, res, next) {
 export async function getFaultById(req, res, next) {
     const fault = await Fault.findById(req.params.id);
 
-    if (!fault) {
-        return res.status(404).send("לא נמצאה התקלה המבוקשת");
-    }
+    if (!fault) return res.status(404).send("לא נמצאה התקלה המבוקשת");
 
     res.status(200).json(fault);
 }
 
 export async function addFault(req, res, next) {
-    const { token, branches, ...baseUser } = req.user;
-    const distributionCenter = req.body.distributionCenter;
+    const { token, branches, ...baseUser }: gg.User = req.user;
+    const [municipality, name] = req.body.distributionCenter.split("|");
 
-    let newFault = {
+    if (!branches.some(_ => _.name === name && _.municipality === municipality))
+        return res.status(403).send("אינך מורשה לפתוח תקלה בנקודת חלוקה זו");
+
+    const newFault: be.Fault = {
         ...req.body,
-        author: { ...req.body.author, ...baseUser }
+        author: { ...req.body.author, ...baseUser },
+        branch: { name, municipality, identifier: getBranchIdentifier({ name, municipality }) }
     };
 
-    const branchDocument = await _getBranch(distributionCenter);
+    const branchDocument = await Branch.findOne({ municipality });
 
     if (branchDocument) {
-        const { _id, ...branch } = branchDocument.toJSON();
-        newFault.branch = branch;
+        newFault.branch.district = branchDocument.district;
+        newFault.branch.napa = branchDocument.napa;
     }
 
     const fault = await Fault.create(newFault);
@@ -62,6 +70,8 @@ export async function updateFault(req, res, next) {
             runValidators: true
         });
 
+        if (!fault) throw new Error();
+
         res.status(200).json(fault);
     }
     catch {
@@ -73,15 +83,17 @@ export async function deleteFault(req, res, next) {
     const fault = await Fault.findById(req.params.id);
     const { branches, role } = req.user as gg.User;
 
-    if (!fault) return res.status(404).json("לא נמצאה התקלה למחיקה");
+    if (!fault) return res.status(404).send("לא נמצאה התקלה למחיקה");
 
-    const { status, distributionCenter } = fault.toJSON() as be.Fault;
+    const branchId = getBranchIdentifier(fault.branch);
 
-    if (role !== "manager" || !branches.some(_ => _.name === distributionCenter)) return res.status(403).json("אין לך הרשאות למחוק תקלה זו");
+    if (role !== "manager" || !branches.some(b => getBranchIdentifier(b) === branchId))
+        return res.status(403).send("אין לך הרשאות למחוק תקלה זו");
 
-    if (status !== "Todo") return res.status(400).send("לא ניתן למחוק תקלה לאחר שהתחילו לטפל בה");
+    if (fault.status !== "Todo") return res.status(400).send("לא ניתן למחוק תקלה לאחר שהתחילו לטפל בה");
 
     await Fault.findByIdAndRemove(req.params.id);
+
     res.status(200).json({});
 }
 
@@ -147,17 +159,5 @@ export async function faultsStatus(req, res, next) {
         res.status(200).json({ total, open, reasons });
     } catch {
         return res.status(500);
-    }
-}
-
-async function _getBranch(name: string) {
-    if (!name) return null;
-
-    try {
-        const branch = await Branch.findOne({ "name": { $eq: name } });
-        return branch;
-    }
-    catch{
-        return null;
     }
 }

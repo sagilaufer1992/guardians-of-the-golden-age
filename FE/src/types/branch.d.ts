@@ -10,3 +10,9 @@ interface Hierarchy {
   napa: string;
   municipality: string;
 }
+
+interface BranchHierarchy extends gg.BranchWithMunicipality {
+  identifier: string; // municipality|name
+  napa?: string; // נפה
+  district?: string; // מחוז
+}

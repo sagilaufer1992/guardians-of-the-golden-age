@@ -19,7 +19,7 @@ export default React.memo(function Fault(props: Props) {
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [canBeConfirmed, setCanBeConfirmed] = useState<boolean>(false);
 
-  const { _id, category, status, author, distributionCenter, date, branch } = props.fault;
+  const { _id, category, status, author, date, branch } = props.fault;
 
   const _onStatusChange = (status: FaultStatus) => props.onStatusChange?.(_id, status);
   const _onFaultDelete = () => props.onFaultDelete?.(_id);
@@ -30,8 +30,8 @@ export default React.memo(function Fault(props: Props) {
       <Card className="fault" onClick={() => setIsDetailsOpen(!isDetailsOpen)}>
         <div className={classnames("status", status)} />
         <div className="content">
-          <div className="hierarchy">{branch ? `${branch.district} / ${branch.napa} / ${branch.municipality} ` : ""}</div>
-          <div className="name">{branch ? `${branch.name} - ${branch.id}` : distributionCenter}</div>
+          <div className="hierarchy">{_getHierarchy(branch)}</div>
+          <div className="name">{branch.name}</div>
           <div className="more-info">
             <span>{`נפתחה בשעה - ${moment(date).format("HH:mm")}`}</span>
             <span>{`על ידי ${author.name}`}</span>
@@ -55,3 +55,11 @@ export default React.memo(function Fault(props: Props) {
     </>
   );
 });
+
+function _getHierarchy({ municipality, district, napa }: BranchHierarchy) {
+  let result = "";
+  if (district) result += `${district} / `;
+  if (napa) result += `${napa} / `;
+
+  return result + municipality;
+}

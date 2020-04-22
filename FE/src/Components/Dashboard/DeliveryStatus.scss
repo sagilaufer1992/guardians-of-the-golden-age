@@ -11,7 +11,8 @@ $failed-color: #f44336;
     padding: 15px;
     color: black;
     .total {
-        .location{
+        margin-top: 5px;
+        .location {
             border: 2px solid $primary-color !important;
             font-weight: bold;
         }
@@ -29,17 +30,20 @@ $failed-color: #f44336;
             justify-content: center;
             text-align: center;
             margin-left: 15px;
-            font-size: 14px;
-            color: darken($primary-color, 10);
+            font-size: 16px;
+            color: darken($primary-color, 20);
             border: 1px solid $primary-color;
             border-radius: 3px;
             overflow: hidden;
-            cursor: default;
+            cursor: pointer;
+            &.disabled {
+                pointer-events: none;
+            }
             span {
                 margin: 5px 10px;
             }
-            &.clickable {
-                cursor: pointer;
+            .external-logo {
+                width: 20px;
             }
         }
         .delivery-data {
@@ -83,16 +87,16 @@ $failed-color: #f44336;
                 }
             }
             .expected-text-info {
-                font-size: 11px;
+                font-size: 12px;
             }
             .actual-text-info {
-                font-size: 12px;
+                font-size: 14px;
                 & > * {
                     &:not(:last-child) {
                         &:after{
                             padding: 0 5px;
                             content: "|";
-                            color: gray
+                            color: gray;
                         }
                     }
                 }
@@ -114,4 +118,7 @@ $failed-color: #f44336;
             }
         }
     }
+}
+.external-logo-tooltip {
+    font-size: 12px !important;
 }

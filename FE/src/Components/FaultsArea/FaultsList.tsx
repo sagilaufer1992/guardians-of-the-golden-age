@@ -1,10 +1,10 @@
 import "./FaultsList.scss";
 
-import React, { useState, useMemo, useContext, useEffect } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import classnames from "classnames";
 
 import { useSnackbar } from "notistack";
-import { Button, Container } from '@material-ui/core';
+import { Button } from '@material-ui/core';
 import FilterListIcon from "@material-ui/icons/FilterList";
 import { ALL_ITEM } from "../../utils/inputs";
 import { getBranches } from "../../utils/fetchBranches";
@@ -29,7 +29,7 @@ const FaultsList = (props: Props) => {
     const [sortBy, setSortBy] = useState<string>("time");
     const [filters, setFilters] = useState({
         district: null,
-        distributionCenter: null,
+        branchName: null,
         category: null,
         status: null
     });
@@ -47,12 +47,13 @@ const FaultsList = (props: Props) => {
     }, []);
 
     const faults = useMemo(() => {
-        const { category, status, distributionCenter, district } = filters;
+        console.log(filters);
+        const { category, status, branchName, district } = filters;
 
         return props.faults.filter(fault =>
             (!category || category === ALL_ITEM.value || fault.category === category) &&
             (!status || status === ALL_ITEM.value || fault.status === status) &&
-            (!distributionCenter || distributionCenter === ALL_ITEM.value || fault.distributionCenter === distributionCenter) &&
+            (!branchName || branchName === ALL_ITEM.value || fault.branch.name === branchName) &&
             (!district || district === ALL_ITEM.value || fault.branch?.district === district)
         ).sort(sortFault);
     }, [props.faults, filters, sortBy]);
@@ -65,8 +66,8 @@ const FaultsList = (props: Props) => {
                 return second.status.localeCompare(first.status);
             case "category":
                 return first.category.localeCompare(second.category);
-            case "distributionCenter":
-                return first.distributionCenter.localeCompare(second.distributionCenter);
+            case "branchName":
+                return first.branch.name.localeCompare(second.branch.name);
             default:
                 return 0;
         }

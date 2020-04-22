@@ -6,6 +6,7 @@ type FailReason = "declined" | "unreachable" | "address" | "other";
 
 interface DeliveryReport {
     name: string;
+    hasExternalInfo?: boolean;
     expected: number;
     actual: number;
     delivered: number;

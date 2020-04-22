@@ -1,5 +1,6 @@
-const mongoose = require('mongoose');
+import * as mongoose from "mongoose";
 import { faultsDB } from "../cosmosdb";
+import { getBranchIdentifier } from "../utils/users";
 
 const FaultSchema = new mongoose.Schema({
     content: {
@@ -41,22 +42,25 @@ const FaultSchema = new mongoose.Schema({
         phone: String
     },
     branch: {
-        id: {
-            type: Number,
+        identifier: {
+            type: String,
+            required: true
         },
         name: {
             type: String,
+            required: true
+        },
+        municipality: {
+            type: String,
+            required: true
         },
         napa: {
             type: String,
         },
         district: {
             type: String,
-        },
-        municipality: {
-            type: String,
-        }
+        },        
     }
 });
 
-export default faultsDB.model('Fault', FaultSchema);
+export default faultsDB.model<mongoose.Document & be.Fault>('Fault', FaultSchema);

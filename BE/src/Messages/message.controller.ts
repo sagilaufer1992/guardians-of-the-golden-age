@@ -12,9 +12,7 @@ export async function getMessages(req, res, next) {
 export async function getMessageById(req, res, next) {
     const message = await Message.findById(req.params.id);
 
-    if (!message) {
-        return res.status(404).send("לא נמצאה התגובה עם המזהה שנשלח");
-    }
+    if (!message) return res.status(404).send("לא נמצאה התגובה עם המזהה שנשלח");
 
     res.status(200).json(message);
 }
@@ -26,9 +24,7 @@ export async function addMessage(req, res, next) {
 
     const fault = await Fault.findById(req.query.faultId);
 
-    if (!fault) {
-        return res.status(404).send("שגיאה בהוספת תגובה - לא נמצאה התקלה");
-    }
+    if (!fault) return res.status(404).send("שגיאה בהוספת תגובה - לא נמצאה התקלה");
 
     const message = await Message.create({
         ...req.body,
@@ -43,9 +39,7 @@ export async function updateMessage(req, res, next) {
     // TODO: not everyone can update messages
     let message = await Message.findById(req.params.id);
 
-    if (!Message) {
-        return res.status(404).send("לא קיימת יותר התגובה אותה ניסית לערוך");
-    }
+    if (!Message) return res.status(404).send("לא קיימת יותר התגובה אותה ניסית לערוך");
 
     message = await Message.findOneAndUpdate({ _id: req.params.id }, req.body, {
         new: true,
@@ -59,8 +53,7 @@ export async function deleteMessage(req, res, next) {
     // TODO: not everyone can delete messages
     let message = await Message.findById(req.params.id);
 
-    if (!message)
-        return res.status(404).send("שגיאה במחיקת תגובה - לא נמצאה התגובה");
+    if (!message) return res.status(404).send("שגיאה במחיקת תגובה - לא נמצאה התגובה");
 
     message.remove();
 

@@ -21,9 +21,13 @@ export default function AddFault() {
   const [name, setName] = useState<string>("");
   const [phone, setPhone] = useState<string>("");
   const [category, setCategory] = useState<FaultCategory>("other");
-  const [distributionCenter, setDistributionCenter] = useState(user.branches[0].name);
+  
+  const centers = useMemo(() => user.branches.map(c => ({
+    label: `${c.municipality} / ${c.name}`,
+    value: `${c.municipality}|${c.name}`
+  })), [user]);
 
-  const centers = useMemo(() => user.branches.map(c => ({ label: c.name, value: c.name })), [user]);
+  const [distributionCenter, setDistributionCenter] = useState(centers[0].value);
 
   const onAddFault = async () => {
     await fetchFaults({

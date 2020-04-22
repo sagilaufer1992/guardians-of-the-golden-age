@@ -10,3 +10,7 @@ export function authGroupsToBranches(authGroups: any): gg.BranchWithMunicipality
     return authGroups.reduce((pv, { city, distributionPoints }) =>
         [...pv, ...distributionPoints.map(name => ({ municipality: city, name }))], []);
 }
+
+export function getBranchIdentifier({ name, municipality }: gg.BranchWithMunicipality) {
+    return `${municipality}|${name}`;
+}

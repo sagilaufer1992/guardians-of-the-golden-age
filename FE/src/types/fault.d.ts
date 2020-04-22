@@ -27,9 +27,9 @@ type ExtendItem<T> = Omit<T, "author"> & {
   author: AuthorInfo & gg.UserInfo;
 }
 
-interface Fault extends ExtendItem<NewFault> {
+interface Fault extends ExtendItem<Omit<NewFault, "distributionCenter">> {
   status: FaultStatus;
-  branch?: Branch;
+  branch: BranchHierarchy;
 }
 
 interface Message extends ExtendItem<NewMessage> {

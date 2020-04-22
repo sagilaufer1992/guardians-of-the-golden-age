@@ -66,25 +66,32 @@ declare namespace be {
     content: string; // תוכן ההודעה
   }
 
-  type ExtendItem<T> = Omit<T, "author"> & {
+  type ExtendItem<T> = Omit<T, "author" | "distributionCenter"> & {
     _id: string;
     date: Date;
-    author: AuthorInfo & gg.UserInfo;
+    author: AuthorInfo & gg.UserInfo;    
   }
 
   interface Fault extends ExtendItem<NewFault> {
     status: FaultStatus;
+    branch: be.BranchHierarchy;
   }
 
   interface Message extends ExtendItem<NewMessage> {
     faultId: string;
   }
 
+  interface BranchHierarchy extends gg.BranchWithMunicipality {
+    identifier: string; // municipality|name
+    napa?: string; // נפה
+    district?: string; // מחוז
+  }
+
   interface Branch extends gg.BranchWithMunicipality {
     id: number;
-    address: string; // כתובת
     napa: string; // נפה
     district: string; // מחוז
+    address: string; // כתובת
   }
 
   interface FutureReport extends Branch {
@@ -102,6 +109,7 @@ declare namespace be {
 
   interface DailyReport {
     name: string;
+    hasExternalInfo?: boolean; // true if information from other team is included
     expected: number;
     actual: number;
     delivered: number;

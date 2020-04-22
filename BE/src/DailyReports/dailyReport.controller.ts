@@ -2,9 +2,9 @@ import DailyReport from "./dailyReport.model";
 import Branch from "../Branches/branch.model";
 import Job from "./job.model";
 import { getRangeFromDate } from "../utils/dates";
-import { isHamal } from "../utils/users";
+import { isHamal, getBranchIdentifier } from "../utils/users";
 
-const LOWER_LEVEL_DICTIONARY: Record<string, (branch: be.Branch) => string> = {
+const LOWER_LEVEL_DICTIONARY: Record<string, (branch: be.BranchHierarchy) => string> = {
     "national": branch => branch.district,
     "district": branch => branch.napa,
     "napa": branch => branch.municipality,
@@ -43,7 +43,8 @@ export async function createFutureReports(req, res) {
         if (!newReport) return;
 
         existingReports.add(report.branchId);
-        await report.update({ total: newReport.amount });
+        report.total = newReport.amount;
+        await report.save();
     });
 
     const newReports = reports.filter(report => !existingReports.has(report.id));
@@ -78,47 +79,59 @@ function _isValid(reports: be.FutureReport[]) {
 function _isEmptyString(value: string) { return value.trim() === ""; }
 
 export async function getDailyReport(req, res) {
-    const { date, level, value } = req.query;
+    const { date, level, value, includeEmpty } = req.query;
 
     if (!isHamal(req.user)) res.status(403).send("אינך מורשה לצפות במידע");
 
     if (!level || !LOWER_LEVEL_DICTIONARY[level]) return res.status(400).send("רמת ההסתכלות אינה תקינה");
 
-    const branches = await Branch.find(BRANCH_FILTER_DICTIONARY[level](value));
+    const branches = (await Branch.find(BRANCH_FILTER_DICTIONARY[level](value))).map(_ => _.toJSON());
 
     const { start, end } = getRangeFromDate(new Date(date));
     const dateRange = { $gte: start, $lt: end };
 
     const reports = await DailyReport.find({
         date: dateRange,
-        branchId: { $in: [...new Set(branches.map(_ => _.id))] },
+        branchId: { $in: branches.map(_ => _.id) },
     });
 
     const jobs = await Job.find({
-        distributionPoint: { $in: branches.map(_ => _.name) },
+        city: { $in: [...new Set(branches.map(_ => _.municipality))] },
         date: dateRange
     });
 
-    res.status(200).json(_groupBySubLevels(level, branches, reports, jobs));
+    res.status(200).json(_groupBySubLevels(level, branches, reports, jobs, includeEmpty));
 }
 
-//TODO: FIX THIS FUNCTION
-function _groupBySubLevels(level: be.Level, branches: be.Branch[], reports: be.DBDailyReport[], jobs: gg.Job[]): be.DailyReport[] {
-    const branchIdDictionary: Record<string, be.Branch> = branches.reduce((pv, v) => ({ ...pv, [v.id]: v }), {});
-    const branchInfoDictionary: Record<string, be.Branch> = branches.reduce((pv, v) => ({ ...pv, [`${v.municipality}|${v.name}`]: v }), {});
+type ReportWithHierarchy = Omit<be.DailyReport, "name"> & { hierarchy: be.BranchHierarchy };
+
+function _groupBySubLevels(level: be.Level, branches: be.Branch[], reports: be.DBDailyReport[], jobs: gg.Job[], includeEmpty: boolean): be.DailyReport[] {
+    const branchDictionary: Record<number, be.Branch> = branches.reduce((pv, v) => ({ ...pv, [v.id]: v }), {});
+
+    const hierarchyCache: Record<string, be.BranchHierarchy> = {};
 
     const lowerLevelDisplayName = LOWER_LEVEL_DICTIONARY[level];
 
-    const totals: Record<number, Omit<be.DailyReport, "name">> = {};
+    const totals: Record<string, ReportWithHierarchy> = {};
 
     for (const { city, distributionPoint, status, tasks } of jobs) {
         if (status === "CANCELED") continue;
 
-        const branchId = branchInfoDictionary[`${city}|${distributionPoint}`]?.id;
+        const branchId = getBranchIdentifier({ name: distributionPoint, municipality: city });
 
-        if (!branchId) continue;
+        if (!hierarchyCache[branchId]) {
+            const branch = branches.find(_ => _.municipality === city);
+            hierarchyCache[branchId] = { identifier: branchId, name: distributionPoint, municipality: city };
+
+            if (branch) {
+                hierarchyCache[branchId].napa = branch.napa;
+                hierarchyCache[branchId].district = branch.district;
+            }
+        }
 
         if (!totals[branchId]) totals[branchId] = {
+            hierarchy: hierarchyCache[branchId],
+            hasExternalInfo: true,
             expected: 0,
             actual: 0,
             delivered: 0,
@@ -148,8 +161,11 @@ function _groupBySubLevels(level: be.Level, branches: be.Branch[], reports: be.D
     }
 
     for (const { branchId, total, delivered, deliveryFailed, deliveryFailReasons } of reports) {
-        if (totals[branchId]) totals[branchId].expected = total;
-        else totals[branchId] = {
+        const id = getBranchIdentifier(branchDictionary[branchId]);
+
+        if (totals[id]) totals[id].expected = total;
+        else totals[id] = {
+            hierarchy: { identifier: id, ...branchDictionary[branchId] },
             expected: total,
             actual: delivered + deliveryFailed,
             delivered,
@@ -164,8 +180,12 @@ function _groupBySubLevels(level: be.Level, branches: be.Branch[], reports: be.D
         };
     }
 
-    return Object.values(Object.entries(totals).reduce((pv, [id, report]) => {
-        const name = lowerLevelDisplayName(branchIdDictionary[id]);
+    return Object.values(Object.values(totals).reduce((pv, report) => {
+        if (!includeEmpty && report.actual === 0) return pv;
+
+        const name = lowerLevelDisplayName(report.hierarchy);
+        if (!name) return pv;
+
         const acc = pv[name];
         const result = _mergeAndFilterResults(name, acc, report);
 
@@ -173,13 +193,15 @@ function _groupBySubLevels(level: be.Level, branches: be.Branch[], reports: be.D
     }, {}));
 }
 
-function _mergeAndFilterResults(name: string, acc: be.DailyReport, report: Omit<be.DailyReport, "name">): be.DailyReport {
-    if (!acc) return { ...report, name };
-
-    if (report.actual === 0) return acc;
+function _mergeAndFilterResults(name: string, acc: be.DailyReport, report: ReportWithHierarchy): be.DailyReport {
+    if (!acc) {
+        const { hierarchy, ...other } = report;
+        return { ...other, name };
+    }
 
     return {
         name,
+        hasExternalInfo: acc.hasExternalInfo || report.hasExternalInfo,
         expected: acc.expected + report.expected,
         actual: acc.actual + report.actual,
         delivered: acc.delivered + report.delivered,

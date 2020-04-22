@@ -14,7 +14,7 @@ function getFilters(branches: Branch[]): Record<string, FilterDefinition> {
             defaultValue: ALL_ITEM.value,
             options: districtsOptions
         },
-        distributionCenter: {
+        branchName: {
             type: "Autocomplete",
             title: "מרכז חלוקה",
             defaultValue: ALL_ITEM.value,

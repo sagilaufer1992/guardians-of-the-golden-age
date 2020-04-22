@@ -1,25 +1,28 @@
 import "./DeliveryStatus.scss";
 import React, { useMemo } from "react";
-import { Card, Tooltip, withStyles, Hidden } from "@material-ui/core";
+import { Card, Tooltip, withStyles, Hidden, Divider } from "@material-ui/core";
 import { PieChart, Pie } from "recharts";
 
 import { failRasonToText } from "../../utils/translations";
 import UploadDeliveryFile from "./UploadDeliveryFile";
 import { dayDifference } from "../../utils/dates";
 
+import logo from "../../assets/logo.png";
+import classNames from "classnames";
+
 interface Props {
     date: Date;
+    level: Level;
     reports: DeliveryReport[];
     onUploadReports: () => void;
     onDeliveryReportClick: (value: string) => void;
-    level: Level;
 }
 
 const RADIAN = Math.PI / 180;
 
 const FAILED_COLOR = "#f44336";
 
-export default React.memo(function DeliveryStatus({ date, reports, onUploadReports, onDeliveryReportClick, level }: Props) {
+export default function DeliveryStatus({ date, level, reports, onUploadReports, onDeliveryReportClick }: Props) {
     const isFutureDate = useMemo(() => dayDifference(date, new Date()) > 0, [date]);
 
     const PieChartTooltip = withStyles((theme) => ({
@@ -46,8 +49,8 @@ export default React.memo(function DeliveryStatus({ date, reports, onUploadRepor
         Object.keys(data).map(key => ({ name: translation[key], value: data[key] }))
             .filter(_ => _.value > 0);
 
-    function singleReport(report: DeliveryReport, isClickable: boolean) {
-        const { name, actual, expected, delivered, deliveryFailed, deliveryInProgress, deliveryFailReasons } = report;
+    function singleReport(report: DeliveryReport, disabled: boolean) {
+        const { name, hasExternalInfo, actual, expected, delivered, deliveryFailed, deliveryInProgress, deliveryFailReasons } = report;
         const max = Math.max(actual, expected); // לפעמים הערך בפועל גדול מזה המצופה
 
         const deliveryPercent = (delivered / max) * 100;
@@ -59,7 +62,10 @@ export default React.memo(function DeliveryStatus({ date, reports, onUploadRepor
         const inProgressStyle = { width: `${inProgressPercent}%` };
 
         return <div className="report-container" key={name}>
-            <div className={`location ${isClickable ? "clickable" : ""}`} onClick={() => isClickable && onDeliveryReportClick(name)}>
+            <div className={classNames("location", { disabled })} onClick={() => onDeliveryReportClick(name)}>
+                {hasExternalInfo && <Tooltip classes={{ tooltip: "external-logo-tooltip" }} title='מכיל מידע ממערכת "משמרות הזהב"' placement="top">
+                    <img className="external-logo" src={logo} />
+                </Tooltip>}
                 <span>{name}</span>
             </div>
             <div className="delivery-data">
@@ -122,9 +128,12 @@ export default React.memo(function DeliveryStatus({ date, reports, onUploadRepor
                 <UploadDeliveryFile title="העלה נתוני חלוקה עבור יום זה" date={date} onUploaded={onUploadReports} />
             </Hidden>}
         </div>}
-        {reports.map(report => singleReport(report, level !== "municipality"))}
-        {(reports.length > 1) && <div className="total">
-            {singleReport(getTotalReport(), false)}
-        </div>}
+        {reports.map(report => singleReport(report, level === "municipality"))}
+        {(reports.length > 1) && <>
+            <Divider variant="fullWidth" />
+            <div className="total">
+                {singleReport(getTotalReport(), true)}
+            </div>
+        </>}
     </Card>);
-})
+}

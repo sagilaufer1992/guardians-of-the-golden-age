@@ -105,7 +105,7 @@ export default function Dashboard({ date, setDate }: AppRouteProps) {
     const onDeliveryReportClick = (value: string) => {
         const levelIndex = HIERARCHY_LEVELS_ORDER.findIndex(level => level === levelAndValue.level);
 
-        if (levelIndex === -1 || levelIndex >= HIERARCHY_LEVELS_ORDER.length - 1) return;
+        if (levelIndex === -1 || levelIndex >= HIERARCHY_LEVELS_ORDER.length - 1 || levelAndValue.value === value) return;
 
         onHierarchyChanged(HIERARCHY_LEVELS_ORDER[levelIndex + 1], value);
     }
@@ -127,7 +127,7 @@ export default function Dashboard({ date, setDate }: AppRouteProps) {
             <HierarchyNavigator levelAndValue={levelAndValue} onHierarchyChanged={onHierarchyChanged} />
         </div>
         <div className="dashboard">
-            {deliveryReports && <DeliveryStatus date={date} reports={deliveryReports} onUploadReports={onExpectedFileUploaded} onDeliveryReportClick={onDeliveryReportClick} level={levelAndValue.level} />}
+            {deliveryReports && <DeliveryStatus level={levelAndValue.level} date={date} reports={deliveryReports} onUploadReports={onExpectedFileUploaded} onDeliveryReportClick={onDeliveryReportClick} />}
             {faultsReport && <FaultsStatus report={faultsReport} />}
         </div>
     </Container>;

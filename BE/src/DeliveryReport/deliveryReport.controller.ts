@@ -6,11 +6,7 @@ export async function incrementDeliveryReport(req, res) {
 
         const { delivered = 0, total = 0 } = req.body;
 
-        const update = {
-            $inc: {
-                delivered,
-            }
-        };
+        const update = { $inc: { delivered } };
 
         const response = await DailyReport.findOneAndUpdate(
             { date, branchId, delivered: { $lte: total - delivered } }, update, { new: true });

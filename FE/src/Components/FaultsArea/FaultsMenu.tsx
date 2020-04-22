@@ -9,7 +9,7 @@ const SORT_BY_OPTIONS = [
     { value: "time", label: "זמן" },
     { value: "status", label: "סטטוס" },
     { value: "category", label: "קטגוריה" },
-    { value: "distributionCenter", label: "מרכז חלוקה" }
+    { value: "branchName", label: "מרכז חלוקה" }
 ];
 
 interface Props {
