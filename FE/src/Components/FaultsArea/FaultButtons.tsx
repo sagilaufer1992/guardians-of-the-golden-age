@@ -11,11 +11,12 @@ import { isHamal } from "../../utils/roles";
 
 interface Props {
     status: FaultStatus;
+    canBeConfirmed: boolean;
     onStatusChange: (status: FaultStatus) => void;
     onFaultDelete: () => void;
 }
 
-export default React.memo(function FaultButtons({ status, onStatusChange, onFaultDelete }: Props) {
+export default React.memo(function FaultButtons({ status, onStatusChange, onFaultDelete, canBeConfirmed }: Props) {
     const user = useUser();
 
     function _deleteFault(e: React.MouseEvent<any>) {
@@ -27,11 +28,11 @@ export default React.memo(function FaultButtons({ status, onStatusChange, onFaul
         return <div className="fault-status-buttons">
             {status === "Complete" && <StateButton status="Todo" onStatusChange={onStatusChange} />}
             {status === "Todo" && <>
-                <StateButton status="Complete" onStatusChange={onStatusChange} />
+                <StateButton status="Complete" disabled={!canBeConfirmed} onStatusChange={onStatusChange} />
                 <StateButton status="InProgress" onStatusChange={onStatusChange} />
             </>}
             {status === "InProgress" && <>
-                <StateButton status="Complete" onStatusChange={onStatusChange} />
+                <StateButton status="Complete" disabled={!canBeConfirmed} onStatusChange={onStatusChange} />
                 <StateButton status="Todo" onStatusChange={onStatusChange} />
             </>}
         </div>;
@@ -48,9 +49,10 @@ export default React.memo(function FaultButtons({ status, onStatusChange, onFaul
 interface ButtonProps {
     onStatusChange: (status: FaultStatus) => void;
     status: FaultStatus;
+    disabled?: boolean;
 }
 
-function StateButton({ onStatusChange: onChangeStatus, status }: ButtonProps) {
+function StateButton({ onStatusChange: onChangeStatus, status, disabled = false }: ButtonProps) {
     const label = status === "Todo" ? "החזר ללא טופל" :
         status === "Complete" ? "סמן כטופל" : "סמן שבתהליך";
 
@@ -59,7 +61,7 @@ function StateButton({ onStatusChange: onChangeStatus, status }: ButtonProps) {
         onChangeStatus(status);
     }
 
-    return <Button className={classnames("button", status)} onClick={_onButtonClick} variant="outlined" size="small">
+    return <Button className={classnames("button", status)} disabled={disabled} onClick={_onButtonClick} variant="outlined" size="small">
         {label}
     </Button>
 }

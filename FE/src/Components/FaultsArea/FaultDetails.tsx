@@ -10,9 +10,10 @@ import { isHamal } from "../../utils/roles";
 
 interface Props {
     fault: Fault;
+    onFaultCanBeConfirmed: (value: boolean) => void;
 }
 
-function FaultDetails({ fault }: Props) {
+function FaultDetails({ fault, onFaultCanBeConfirmed }: Props) {
     const { enqueueSnackbar } = useSnackbar();
     const user = useUser();
     const [messages, setMessages] = useState<Message[]>([]);
@@ -20,6 +21,12 @@ function FaultDetails({ fault }: Props) {
     useEffect(() => {
         fetchMessages();
     }, [fault._id]);
+
+    useEffect(() => {
+        if (messages && messages.length > 0 && messages.find(({author}) => isHamal(author))) 
+            onFaultCanBeConfirmed(true);
+        else onFaultCanBeConfirmed(false);    
+    }, [messages])
 
     async function fetchMessages() {
         const newMessages = await getMessagesByFaultId(user, fault._id) as Message[];

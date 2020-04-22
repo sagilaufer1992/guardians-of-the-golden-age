@@ -17,11 +17,13 @@ interface Props {
 
 export default React.memo(function Fault(props: Props) {
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  const [canBeConfirmed, setCanBeConfirmed] = useState<boolean>(false);
 
   const { _id, category, status, author, distributionCenter, date, branch } = props.fault;
 
   const _onStatusChange = (status: FaultStatus) => props.onStatusChange?.(_id, status);
   const _onFaultDelete = () => props.onFaultDelete?.(_id);
+  const _onFaultCanBeConfirmed = (value: boolean) => setCanBeConfirmed(value);
 
   return (
     <>
@@ -37,7 +39,7 @@ export default React.memo(function Fault(props: Props) {
           </div>
         </div>
         <div className="left-side">
-          <FaultButtons status={status} onStatusChange={_onStatusChange} onFaultDelete={_onFaultDelete} />
+          <FaultButtons status={status} canBeConfirmed={canBeConfirmed} onStatusChange={_onStatusChange} onFaultDelete={_onFaultDelete} />
           <div className="show-history">
             {isDetailsOpen ? (
               <><MdKeyboardArrowUp className="expander-arrow" />סגור פרטים</>
@@ -47,7 +49,9 @@ export default React.memo(function Fault(props: Props) {
           </div>
         </div>
       </Card>
-      {isDetailsOpen && <FaultDetails fault={props.fault} />}
+      <div className={classnames({'details-is-closed': !isDetailsOpen})}>
+        <FaultDetails fault={props.fault} onFaultCanBeConfirmed={_onFaultCanBeConfirmed} />
+      </div>
     </>
   );
 });

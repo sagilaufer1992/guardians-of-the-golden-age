@@ -1,3 +1,13 @@
+@mixin status-button($color) {
+  color: $color;
+  border-color: $color;
+
+  &:disabled {
+    color: rgb(180, 180, 180);
+    border-color: rgb(180, 180, 180);
+  }
+}
+
 .delete-fault-button {
     font-size: 20px;
     cursor: pointer;
@@ -7,16 +17,13 @@
       margin-right: 5px;
       cursor: pointer;
       &.Todo {
-        color: red;
-        border-color: red;
+        @include status-button(red);
       }
       &.InProgress {
-        color: rgb(255, 145, 0);
-        border-color: rgb(255, 145, 0);
+        @include status-button(rgb(255, 145, 0));
       }
       &.Complete {
-        color: rgb(53, 190, 53);
-        border-color: rgb(53, 190, 53);
+        @include status-button(rgb(53, 190, 53));
       }
     }
 }
