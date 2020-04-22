@@ -68,6 +68,7 @@ export default function Dashboard({ date, setDate }: AppRouteProps) {
     const [faultsReport, setFaultsReport] = useState<FaultsReport | null>(null);
     const [deliveryReports, setDeliveryReports] = useState<DeliveryReport[] | null>(null);
     const [modalOpen, setModalOpen] = useState<boolean>(false);
+    const [hideEmpty, setHideEmpty] = useState<boolean>(false);
     const datePanelRef = useRef<DatePanel>(null);
 
     const [fetchFaultsReport] = useApi("/api/faults/status");
@@ -75,7 +76,7 @@ export default function Dashboard({ date, setDate }: AppRouteProps) {
 
     const showUpload = useMemo(() => dayDifference(date, new Date()) >= 0, [date]);
 
-    useEffect(() => { datePanelRef.current?.refresh() }, [levelAndValue]);
+    useEffect(() => { datePanelRef.current?.refresh() }, [levelAndValue, hideEmpty]);
 
     const onHierarchyChanged = (level: Level, value: string | null) => {
         if (value) window.localStorage.setItem(LEVEL_VALUE_KEY, value);
@@ -90,7 +91,7 @@ export default function Dashboard({ date, setDate }: AppRouteProps) {
 
     const _refreshReports = useCallback(async (date: Date) => {
         const { level, value: levelValue } = levelAndValue;
-        const params = `?level=${level}${levelValue ? `&value=${levelValue}` : ""}&date=${date.toISOString()}`;
+        const params = `?level=${level}${levelValue ? `&value=${levelValue}` : ""}&date=${date.toISOString()}&hideEmpty=${hideEmpty}`;
         const [newFaultsReport, newDeliveryReports] = await Promise.all([
             fetchFaultsReport<FaultsReport>({ route: params }),
             fetchDeliveryReports<DeliveryReport[]>({ route: params })
@@ -100,7 +101,7 @@ export default function Dashboard({ date, setDate }: AppRouteProps) {
 
         newFaultsReport && setFaultsReport(newFaultsReport);
         newDeliveryReports && setDeliveryReports(newDeliveryReports);
-    }, [date, levelAndValue]);
+    }, [date, levelAndValue, hideEmpty]);
 
     const onExpectedFileUploaded = () => { datePanelRef.current?.refresh(); };
 
@@ -132,12 +133,17 @@ export default function Dashboard({ date, setDate }: AppRouteProps) {
                 <Button variant="contained" color="primary" onClick={handleModalOpen} className="modal-button">שנה היררכיה</Button>
                 <HierarchyNavigator levelAndValue={levelAndValue} onHierarchyChanged={onHierarchyChanged} />
             </div>
-            {showUpload && <Hidden smDown>
+            {deliveryReports && showUpload && <Hidden smDown>
                 <UploadDeliveryFile title="העלה נתוני חלוקה עבור יום זה" date={date} onUploaded={onExpectedFileUploaded} />
             </Hidden>}
         </div>
         <div className="dashboard">
-            {deliveryReports && <DeliveryStatus level={levelAndValue.level} reports={deliveryReports} onDeliveryReportClick={onDeliveryReportClick} />}
+            {deliveryReports && <DeliveryStatus
+                hideEmpty={hideEmpty}
+                setHideEmpty={setHideEmpty}
+                level={levelAndValue.level}
+                reports={deliveryReports}
+                onDeliveryReportClick={onDeliveryReportClick} />}
             {faultsReport && <FaultsStatus report={faultsReport} />}
         </div>
     </Container>;

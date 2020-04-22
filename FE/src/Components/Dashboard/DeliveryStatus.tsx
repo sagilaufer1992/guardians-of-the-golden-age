@@ -1,6 +1,6 @@
 import "./DeliveryStatus.scss";
 import React from "react";
-import { Card, Tooltip, withStyles, Divider } from "@material-ui/core";
+import { Card, Tooltip, withStyles, Divider, Checkbox } from "@material-ui/core";
 import { PieChart, Pie } from "recharts";
 
 import { failRasonToText } from "../../utils/translations";
@@ -9,6 +9,8 @@ import logo from "../../assets/logo.png";
 import classNames from "classnames";
 
 interface Props {
+    hideEmpty: boolean;
+    setHideEmpty: (value: boolean) => void;
     level: Level;
     reports: DeliveryReport[];
     onDeliveryReportClick: (value: string) => void;
@@ -18,7 +20,7 @@ const RADIAN = Math.PI / 180;
 
 const FAILED_COLOR = "#f44336";
 
-export default function DeliveryStatus({ level, reports, onDeliveryReportClick }: Props) {
+export default function DeliveryStatus({ level, reports, hideEmpty, setHideEmpty, onDeliveryReportClick }: Props) {
     const PieChartTooltip = withStyles((theme) => ({
         tooltip: {
             backgroundColor: "white",
@@ -70,12 +72,12 @@ export default function DeliveryStatus({ level, reports, onDeliveryReportClick }
                     {deliveryFailed > 0 && <span className="failed" style={failedStyle} />}
                 </div>
                 <div className="actual-text-info">
-                    <span>{actual} חבילות בפועל</span>
                     <span className="delivered">{delivered} חולקו</span>
                     <span className="in-progress zero">{deliveryInProgress} בתהליך חלוקה</span>
                     {deliveryFailed > 0 ? <PieChartTooltip title={_generatePieChart(FAILED_COLOR, _convertToChartData(deliveryFailReasons, failRasonToText))}>
                         <span className="failed">{deliveryFailed} נתקלו בבעיה</span>
                     </PieChartTooltip> : <span className="failed zero">{deliveryFailed} נתקלו בבעיה</span>}
+                    <span>{actual} סך הכל</span>
                 </div>
             </div>
         </div>
@@ -116,6 +118,13 @@ export default function DeliveryStatus({ level, reports, onDeliveryReportClick }
     }
 
     return (<Card className="panel delivery-status">
+        <div className="delivery-status-title">
+            <span className="status-title">סטטוס חלוקה</span>
+            <div className="hide-empty-button">
+                <Checkbox color="primary" checked={hideEmpty} onChange={(_, v) => setHideEmpty(v)} />
+                <span>הסתר סטטוסים ריקים</span>
+            </div>
+        </div>
         {reports.length === 0 && <div className="no-reports">
             לא נמצאו דיווחים בזמן וההיררכיה המבוקשים
         </div>}

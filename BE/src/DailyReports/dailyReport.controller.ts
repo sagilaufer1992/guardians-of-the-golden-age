@@ -79,7 +79,7 @@ function _isValid(reports: be.FutureReport[]) {
 function _isEmptyString(value: string) { return value.trim() === ""; }
 
 export async function getDailyReport(req, res) {
-    const { date, level, value, includeEmpty } = req.query;
+    const { date, level, value, hideEmpty } = req.query;
 
     if (!isHamal(req.user)) res.status(403).send("אינך מורשה לצפות במידע");
 
@@ -100,12 +100,12 @@ export async function getDailyReport(req, res) {
         date: dateRange
     });
 
-    res.status(200).json(_groupBySubLevels(level, branches, reports, jobs, includeEmpty));
+    res.status(200).json(_groupBySubLevels(level, branches, reports, jobs, hideEmpty === "true"));
 }
 
 type ReportWithHierarchy = Omit<be.DailyReport, "name"> & { hierarchy: be.BranchHierarchy };
 
-function _groupBySubLevels(level: be.Level, branches: be.Branch[], reports: be.DBDailyReport[], jobs: gg.Job[], includeEmpty: boolean): be.DailyReport[] {
+function _groupBySubLevels(level: be.Level, branches: be.Branch[], reports: be.DBDailyReport[], jobs: gg.Job[], hideEmpty: boolean): be.DailyReport[] {
     const branchDictionary: Record<number, be.Branch> = branches.reduce((pv, v) => ({ ...pv, [v.id]: v }), {});
 
     const hierarchyCache: Record<string, be.BranchHierarchy> = {};
@@ -180,17 +180,19 @@ function _groupBySubLevels(level: be.Level, branches: be.Branch[], reports: be.D
         };
     }
 
-    return Object.values(Object.values(totals).reduce((pv, report) => {
-        if (!includeEmpty && report.actual === 0) return pv;
-
+    let result: be.DailyReport[] = Object.values(Object.values(totals).reduce((pv, report) => {
         const name = lowerLevelDisplayName(report.hierarchy);
         if (!name) return pv;
 
         const acc = pv[name];
         const result = _mergeAndFilterResults(name, acc, report);
 
-        return !result ? pv : { ...pv, [name]: result };
+        return { ...pv, [name]: result };
     }, {}));
+
+    if (hideEmpty) result = result.filter(_ => _.actual > 0);
+
+    return result;
 }
 
 function _mergeAndFilterResults(name: string, acc: be.DailyReport, report: ReportWithHierarchy): be.DailyReport {
