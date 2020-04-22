@@ -1,4 +1,5 @@
 .upload-file-input {
+  display: flex;
   margin: 0 20px 10px 20px;
   .upload-input-element {
     display: none;
@@ -6,9 +7,7 @@
   .example-file-link {
     text-align: center;
     margin-right: 10px;
-    color: royalblue;
-    font-size: 13px;
     font-weight: bold;
-    text-decoration: underline;
+    text-decoration: none !important;
   }
 }

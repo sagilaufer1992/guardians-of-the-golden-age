@@ -31,7 +31,7 @@ export default function NavBar({ routes, user, onLogout }: Props) {
             {!isMobile && <PagesContainer className="bar-pages" selected={pathname} routes={routes} />}
             {user && <div className="nav-left">
                 {!isMobile ?
-                    <Button className="logout-button" startIcon={<MdExitToApp />} onClick={onLogout}>התנתק</Button> :
+                    <Button className="page-button logout-button" startIcon={<MdExitToApp />} onClick={onLogout}>התנתק</Button> :
                     <IconButton edge="end" color="inherit">
                         <MenuIcon onClick={() => setShowDrawer(!showDrawer)} />
                     </IconButton>}
@@ -40,7 +40,7 @@ export default function NavBar({ routes, user, onLogout }: Props) {
         <Drawer className="nav-drawer" anchor="right" open={showDrawer} onClose={() => setShowDrawer(false)}>
             <PagesContainer className="drawer-pages" selected={pathname} routes={routes} />
             <Divider variant="middle" />
-            <Button className="logout-button" startIcon={<MdExitToApp />} onClick={onLogout}>התנתק</Button>
+            <Button className="page-button logout-button" startIcon={<MdExitToApp />} onClick={onLogout}>התנתק</Button>
         </Drawer>
     </AppBar >
 }

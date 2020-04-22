@@ -43,18 +43,23 @@ $primary-color: #007aff;
 .nav-drawer {
   .drawer-pages {
     flex-direction: column;
-    .page-button {
-      &.selected {
-          color: white !important;
-          background-color: $primary-color;
-      }
+  }
+  .page-item, .page-button, a {
+    width: 100%;
+  }
+  .page-button {
+    margin: 5px 0 !important;
+    padding: 5px 30px !important;
+    justify-content: start !important;
+    &.selected {
+        color: white !important;
+        background-color: $primary-color;
     }
   }
   .logout-button {
     color: $primary-color !important;
     font-weight: normal;
     font-size: 14px;
-    padding: 5px 15px;
     margin-top: 5px;
   }
 }

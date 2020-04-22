@@ -1,8 +1,7 @@
 .dashboard-container {
   .actions-container {
     display: flex;
-    justify-content: space-between;
-    width: 50%;
+    flex-direction: column;
     .hierarchy-container {
       margin-bottom: 10px;
       display: inline-flex;

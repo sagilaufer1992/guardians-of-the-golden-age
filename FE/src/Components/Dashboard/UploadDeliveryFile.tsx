@@ -3,7 +3,7 @@ import "./UploadDeliveryFile.scss";
 import React from "react";
 import { Button } from "@material-ui/core";
 import { useSnackbar } from "notistack";
-
+import GetAppOutlinedIcon from '@material-ui/icons/GetAppOutlined';
 import { extractDailyReports } from "../../utils/expectedReports";
 import { useApi } from "../../hooks/useApi";
 
@@ -51,6 +51,13 @@ export default function UploadExpectedFile({ title, date, onUploaded }: Props) {
                 accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
             />
         </Button>
-        <a className="example-file-link" href={process.env.PUBLIC_URL + "/example.xlsx"}>להורדת קובץ לדוגמה</a>
+        <Button
+            href={process.env.PUBLIC_URL + "/example.xlsx"}
+            color="secondary"
+            variant="contained"
+            startIcon={<GetAppOutlinedIcon />}
+            className="example-file-link">
+            הורד קובץ לדוגמא
+        </Button>
     </div>;
 }

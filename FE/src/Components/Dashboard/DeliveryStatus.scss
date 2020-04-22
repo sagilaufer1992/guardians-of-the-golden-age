@@ -17,6 +17,7 @@ $failed-color: #f44336;
     .total {
         margin-top: 5px;
         .location {
+            color: $primary-color !important;
             border: 2px solid $primary-color !important;
             font-weight: bold;
         }
