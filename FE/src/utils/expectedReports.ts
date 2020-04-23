@@ -12,7 +12,7 @@ const COLUMN_TO_TITEL: Record<string, string> = {
     I: "כמות מנות"
 }
 
-const REQUIRED_KEYS = ["A", "B", "C", "D", "E", "F", "I"];
+const REQUIRED_KEYS = ["A", "B", "C", "D", "E", "F", "H"];
 
 const COLUMN_TO_KEY: Record<string, string> = {
     A: "district",
@@ -21,7 +21,7 @@ const COLUMN_TO_KEY: Record<string, string> = {
     D: "name",
     E: "id",
     F: "address",
-    I: "amount"
+    H: "amount"
 }
 
 export function extractDailyReports(file: File): Promise<FutureReport[]> {

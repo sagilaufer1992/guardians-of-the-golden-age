@@ -65,7 +65,7 @@ export default function DeliveryStatus({ level, reports, hideEmpty, setHideEmpty
                 <span>{name}</span>
             </div>
             <div className="delivery-data">
-                <div className="expected-text-info">צפי יומי - {expected} חבילות</div>
+                <div className="expected-text-info">צפי יומי - {expected} אנשים</div>
                 <div className="status-bar">
                     {delivered > 0 && <span className="delivered" style={deliveredStyle} />}
                     {deliveryInProgress > 0 && <span className="in-progress" style={inProgressStyle} />}
@@ -119,7 +119,7 @@ export default function DeliveryStatus({ level, reports, hideEmpty, setHideEmpty
 
     return (<Card className="panel delivery-status">
         <div className="delivery-status-title">
-            <span className="status-title">סטטוס חלוקה</span>
+            <span className="status-title">סטטוס חלוקה לאנשים</span>
             <div className="hide-empty-button">
                 <Checkbox color="primary" checked={hideEmpty} onChange={(_, v) => setHideEmpty(v)} />
                 <span>הסתר סטטוסים ריקים</span>

@@ -70,7 +70,7 @@ function _isValid(reports: be.FutureReport[]) {
         if (_isEmptyString(municipality)) return `מרכז חלוקה ${id}: שם הרשות אינו תקין`;
         if (_isEmptyString(napa)) return `מרכז חלוקה ${id}: הנפה שהוזנה אינה תקין`;
         if (_isEmptyString(district)) return `מרכז חלוקה ${id}: המחוז שהוזן  אינו תקין`;
-        if (isNaN(amount)) return `מרכז חלוקה ${id}: כמות המנות לחלוקה אינה תקינה`;
+        if (isNaN(amount)) return `מרכז חלוקה ${id}: כמות האזרחים אינה תקינה`;
     }
 
     return null;
