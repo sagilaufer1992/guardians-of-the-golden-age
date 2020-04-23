@@ -17,7 +17,23 @@
             margin: 5px;
         }
         .decrease-buttons {
+            display: flex;
+            flex-direction: row-reverse;
             margin-right: 20px;
+        }
+    }
+    .manual-form-bottom {
+        margin: 10px;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        .small-button {
+            margin: 15px 5px 0 5px;
+        }
+        .manual-form-input {
+            margin: 1px 8px;
+            max-width: 100px;
         }
     }
 }

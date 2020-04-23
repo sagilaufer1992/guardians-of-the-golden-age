@@ -1,13 +1,15 @@
 import "./ManualForm.scss";
 
-import React from "react";
+import React, { useState } from "react";
 import moment from "moment";
 import { Fab } from '@material-ui/core';
+import AddIcon from '@material-ui/icons/Add';
+import RemoveIcon from '@material-ui/icons/Remove';
 
 import { ColorButton, ProgressBar } from "./utils";
+import NumberInput from "../Inputs/NumberInput";
 
-const INCREASE_VALUES = [100, 50, 10, 1];
-const DECREASE_VALUES = [1, 50];
+const BUTTON_VALUES = [100, 10, 1];
 
 interface Props {
     date: Date;
@@ -18,6 +20,7 @@ interface Props {
 
 export default function ManualFrom({ date, deliveryReport, setIsDone, updateDelivery }: Props) {
     const { delivered = 0, total = 100 } = deliveryReport || {};
+    const [valueToAdd, setValueToAdd] = useState<number>(0);
 
     function onChange(value: number) {
         if (value + delivered <= total)
@@ -34,9 +37,29 @@ export default function ManualFrom({ date, deliveryReport, setIsDone, updateDeli
             </ColorButton>
         </div>
         <div><ProgressBar total={total} current={delivered} /></div>
+        <div className="manual-form-bottom">
+            <Fab className="small-button"
+                onClick={() => onChange(valueToAdd)}
+                disabled={valueToAdd + delivered > total}
+                size="small"
+                color="primary">
+                <AddIcon />
+            </Fab>
+            <NumberInput className="manual-form-input"
+                value={valueToAdd}
+                onChange={(value) => setValueToAdd(value)}
+                label="הוספת מספר"
+                min={0} max={Infinity} />
+            <Fab className="small-button"
+                onClick={() => onChange(-valueToAdd)}
+                disabled={delivered - valueToAdd < 0}
+                size="small">
+                <RemoveIcon />
+            </Fab>
+        </div>
         <div className="manual-form-buttons">
             <div>
-                {INCREASE_VALUES.map(value => <Fab key={`+${value}`}
+                {BUTTON_VALUES.map(value => <Fab key={`+${value}`}
                     className="small-button"
                     size="small"
                     color="primary"
@@ -46,7 +69,7 @@ export default function ManualFrom({ date, deliveryReport, setIsDone, updateDeli
                 </Fab>)}
             </div>
             <div className="decrease-buttons">
-                {DECREASE_VALUES.map(value => <Fab key={`-${value}`}
+                {BUTTON_VALUES.map(value => <Fab key={`-${value}`}
                     className="small-button"
                     size="small"
                     disabled={delivered - value < 0}

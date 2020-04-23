@@ -103,7 +103,7 @@ export default function DeliveryReport() {
                 </ExpansionPanelDetails>
             </ExpansionPanel>
             <ExpansionPanel disabled={!branch} expanded={!!branch && openForm === "advanced"} onChange={(_, v) => setOpenForm(v ? "advanced" : null)}>
-                <ExpansionPanelSummary style={{ backgroundColor: "#eee" }}>
+                <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} style={{ backgroundColor: "#eee" }}>
                     <div className="title">
                         סיכום יום החלוקה
                     </div>
