@@ -139,9 +139,11 @@ export default function Dashboard({ date, setDate }: AppRouteProps) {
         </div>
         <div className="dashboard">
             {deliveryReports && <DeliveryStatus
+                date={date}
                 hideEmpty={hideEmpty}
                 setHideEmpty={setHideEmpty}
                 level={levelAndValue.level}
+                levelValue={levelAndValue.value}
                 reports={deliveryReports}
                 onDeliveryReportClick={onDeliveryReportClick} />}            
         </div>

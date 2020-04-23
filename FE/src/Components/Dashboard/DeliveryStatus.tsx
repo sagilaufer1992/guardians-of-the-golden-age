@@ -2,16 +2,20 @@ import "./DeliveryStatus.scss";
 import React from "react";
 import { Card, Tooltip, withStyles, Divider, Checkbox } from "@material-ui/core";
 import { PieChart, Pie } from "recharts";
+import moment from "moment";
 
+import DeliveryReport from "../DeliveryReport/DeliveryReportDialog";
 import { failRasonToText } from "../../utils/translations";
 
 import logo from "../../assets/logo.png";
 import classNames from "classnames";
 
 interface Props {
+    date: Date;
     hideEmpty: boolean;
     setHideEmpty: (value: boolean) => void;
     level: Level;
+    levelValue: string | null;
     reports: DeliveryReport[];
     onDeliveryReportClick: (value: string) => void;
 }
@@ -20,7 +24,7 @@ const RADIAN = Math.PI / 180;
 
 const FAILED_COLOR = "#f44336";
 
-export default function DeliveryStatus({ level, reports, hideEmpty, setHideEmpty, onDeliveryReportClick }: Props) {
+export default function DeliveryStatus({ level, levelValue, reports, hideEmpty, setHideEmpty, onDeliveryReportClick, date}: Props) {
     const PieChartTooltip = withStyles((theme) => ({
         tooltip: {
             backgroundColor: "white",
@@ -45,7 +49,7 @@ export default function DeliveryStatus({ level, reports, hideEmpty, setHideEmpty
         Object.keys(data).map(key => ({ name: translation[key], value: data[key] }))
             .filter(_ => _.value > 0);
 
-    function singleReport(report: DeliveryReport, disabled: boolean) {
+    function singleReport(report: DeliveryReport, disabled: boolean, isTotal:boolean = false) {
         const { name, hasExternalInfo, actual, expected, delivered, deliveryFailed, deliveryInProgress, deliveryFailReasons } = report;
         const max = Math.max(actual, expected); // לפעמים הערך בפועל גדול מזה המצופה
 
@@ -80,6 +84,9 @@ export default function DeliveryStatus({ level, reports, hideEmpty, setHideEmpty
                     <span>{actual} סך הכל</span>
                 </div>
             </div>
+            {level === "municipality" && !isTotal && moment(date).isSame(moment(), 'day') && <>
+                <DeliveryReport name={name} municipality={levelValue} expected={expected} />
+            </>}
         </div>
     }
 
@@ -130,7 +137,7 @@ export default function DeliveryStatus({ level, reports, hideEmpty, setHideEmpty
         </div>}
         {(reports.length > 1) && <>
             <div className="total">
-                {singleReport(getTotalReport(), true)}
+                {singleReport(getTotalReport(), true, true)}
             </div>
             <Divider variant="fullWidth" />
             <div className="all-reports">{reports.map(report => singleReport(report, level === "municipality"))}</div>

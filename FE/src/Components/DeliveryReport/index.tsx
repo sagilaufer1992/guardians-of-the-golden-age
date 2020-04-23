@@ -10,11 +10,16 @@ import ManualFrom from "./ManualForm";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { useApi } from "../../hooks/useApi";
 
-export default function DeliveryReport() {
+interface Props {
+    branch?: Branch | null;
+    isDialog?: boolean;
+}
+
+export default function DeliveryReport({ isDialog = false, branch: DialogBranch = null }: Props) {
     const { enqueueSnackbar } = useSnackbar();
     const [fetchDelivery] = useApi("/api/deliveryReport");
     const [fetchBranches] = useApi("/api/branches");
-    const [branch, setBranch] = useState<Branch | null>(null);
+    const [branch, setBranch] = useState<Branch | null>(DialogBranch);
     const [branches, setBranches] = useState<Branch[] | null>(null);
     const [deliveryReport, setDeliveryReport] = useState<DeliveryReportData | null>(null);
     const [openForm, setOpenForm] = useState<"manual" | "advanced" | null>(null);
@@ -22,7 +27,7 @@ export default function DeliveryReport() {
     const date = moment().startOf('day').toDate();
 
     useEffect(() => {
-        if (!branches) getBranches();
+        if (!isDialog && !branches) getBranches();
 
         if (branch) fetchReport(branch);
     }, [branch, branches])
@@ -62,7 +67,7 @@ export default function DeliveryReport() {
 
         setDeliveryReport(deliveryReport);
 
-        if (deliveryReport.deliveryFailReasons && Object.keys(deliveryReport.deliveryFailReasons).length > 0) 
+        if (deliveryReport.deliveryFailReasons && Object.keys(deliveryReport.deliveryFailReasons).length > 0)
             setOpenForm("advanced");
         else setOpenForm("manual");
     }
@@ -81,17 +86,20 @@ export default function DeliveryReport() {
 
     return <div className="delivery-report-container">
         <div className="delivery-report">
-            {!branches ?
-                <div className="branches-loading">
-                    <span>טוען רשימת מרכזי חלוקה</span>
-                    <CircularProgress size={20} thickness={5} />
-                </div> :
-                <div className="autocomplete-branch-input">
-                    <Autocomplete value={branch} options={branches} renderOption={_showBranch} onChange={_selectBranch}
-                        filterOptions={_filterAutocomplete} getOptionLabel={b => b.name}
-                        renderInput={(params: any) => (<TextField {...params} label="בחר מרכז חלוקה" variant="outlined" />)} />
-                </div>}
-            <ExpansionPanel disabled={isManualFormDisabled} 
+            {!isDialog ?
+                branches ?
+                    <div className="autocomplete-branch-input">
+                        <Autocomplete value={branch} options={branches!} renderOption={_showBranch} onChange={_selectBranch}
+                            filterOptions={_filterAutocomplete} getOptionLabel={b => b.name}
+                            renderInput={(params: any) => (<TextField {...params} label="בחר מרכז חלוקה" variant="outlined" />)} />
+                    </div> :
+                    <div className="branches-loading">
+                        <span>טוען רשימת מרכזי חלוקה</span>
+                        <CircularProgress size={20} thickness={5} />
+                    </div> :
+                <></>
+            }
+            <ExpansionPanel disabled={isManualFormDisabled}
                 expanded={!!branch && openForm === "manual"} onChange={(_, v) => setOpenForm(v ? "manual" : null)}>
                 <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} style={{ backgroundColor: "#eee" }}>
                     <div className="title">

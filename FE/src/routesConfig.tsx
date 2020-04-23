@@ -35,7 +35,7 @@ export const hamalRoutes: AppRoute[] = [{
 }, {
     path: "/deliveryReport",
     name: "טופס ידני",
-    component: DeliveryReport,
+    component: DeliveryReport as React.ComponentType<AppRouteProps>,
     icon: Create
 }];
 
