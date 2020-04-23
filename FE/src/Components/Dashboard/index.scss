@@ -1,9 +1,10 @@
 .dashboard-container {
   .actions-container {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 10px;
     .hierarchy-container {
-      margin-bottom: 10px;
       display: inline-flex;
       align-items: center;
       .modal-button {

@@ -13,7 +13,6 @@ interface Props {
 export default function DatePicker({ date, onDateChanged }: Props) {
     const onClick = (daysToAdd: number) => {
         const newDate = moment(date).add(daysToAdd, "days").startOf('day').toDate();
-        console.log(newDate);
         onDateChanged(newDate);
     }
 

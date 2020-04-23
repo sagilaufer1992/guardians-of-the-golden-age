@@ -47,7 +47,6 @@ const FaultsList = (props: Props) => {
     }, []);
 
     const faults = useMemo(() => {
-        console.log(filters);
         const { category, status, branchName, district } = filters;
 
         return props.faults.filter(fault =>
