@@ -12,6 +12,7 @@ import { useUser } from "../../utils/UserProvider";
 import Fault from "./Fault";
 import FaultsMenu from "./FaultsMenu";
 import getFilterDefinitions from "./filters";
+import FaultsStatus from "../Dashboard/FaultsStatus";
 
 interface Props {
     faults: Fault[];
@@ -57,6 +58,24 @@ const FaultsList = (props: Props) => {
         ).sort(sortFault);
     }, [props.faults, filters, sortBy]);
 
+    // TODO: delete (should get status from hierarchy) & move dashboard logic to index!
+    const faultsReport: FaultsReport = useMemo(() => {
+        const faultsReasons = faults.reduce((prev: Record<FaultCategory, FaultReasonReport>, { category, status }: Fault) => {
+            const reports = { ...prev, [category]: prev[category] || { category, open: 0, closed: 0 } };
+
+            if (status !== "Complete") reports[category].open++
+            else reports[category].closed++
+
+            return reports;
+        }, {} as Record<FaultCategory, FaultReasonReport>);
+
+        return {
+            total: faults.length,
+            open: faults.filter(f => f.status !== "Complete").length,
+            reasons: Object.values(faultsReasons)
+        };
+    }, [faults]);
+
     function sortFault(first: Fault, second: Fault) {
         switch (sortBy) {
             case "time":
@@ -74,33 +93,36 @@ const FaultsList = (props: Props) => {
 
     const onFilterChange = (fieldName: string, value: string) => setFilters({ ...filters, [fieldName]: value });
 
-    return <div className="faults-area">
-        <div className="faults-area-header">
-            <div className="title">רשימת התקלות</div>
-            <Button
-                variant="outlined"
-                color="secondary"
-                onClick={() => setFilterOpen(!isFilterOpen)}>
-                <FilterListIcon style={{ marginLeft: 5 }} />
-                <span>סינון ומיון</span>
-            </Button>
-        </div>
-        <div className={classnames("faults-filter-container", { open: isFilterOpen })}>
-            {filterDefinitions && <FaultsMenu
-                filters={filterDefinitions}
-                onFilterChange={onFilterChange}
-                onSortChange={setSortBy} />}
-        </div>
-        <div className="faults-list">
-            {faults.length === 0 ?
-                <div className="empty" >
-                    <div className="title">לא נמצאו תקלות</div>
-                    <div>או שסיננת את כולן...</div>
-                </div> :
-                faults.map(fault => <Fault key={fault._id}
-                    fault={fault}
-                    onStatusChange={props.onStatusChange}
-                    onFaultDelete={props.onFaultDelete} />)}
+    return <div className="dashboard">
+        {faultsReport && <FaultsStatus report={faultsReport} />}
+        <div className="faults-area panel">
+            <div className="faults-area-header">
+                <div className="title">רשימת התקלות</div>
+                <Button
+                    variant="outlined"
+                    color="secondary"
+                    onClick={() => setFilterOpen(!isFilterOpen)}>
+                    <FilterListIcon style={{ marginLeft: 5 }} />
+                    <span>סינון ומיון</span>
+                </Button>
+            </div>
+            <div className={classnames("faults-filter-container", { open: isFilterOpen })}>
+                {filterDefinitions && <FaultsMenu
+                    filters={filterDefinitions}
+                    onFilterChange={onFilterChange}
+                    onSortChange={setSortBy} />}
+            </div>
+            <div className="faults-list">
+                {faults.length === 0 ?
+                    <div className="empty" >
+                        <div className="title">לא נמצאו תקלות</div>
+                        <div>או שסיננת את כולן...</div>
+                    </div> :
+                    faults.map(fault => <Fault key={fault._id}
+                        fault={fault}
+                        onStatusChange={props.onStatusChange}
+                        onFaultDelete={props.onFaultDelete} />)}
+            </div>
         </div>
     </div>
 }

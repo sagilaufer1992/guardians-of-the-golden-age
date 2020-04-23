@@ -4,7 +4,7 @@ import { Dashboard as DashboardIcon, AssignmentInd, PostAdd, Create } from "@mat
 
 import AddFault from "./Components/AddFault";
 import Dashboard from "./Components/Dashboard";
-import FaultsArea from "./Components/FaultsArea";
+import FaultsArea from "./Components/FaultsDashboard";
 import DeliveryReport from "./Components/DeliveryReport";
 
 export interface AppRoute extends RouteProps {

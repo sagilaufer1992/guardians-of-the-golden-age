@@ -1,0 +1,12 @@
+.faults-dashboard-container {
+    .dashboard {
+        display: flex;
+        justify-content: space-between;
+        padding: 0 10px;
+        .panel {
+          width: 100%;
+          height: fit-content;
+          margin: 0 10px;
+        }
+      }
+}
