@@ -14,8 +14,9 @@ $failed-color: #f44336;
         display: flex;
         justify-content: space-between;
     }
-    .total {
-        margin-top: 5px;
+    .total {        
+        margin: 15px auto;
+        width: 75%;
         .location {
             color: $primary-color !important;
             border: 2px solid $primary-color !important;
@@ -25,9 +26,6 @@ $failed-color: #f44336;
     .report-container {
         display: flex;
         align-items: center;
-        &:not(:last-child) {
-            margin-bottom: 15px;
-        }
         .location {
             width: 150px;
             display: flex;
@@ -98,7 +96,7 @@ $failed-color: #f44336;
                 font-size: 14px;
                 & > * {
                     &:not(:last-child) {
-                        &:after{
+                        &:after {
                             padding: 0 5px;
                             content: "|";
                             color: gray;
@@ -121,6 +119,18 @@ $failed-color: #f44336;
                     cursor: default !important;
                 }
             }
+        }
+    }
+    .all-reports {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        .report-container {
+            @extend .report-container;            
+            flex: 2 2 48%;
+            margin: 1%;
+            max-width: 48%;
         }
     }
 }

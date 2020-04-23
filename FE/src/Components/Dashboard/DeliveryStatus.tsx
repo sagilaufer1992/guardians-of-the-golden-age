@@ -128,12 +128,12 @@ export default function DeliveryStatus({ level, reports, hideEmpty, setHideEmpty
         {reports.length === 0 && <div className="no-reports">
             לא נמצאו דיווחים בזמן וההיררכיה המבוקשים
         </div>}
-        {reports.map(report => singleReport(report, level === "municipality"))}
         {(reports.length > 1) && <>
-            <Divider variant="fullWidth" />
             <div className="total">
                 {singleReport(getTotalReport(), true)}
             </div>
-        </>}
+            <Divider variant="fullWidth" />
+            <div className="all-reports">{reports.map(report => singleReport(report, level === "municipality"))}</div>
+        </>}        
     </Card>);
 }
