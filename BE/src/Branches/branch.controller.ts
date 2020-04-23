@@ -1,5 +1,6 @@
 import Branch from "./branch.model";
 import { isHamal } from "../utils/users";
+import { MongooseFilterQuery } from "mongoose";
 
 export async function getBranches(req, res, next) {
     const branches = await _getRelevantBranches(req.user);
@@ -27,12 +28,18 @@ export async function getMunicipalities(req, res, next) {
     res.status(200).json(_removeDuplicates(municipalities, item => item.municipality));
 }
 
-export async function getBranchFromValue(req, res, next) {
-    const { level, value } = req.query;
+export async function getBranchFromInfo(req, res, next) {
+    const { napa, district, municipality, name } = req.query;
 
-    const result = await Branch.findOne({ [level]: value });
+    const query: MongooseFilterQuery<be.Branch> = {};
+    if (district) query.district = district;
+    if (napa) query.napa = napa;
+    if (municipality) query.municipality = municipality;
+    if (name) query.name = name;
+
+    const result = await Branch.findOne(query);
     if (!result) return res.status(404).send("לא נמצאו פרטי מרכז החלוקה");
-    
+
     res.status(200).json(result);
 }
 

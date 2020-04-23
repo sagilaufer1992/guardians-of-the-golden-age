@@ -21,7 +21,7 @@ export default function HierarchyNavigator({ levelAndValue, onHierarchyChanged }
 
         if (level === "district") return setCurrentHierarchy({ district: levelValue });
 
-        const branch = await fetchApi<Branch>({ route: `/fromValue?level=${level}&value=${levelValue}` });
+        const branch = await fetchApi<Branch>({ route: `/fromInfo?${level}=${levelValue}` });
         if (!branch) return;
 
         if (level === "napa")
