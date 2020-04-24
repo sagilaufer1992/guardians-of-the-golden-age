@@ -39,21 +39,25 @@ export default function ManualFrom({ date, deliveryReport, setIsDone, updateDeli
         <div><ProgressBar total={total} current={delivered} /></div>
         <div className="manual-form-bottom">
             <Fab className="small-button"
+                variant="extended"
                 onClick={() => onChange(valueToAdd)}
-                disabled={valueToAdd + delivered > total}
+                disabled={valueToAdd + delivered > total || valueToAdd === 0}
                 size="small"
                 color="primary">
+                הוסף
                 <AddIcon />
             </Fab>
             <NumberInput className="manual-form-input"
                 value={valueToAdd}
                 onChange={(value) => setValueToAdd(value)}
-                label="הוספת מספר"
+                label=""
                 min={0} max={Infinity} />
             <Fab className="small-button"
+                variant="extended"
                 onClick={() => onChange(-valueToAdd)}
-                disabled={delivered - valueToAdd < 0}
+                disabled={delivered - valueToAdd < 0 || valueToAdd === 0}
                 size="small">
+                חסר
                 <RemoveIcon />
             </Fab>
         </div>
