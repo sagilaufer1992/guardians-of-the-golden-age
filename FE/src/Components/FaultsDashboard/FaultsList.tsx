@@ -4,7 +4,7 @@ import React, { useState, useMemo, useEffect } from "react";
 import classnames from "classnames";
 
 import { useSnackbar } from "notistack";
-import { Button } from '@material-ui/core';
+import { Button, Container, useMediaQuery, Theme } from '@material-ui/core';
 import FilterListIcon from "@material-ui/icons/FilterList";
 import { ALL_ITEM } from "../../utils/inputs";
 import { getBranches } from "../../utils/fetchBranches";
@@ -34,6 +34,8 @@ const FaultsList = (props: Props) => {
         category: null,
         status: null
     });
+
+    const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down("sm"));
 
     useEffect(() => {
         const initFilterDefinitions = async () => {
@@ -94,8 +96,7 @@ const FaultsList = (props: Props) => {
     const onFilterChange = (fieldName: string, value: string) => setFilters({ ...filters, [fieldName]: value });
 
     return <div className="dashboard">
-        {faultsReport && <FaultsStatus report={faultsReport} />}
-        <div className="faults-area panel">
+        <Container className="faults-area panel" maxWidth="md">
             <div className="faults-area-header">
                 <div className="title">רשימת התקלות</div>
                 <Button
@@ -123,7 +124,8 @@ const FaultsList = (props: Props) => {
                         onStatusChange={props.onStatusChange}
                         onFaultDelete={props.onFaultDelete} />)}
             </div>
-        </div>
+        </Container>
+        {faultsReport && !isMobile && <Container maxWidth="sm"><FaultsStatus report={faultsReport} /></Container>}
     </div>
 }
 

@@ -1,22 +1,22 @@
 import "./DeliveryStatus.scss";
-import React from "react";
-import { Card, Tooltip, withStyles, Divider, Checkbox } from "@material-ui/core";
+import React, { useMemo } from "react";
+import classNames from "classnames";
 import { PieChart, Pie } from "recharts";
-import moment from "moment";
-
-import DeliveryReport from "../DeliveryReport/DeliveryReportDialog";
-import { failRasonToText } from "../../utils/translations";
+import { Card, Tooltip, withStyles, Divider, Checkbox } from "@material-ui/core";
 
 import logo from "../../assets/logo.png";
-import classNames from "classnames";
+import { isToday } from "../../utils/dates";
+import { failRasonToText } from "../../utils/translations";
+
+import DeliveryReport from "../DeliveryReport/DeliveryReportDialog";
 
 interface Props {
     date: Date;
     hideEmpty: boolean;
-    setHideEmpty: (value: boolean) => void;
     level: Level;
     levelValue: string | null;
     reports: DeliveryReport[];
+    setHideEmpty: (value: boolean) => void;
     onDeliveryReportClick: (value: string) => void;
 }
 
@@ -24,7 +24,7 @@ const RADIAN = Math.PI / 180;
 
 const FAILED_COLOR = "#f44336";
 
-export default function DeliveryStatus({ level, levelValue, reports, hideEmpty, setHideEmpty, onDeliveryReportClick, date}: Props) {
+export default function DeliveryStatus({ level, levelValue, reports, hideEmpty, setHideEmpty, onDeliveryReportClick, date }: Props) {
     const PieChartTooltip = withStyles((theme) => ({
         tooltip: {
             backgroundColor: "white",
@@ -49,7 +49,7 @@ export default function DeliveryStatus({ level, levelValue, reports, hideEmpty, 
         Object.keys(data).map(key => ({ name: translation[key], value: data[key] }))
             .filter(_ => _.value > 0);
 
-    function singleReport(report: DeliveryReport, disabled: boolean, isTotal:boolean = false) {
+    function singleReport(report: DeliveryReport, disabled: boolean, isTotal: boolean = false) {
         const { name, hasExternalInfo, actual, expected, delivered, deliveryFailed, deliveryInProgress, deliveryFailReasons } = report;
         const max = Math.max(actual, expected); // לפעמים הערך בפועל גדול מזה המצופה
 
@@ -63,7 +63,7 @@ export default function DeliveryStatus({ level, levelValue, reports, hideEmpty, 
 
         return <div className="report-container" key={name}>
             <div className={classNames("location", { disabled })} onClick={() => onDeliveryReportClick(name)}>
-                {hasExternalInfo && <Tooltip classes={{ tooltip: "external-logo-tooltip" }} title='מכיל מידע ממערכת "משמרות הזהב"' placement="top">
+                {hasExternalInfo && <Tooltip title='מכיל מידע ממערכת "משמרות הזהב"' placement="top">
                     <img className="external-logo" src={logo} />
                 </Tooltip>}
                 <span>{name}</span>
@@ -84,9 +84,8 @@ export default function DeliveryStatus({ level, levelValue, reports, hideEmpty, 
                     <span>{actual} סך הכל</span>
                 </div>
             </div>
-            {level === "municipality" && !isTotal && moment(date).isSame(moment(), 'day') && <>
-                <DeliveryReport name={name} municipality={levelValue} expected={expected} />
-            </>}
+            {level === "municipality" && !isTotal && isToday(date) &&
+                <DeliveryReport name={name} municipality={levelValue!} disabled={!!hasExternalInfo} />}
         </div>
     }
 
@@ -124,6 +123,8 @@ export default function DeliveryStatus({ level, levelValue, reports, hideEmpty, 
         }, initialReport);
     }
 
+    const reportsMemo = useMemo(() => reports.map(report => singleReport(report, level === "municipality")), [reports]);
+
     return (<Card className="panel delivery-status">
         <div className="delivery-status-title">
             <span className="status-title">סטטוס חלוקה לאנשים</span>
@@ -132,15 +133,15 @@ export default function DeliveryStatus({ level, levelValue, reports, hideEmpty, 
                 <span>הסתר סטטוסים ריקים</span>
             </div>
         </div>
-        {reports.length === 0 && <div className="no-reports">
+        {reportsMemo.length === 0 && <div className="no-reports">
             לא נמצאו דיווחים בזמן וההיררכיה המבוקשים
         </div>}
-        {(reports.length > 1) && <>
+        {reportsMemo.length > 0 && <>
             <div className="total">
                 {singleReport(getTotalReport(), true, true)}
             </div>
             <Divider variant="fullWidth" />
-            <div className="all-reports">{reports.map(report => singleReport(report, level === "municipality"))}</div>
-        </>}        
+            <div className="all-reports">{reportsMemo}</div>
+        </>}
     </Card>);
 }

@@ -75,9 +75,9 @@ export default function FaultsStatus({ report }: Props) {
                 })}
             </div>
         </div>
-        <div className="show-all-faults" onClick={_showAllFaults}>
+        {/* <div className="show-all-faults" onClick={_showAllFaults}>
             {"עבור לכלל הבעיות של יום זה"}
             <ArrowBackIosIcon />
-        </div>
+        </div> */}
     </Card>;
 }

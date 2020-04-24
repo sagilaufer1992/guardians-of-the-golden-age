@@ -47,6 +47,8 @@ $failed-color: #f44336;
             }
             .external-logo {
                 width: 20px;
+                cursor: default;
+                pointer-events: all;
             }
         }
         .delivery-data {
@@ -136,7 +138,4 @@ $failed-color: #f44336;
             max-width: 48%;
         }
     }
-}
-.external-logo-tooltip {
-    font-size: 12px !important;
 }
