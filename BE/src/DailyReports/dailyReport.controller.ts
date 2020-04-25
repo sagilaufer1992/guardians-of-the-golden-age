@@ -140,21 +140,21 @@ function _groupBySubLevels(level: be.Level, branches: be.Branch[], reports: be.D
             deliveryFailReasons: { declined: 0, address: 0, unreachable: 0, other: 0 }
         };
 
-        for (const { status: taskStatus, failureReason, amount } of tasks) {
-            totals[branchId].actual += amount;
+        for (const { status: taskStatus, failureReason } of tasks) {
+            totals[branchId].actual += 1;
             switch (taskStatus) {
                 // delivered
                 case "DELIVERED":
-                    totals[branchId].delivered += amount;
+                    totals[branchId].delivered += 1;
                     break;
                 case "UNDELIVERED":
-                    totals[branchId].deliveryInProgress += amount;
+                    totals[branchId].deliveryInProgress += 1;
                     break;
                 // deliveryFailed
                 case "FAILED":
-                    totals[branchId].deliveryFailed += amount;
+                    totals[branchId].deliveryFailed += 1;
                     const field = ["DECLINED", "UNREACHABLE", "ADDRESS"].includes(failureReason) ? failureReason.toLowerCase() : "other";
-                    totals[branchId].deliveryFailReasons[field] += amount;
+                    totals[branchId].deliveryFailReasons[field] += 1;
                     break;
             }
         }

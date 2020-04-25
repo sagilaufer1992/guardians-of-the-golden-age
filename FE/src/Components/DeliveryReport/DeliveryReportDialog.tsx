@@ -27,8 +27,8 @@ export default function DeliveryReportDialog({ name, municipality, disabled }: P
     }
 
     return <div className="delivery-report-dialog">
-        <Tooltip title="הזן סטטוס חלוקה" placement="top">
-            <Fab className="open-manual-report" onClick={() => setOpen(true)} disabled={disabled} color="primary" size="small">
+        <Tooltip title={disabled ? "לא ניתן להזין סטטוס חלוקה לנקודה שמנוהלת ממערכת \"משמרות הזהב\"" : "הזן סטטוס חלוקה"} placement="top">
+            <Fab className="open-manual-report" onClick={() => !disabled && setOpen(true)} disabled={disabled} color="primary" size="small">
                 <CreateIcon />
             </Fab>
         </Tooltip>

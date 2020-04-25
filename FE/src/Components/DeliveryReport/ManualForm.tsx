@@ -45,7 +45,6 @@ export default function ManualFrom({ date, deliveryReport, setIsDone, updateDeli
                 size="small"
                 color="primary">
                 הוסף
-                <AddIcon />
             </Fab>
             <NumberInput className="manual-form-input"
                 value={valueToAdd}
@@ -57,8 +56,7 @@ export default function ManualFrom({ date, deliveryReport, setIsDone, updateDeli
                 onClick={() => onChange(-valueToAdd)}
                 disabled={delivered - valueToAdd < 0 || valueToAdd === 0}
                 size="small">
-                חסר
-                <RemoveIcon />
+                הורד
             </Fab>
         </div>
         <div className="manual-form-buttons">
