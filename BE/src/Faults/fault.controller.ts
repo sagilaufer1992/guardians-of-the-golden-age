@@ -5,14 +5,16 @@ import Branch from "../Branches/branch.model";
 import { getRangeFromDate } from "../utils/dates";
 import { isManager, getBranchIdentifier } from "../utils/users";
 
-export async function getFaultsInDate(req, res, next) {
-    const { date } = req.query;
+export async function getFaults(req, res, next) {
+    const { level, value, date } = req.query;
     const { branches } = req.user;
 
     const query: MongooseFilterQuery<be.Fault> = {};
 
     if (isManager(req.user))
         query["branch.identifier"] = { $in: branches.map(getBranchIdentifier) };
+
+    if (level && level !== "national") query[`branch.${level}`] = value;
 
     if (date) {
         const { start, end } = getRangeFromDate(new Date(date));

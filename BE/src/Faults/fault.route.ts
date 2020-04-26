@@ -1,5 +1,5 @@
 import * as express from "express";
-import { getFaultById, addFault, deleteFault, updateFault, getFaultsInDate, faultsStatus } from "./fault.controller";
+import { getFaultById, addFault, deleteFault, updateFault, getFaults, faultsStatus } from "./fault.controller";
 import messagesRouter from "../Messages/message.route";
 import { userInfoMiddleware } from "../authMiddlewares";
 
@@ -14,7 +14,7 @@ router.route('/status')
 
 router
     .route('/')
-    .get(getFaultsInDate)
+    .get(getFaults)
     .post(addFault);
 
 router
