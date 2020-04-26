@@ -35,8 +35,8 @@ export function ProgressBar({ total, current }: Props) {
         {/* <div className="precentage">{isNaN(percentage) ? 0 : percentage}%</div> */}
         <Bar variant="determinate" value={percentage}/>
         <span>
-            תכנון: {total} מנות
-            | חולקו: {isNaN(current) ? 0 : current} מנות
+            תכנון: {total} אנשים
+            | בוצע: {isNaN(current) ? 0 : current}
         </span>
     </div>
 }

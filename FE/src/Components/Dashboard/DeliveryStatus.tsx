@@ -76,12 +76,12 @@ export default function DeliveryStatus({ level, levelValue, reports, hideEmpty, 
                     {deliveryFailed > 0 && <span className="failed" style={failedStyle} />}
                 </div>
                 <div className="actual-text-info">
-                    <span className="delivered">{delivered} חולקו</span>
-                    <span className="in-progress zero">{deliveryInProgress} בתהליך חלוקה</span>
+                    <span className="delivered">בוצע: {delivered}</span>
+                    <span className="in-progress zero">בדרך: {deliveryInProgress}</span>
                     {deliveryFailed > 0 ? <PieChartTooltip title={_generatePieChart(FAILED_COLOR, _convertToChartData(deliveryFailReasons, failRasonToText))}>
-                        <span className="failed">{deliveryFailed} נתקלו בבעיה</span>
-                    </PieChartTooltip> : <span className="failed zero">{deliveryFailed} נתקלו בבעיה</span>}
-                    <span>{actual} סך הכל</span>
+                        <span className="failed"> נתקלו בבעיה: {deliveryFailed}</span>
+                    </PieChartTooltip> : <span className="failed zero">נתקלו בבעיה: {deliveryFailed}</span>}
+                    <span>סך הכל: {actual}</span>
                 </div>
             </div>
             {level === "municipality" && !isTotal && isToday(date) &&
