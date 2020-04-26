@@ -80,6 +80,7 @@ function _isEmptyString(value: string) { return value.trim() === ""; }
 
 export async function getRelevantBranches(req, res) {
     const { date } = req.params;
+    const { level, value } = req.query;
     const { start, end } = getRangeFromDate(new Date(date));
     
     const reports = await DailyReport.find({
@@ -91,7 +92,9 @@ export async function getRelevantBranches(req, res) {
         id: { $in: reports.map(_ => _.branchId) }
     });
 
-    res.json(branches);
+    if ((level as be.Level) === "national") res.json(branches);
+
+    else res.json(branches.filter(branch => branch[level] === value));
 }
 
 export async function getDailyReport(req, res) {

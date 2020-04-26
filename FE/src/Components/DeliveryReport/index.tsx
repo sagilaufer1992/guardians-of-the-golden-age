@@ -9,13 +9,14 @@ import DailySummary from "./DailySummary";
 import ManualFrom from "./ManualForm";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { useApi } from "../../hooks/useApi";
+import { AppRouteProps } from "../../routesConfig";
 
 interface Props {
     branch?: Branch | null;
     isDialog?: boolean;
 }
 
-export default function DeliveryReport({ isDialog = false, branch: DialogBranch = null }: Props) {
+export default function DeliveryReport({ isDialog = false, branch: DialogBranch = null, levelAndValue }: Props & Partial<AppRouteProps>) {
     const { enqueueSnackbar } = useSnackbar();
     const [fetchDelivery] = useApi("/api/deliveryReport");
     const [fetchDailyReports] = useApi("/api/dailyReports");
@@ -30,11 +31,17 @@ export default function DeliveryReport({ isDialog = false, branch: DialogBranch 
         if (!isDialog && !branches) getBranches();
 
         if (branch) fetchReport(branch);
-    }, [branch, branches])
+    }, [branch, branches]);
+
+    useEffect(() => {
+        getBranches()
+    }, [levelAndValue]);
 
     async function getBranches() {
+        const { level , value } = levelAndValue as LevelAndValue;
+        const queryString = `level=${level}` + `${level !== "national" ? `&value=${value}` : ""}`;
         const branches = await fetchDailyReports<Branch[]>({
-            route: `/${date.toISOString()}/branches`,
+            route: `/${date.toISOString()}/branches?${queryString}`,
             defaultErrorMessage: "אירעה שגיאה בקבלת מרכזי החלוקה"
         });
         if (branches) setBranches(branches);
