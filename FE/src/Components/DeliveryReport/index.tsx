@@ -18,7 +18,7 @@ interface Props {
 export default function DeliveryReport({ isDialog = false, branch: DialogBranch = null }: Props) {
     const { enqueueSnackbar } = useSnackbar();
     const [fetchDelivery] = useApi("/api/deliveryReport");
-    const [fetchBranches] = useApi("/api/branches");
+    const [fetchDailyReports] = useApi("/api/dailyReports");
     const [branch, setBranch] = useState<Branch | null>(DialogBranch);
     const [branches, setBranches] = useState<Branch[] | null>(null);
     const [deliveryReport, setDeliveryReport] = useState<DeliveryReportData | null>(null);
@@ -33,7 +33,10 @@ export default function DeliveryReport({ isDialog = false, branch: DialogBranch 
     }, [branch, branches])
 
     async function getBranches() {
-        const branches = await fetchBranches<Branch[]>({ defaultErrorMessage: "אירעה שגיאה בקבלת מרכזי החלוקה" });
+        const branches = await fetchDailyReports<Branch[]>({
+            route: `/${date.toISOString()}/branches`,
+            defaultErrorMessage: "אירעה שגיאה בקבלת מרכזי החלוקה"
+        });
         if (branches) setBranches(branches);
     }
 

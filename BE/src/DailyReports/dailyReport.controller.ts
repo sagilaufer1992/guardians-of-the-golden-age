@@ -70,13 +70,29 @@ function _isValid(reports: be.FutureReport[]) {
         if (_isEmptyString(municipality)) return `מרכז חלוקה ${id}: שם הרשות אינו תקין`;
         if (_isEmptyString(napa)) return `מרכז חלוקה ${id}: הנפה שהוזנה אינה תקין`;
         if (_isEmptyString(district)) return `מרכז חלוקה ${id}: המחוז שהוזן  אינו תקין`;
-        if (isNaN(amount)) return `מרכז חלוקה ${id}: כמות האזרחים אינה תקינה`;
+        if (isNaN(amount)) return `מרכז חלוקה ${id}: כמות האזרחים לחלוקה אינה תקינה`;
     }
 
     return null;
 }
 
 function _isEmptyString(value: string) { return value.trim() === ""; }
+
+export async function getRelevantBranches(req, res) {
+    const { date } = req.params;
+    const { start, end } = getRangeFromDate(new Date(date));
+    
+    const reports = await DailyReport.find({
+        date: { $gte: start, $lt: end },
+        total: { $gt: 0 }
+    }, "branchId");
+
+    const branches = await Branch.find({
+        id: { $in: reports.map(_ => _.branchId) }
+    });
+
+    res.json(branches);
+}
 
 export async function getDailyReport(req, res) {
     const { date, level, value, hideEmpty } = req.query;
