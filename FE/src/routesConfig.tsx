@@ -16,7 +16,9 @@ export interface AppRoute extends RouteProps {
 
 export interface AppRouteProps {
     date: Date;
+    levelAndValue: LevelAndValue;
     setDate: (date: Date) => void;
+    setLevelAndValue: (level: Level, value: string | null) => void;
 }
 
 export const FAULTS_ROUTE = "/faults";

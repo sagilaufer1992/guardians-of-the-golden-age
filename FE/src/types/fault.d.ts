@@ -11,6 +11,11 @@ type FaultCategory = "food" | "supplier" | "volunteers" | "other";
 
 type Level = "national" | "district" | "napa" | "municipality";
 
+interface LevelAndValue {
+  level: Level;
+  value: string | null;
+}
+
 interface AuthorInfo {
   name: string;
   phone?: string;

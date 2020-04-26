@@ -1,0 +1,20 @@
+.hierarchy-navigator {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    margin: 0 10px;
+    height: 100%;
+    .hierarchy-breadcrumbs {
+        margin: 0 10px;
+    }
+    a:hover {
+        text-decoration: none;
+        cursor: pointer;
+    }
+    a {
+        color: inherit;
+    }
+    .select-hierarchy-button {
+        cursor: pointer;
+    }
+}

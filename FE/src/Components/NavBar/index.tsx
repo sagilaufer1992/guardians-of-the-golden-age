@@ -4,11 +4,11 @@ import React, { useState } from 'react';
 import { useLocation, Link } from "react-router-dom";
 import classnames from "classnames";
 import MenuIcon from '@material-ui/icons/Menu';
-import { useMediaQuery, Theme, AppBar, Toolbar, Typography, Button, Drawer, List, ListItem, IconButton, Divider } from '@material-ui/core';
+import { MdExitToApp } from "react-icons/md";
+import { useMediaQuery, Theme, AppBar, Toolbar, Typography, Button, Dialog, DialogContent, DialogTitle, Drawer, List, ListItem, IconButton, Divider } from '@material-ui/core';
 
 import logo from "../../assets/logo.png";
 import { AppRoute } from "../../routesConfig";
-import { MdExitToApp } from "react-icons/md";
 
 interface Props {
     routes: AppRoute[];
@@ -16,7 +16,9 @@ interface Props {
     onLogout: () => void;
 }
 
-export default function NavBar({ routes, user, onLogout }: Props) {
+const NavBar: React.FunctionComponent<Props> = props => {
+    const { routes, user, onLogout, children } = props;
+
     const { pathname } = useLocation();
     const [showDrawer, setShowDrawer] = useState<boolean>(false);
 
@@ -29,6 +31,7 @@ export default function NavBar({ routes, user, onLogout }: Props) {
                 {"משמרות הזהב"}
             </Typography>
             {!isMobile && <PagesContainer className="bar-pages" selected={pathname} routes={routes} />}
+            {children}
             {user && <div className="nav-left">
                 {!isMobile ?
                     <Button className="page-button logout-button" startIcon={<MdExitToApp />} onClick={onLogout}>התנתק</Button> :
@@ -66,3 +69,5 @@ const PagesContainer = ({ selected, className, routes }: PageContainerProps) => 
         )}
     </List>;
 }
+
+export default NavBar;
