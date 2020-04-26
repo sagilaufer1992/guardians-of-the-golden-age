@@ -94,8 +94,8 @@ export default function DeliveryReasons({ deliveryReport, finishDeliveryReport }
         </div>
         <div className="remaining-deliveries">
             {deliveriesDifference < 0 ?
-                <span>מספר המנות גדול ב-{Math.abs(deliveriesDifference)} מהתכנון</span> :
-                <span>סה״כ מנות שלא ידועות: {deliveriesDifference}</span>}
+                <span>מספר המשלוחים גדול ב-{Math.abs(deliveriesDifference)} מהתכנון</span> :
+                <span>סה״כ משלוחים שלא ידוע מדוע נכשלו: {deliveriesDifference}</span>}
         </div>
         <div className="send-reasons">
             <ColorButton disabled={!finishDeliveryReport || !deliveryReport || sumDeliveries !== deliveryReport.total} onClick={_finishDeliveryReport}>
@@ -127,7 +127,7 @@ function ReasonInput({ reason, reasons, setReason }: ReasonsProps) {
                 onChange={explanation => setReason(reason, { value: explanation as FailReason, deliveries: reason.deliveries })} />
         </div>
         <NumberInput className="reason-number"
-            label="מספר המנות"
+            label="מספר המשלוחים"
             onChange={deliveries => setReason(reason, { value: reason.value, deliveries })}
             min={0}
             max={Infinity}

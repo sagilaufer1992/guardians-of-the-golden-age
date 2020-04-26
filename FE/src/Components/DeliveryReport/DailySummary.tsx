@@ -45,7 +45,7 @@ function DeliveryForm({ deliveryReport, setDeliveryReport, finishDeliveryReport 
         <div className="total-deliveries">
             <NumberInput className="total-input"
                 disabled={isApproved}
-                label='כמה מנות חולקו סה"כ?'
+                label='כמה משלוחים בוצעו סה"כ?'
                 min={0}
                 max={deliveryReport?.total ?? 0}
                 onChange={(value, isValid) => {
