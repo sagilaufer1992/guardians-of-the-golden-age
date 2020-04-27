@@ -14,7 +14,7 @@ $failed-color: #f44336;
         display: flex;
         justify-content: space-between;
     }
-    .total {        
+    .total {
         margin: 15px auto;
         width: 75%;
         .location {
@@ -51,74 +51,77 @@ $failed-color: #f44336;
                 pointer-events: all;
             }
         }
-        .delivery-data {
+        .deliveries-data {
             flex: 1;
-            .status-bar {
-                display: flex;
-                height: 15px;
-                border-radius: 5px;
-                margin: 2px 0;
-                background-color: darken(whitesmoke, 5);
-                .status {
-                    width: 0;
-                    height: 100%;
-                    text-align: center;
-                    overflow: hidden;
-                    font-size: 12px;
-                    color: white;
-                    cursor: auto;
-                    &:first-child {
-                        border-radius: 0 5px 5px 0;
-                    }
-                    &:last-child {
-                        border-radius: 5px 0 0 5px;
-                    }
-                    &:only-child {
-                        border-radius: 5px;
-                    }
-                }
-                .delivered {
-                    @extend .status;
-                    background: $delivered-color;
-                }
-                .in-progress {
-                    @extend .status;
-                    background: $in-progress-color;
-                }
-                .failed {
-                    @extend .status;
-                    border-radius: 5px 0 0 5px;
-                    background: $failed-color;
-                }
-            }
-            .expected-text-info {
-                font-size: 12px;
-            }
-            .actual-text-info {
-                font-size: 14px;
-                & > * {
-                    &:not(:last-child) {
-                        &:after {
-                            padding: 0 5px;
-                            content: "|";
-                            color: gray;
+            .delivery {
+                margin: 10px 0;        
+                .status-bar {
+                    display: flex;
+                    height: 15px;
+                    border-radius: 5px;
+                    margin: 2px 0;
+                    background-color: darken(whitesmoke, 5);
+                    .status {
+                        width: 0;
+                        height: 100%;
+                        text-align: center;
+                        overflow: hidden;
+                        font-size: 12px;
+                        color: white;
+                        cursor: auto;
+                        &:first-child {
+                            border-radius: 0 5px 5px 0;
+                        }
+                        &:last-child {
+                            border-radius: 5px 0 0 5px;
+                        }
+                        &:only-child {
+                            border-radius: 5px;
                         }
                     }
+                    .delivered {
+                        @extend .status;
+                        background: $delivered-color;
+                    }
+                    .in-progress {
+                        @extend .status;
+                        background: $in-progress-color;
+                    }
+                    .failed {
+                        @extend .status;
+                        border-radius: 5px 0 0 5px;
+                        background: $failed-color;
+                    }
                 }
-                .delivered {
-                    cursor: default;
-                    color: darken($delivered-color, 5);
+                .expected-text-info {
+                    font-size: 12px;
                 }
-                .in-progress {
-                    cursor: pointer;
-                    color: darken($in-progress-color, 5);
-                }
-                .failed {
-                    cursor: pointer;
-                    color: darken($failed-color, 5);
-                }
-                .zero {
-                    cursor: default !important;
+                .actual-text-info {
+                    font-size: 14px;
+                    & > * {
+                        &:not(:last-child) {
+                            &:after {
+                                padding: 0 5px;
+                                content: "|";
+                                color: gray;
+                            }
+                        }
+                    }
+                    .delivered {
+                        cursor: default;
+                        color: darken($delivered-color, 5);
+                    }
+                    .in-progress {
+                        cursor: pointer;
+                        color: darken($in-progress-color, 5);
+                    }
+                    .failed {
+                        cursor: pointer;
+                        color: darken($failed-color, 5);
+                    }
+                    .zero {
+                        cursor: default !important;
+                    }
                 }
             }
         }
@@ -132,7 +135,7 @@ $failed-color: #f44336;
         align-items: center;
         flex-wrap: wrap;
         .report-container {
-            @extend .report-container;            
+            @extend .report-container;
             flex: 2 2 48%;
             margin: 1%;
             max-width: 48%;

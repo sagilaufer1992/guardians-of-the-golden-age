@@ -12,36 +12,54 @@ import UploadDeliveryFile from "./UploadDeliveryFile";
 
 const TEST_DELIVERY_REPORTS: DeliveryReport[] = [{
     name: "רחובות",
-    expected: 400,
-    actual: 400,
-    delivered: 234,
-    deliveryFailed: 40,
-    deliveryInProgress: 50,
-    deliveryFailReasons: { declined: 10, unreachable: 15, address: 10, other: 5 }
+    deliveries: {
+        food: {
+            expected: 400,
+            actual: 400,
+            delivered: 234,
+            deliveryFailed: 40,
+            deliveryInProgress: 50,
+            deliveryFailReasons: { declined: 10, unreachable: 15, address: 10, other: 5 }
+        }
+    }
 }, {
-    name: "ראשון לציון - מערב",
-    expected: 400,
-    actual: 400,
-    delivered: 234,
-    deliveryFailed: 40,
-    deliveryInProgress: 50,
-    deliveryFailReasons: { declined: 10, unreachable: 15, address: 10, other: 5 }
-}, {
-    name: "מקום חשוב",
-    expected: 400,
-    actual: 400,
-    delivered: 234,
-    deliveryFailed: 40,
-    deliveryInProgress: 50,
-    deliveryFailReasons: { declined: 10, unreachable: 15, address: 10, other: 5 }
-}, {
-    name: "ירושלים והמרכז ומחוצה לו ולתמיד",
-    expected: 400,
-    actual: 500,
-    delivered: 334,
-    deliveryFailed: 40,
-    deliveryInProgress: 50,
-    deliveryFailReasons: { declined: 10, unreachable: 15, address: 10, other: 5 }
+    name: "רחובות",
+    deliveries: {
+        food: {
+            expected: 400,
+            actual: 400,
+            delivered: 234,
+            deliveryFailed: 40,
+            deliveryInProgress: 50,
+            deliveryFailReasons: { declined: 10, unreachable: 15, address: 10, other: 5 }
+        }
+    }
+},
+{
+    name: "רחובות",
+    deliveries: {
+        food: {
+            expected: 400,
+            actual: 400,
+            delivered: 234,
+            deliveryFailed: 40,
+            deliveryInProgress: 50,
+            deliveryFailReasons: { declined: 10, unreachable: 15, address: 10, other: 5 }
+        }
+    }
+},
+{
+    name: "רחובות",
+    deliveries: {
+        food: {
+            expected: 400,
+            actual: 400,
+            delivered: 234,
+            deliveryFailed: 40,
+            deliveryInProgress: 50,
+            deliveryFailReasons: { declined: 10, unreachable: 15, address: 10, other: 5 }
+        }
+    }
 }];
 
 const REFRESH_INTERVAL: number = 30 * 1000;

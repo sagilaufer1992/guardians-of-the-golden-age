@@ -41,6 +41,21 @@ export default function DeliveryStatus({ level, levelValue, reports, hideEmpty, 
         return <text x={x} y={y} fill="black" fontSize={11} textAnchor="middle" dominantBaseline="central">{`${name} - ${value}`}</text>;
     }
 
+    const translateDeliveryType = (type: DeliveryType): string => {
+        switch (type) {
+            case "food_hot":
+                return "מנות חמות";
+            case "food_cold":
+                return "סלי מזון";
+            case "mask":
+                return "מסיכות";
+            case "flower":
+                return "פרחים";
+            default:
+                return type;
+        }
+    }
+
     const _generatePieChart = (color: string, data: any[]) => <PieChart height={250} width={250}>
         <Pie data={data} dataKey="value" nameKey="name" direction="rtl" fill={color} animationDuration={850} labelLine={false} innerRadius={50} label={CustomizedLabel} />
     </PieChart>;
@@ -50,16 +65,7 @@ export default function DeliveryStatus({ level, levelValue, reports, hideEmpty, 
             .filter(_ => _.value > 0);
 
     function singleReport(report: DeliveryReport, disabled: boolean, isTotal: boolean = false) {
-        const { name, hasExternalInfo, actual, expected, delivered, deliveryFailed, deliveryInProgress, deliveryFailReasons } = report;
-        const max = Math.max(actual, expected); // לפעמים הערך בפועל גדול מזה המצופה
-
-        const deliveryPercent = (delivered / max) * 100;
-        const failedPercent = (deliveryFailed / max) * 100;
-        const inProgressPercent = Math.min((deliveryInProgress / max) * 100, 100 - failedPercent - deliveryPercent);
-
-        const deliveredStyle = { width: `${deliveryPercent}%`, };
-        const failedStyle = { width: `${failedPercent}%` };
-        const inProgressStyle = { width: `${inProgressPercent}%` };
+        const { name, hasExternalInfo, deliveries } = report;
 
         return <div className="report-container" key={name}>
             <div className={classNames("location", { disabled })} onClick={() => onDeliveryReportClick(name)}>
@@ -68,21 +74,36 @@ export default function DeliveryStatus({ level, levelValue, reports, hideEmpty, 
                 </Tooltip>}
                 <span>{name}</span>
             </div>
-            <div className="delivery-data">
-                <div className="expected-text-info">צפי יומי - {expected} אנשים</div>
-                <div className="status-bar">
-                    {delivered > 0 && <span className="delivered" style={deliveredStyle} />}
-                    {deliveryInProgress > 0 && <span className="in-progress" style={inProgressStyle} />}
-                    {deliveryFailed > 0 && <span className="failed" style={failedStyle} />}
-                </div>
-                <div className="actual-text-info">
-                    <span className="delivered">בוצע: {delivered}</span>
-                    <span className="in-progress zero">בדרך: {deliveryInProgress}</span>
-                    {deliveryFailed > 0 ? <PieChartTooltip title={_generatePieChart(FAILED_COLOR, _convertToChartData(deliveryFailReasons, failRasonToText))}>
-                        <span className="failed"> נתקלו בבעיה: {deliveryFailed}</span>
-                    </PieChartTooltip> : <span className="failed zero">נתקלו בבעיה: {deliveryFailed}</span>}
-                    <span>סך הכל: {actual}</span>
-                </div>
+            <div className="deliveries-data">
+                {Object.entries(deliveries).map(([deliveryType, deliveryInfo]) => {
+                    const { expected, delivered, deliveryInProgress, deliveryFailed, deliveryFailReasons, actual } = deliveryInfo;
+                    const max = Math.max(actual, expected); // לפעמים הערך בפועל גדול מזה המצופה
+
+                    const deliveryPercent = (delivered / max) * 100;
+                    const failedPercent = (deliveryFailed / max) * 100;
+                    const inProgressPercent = Math.min((deliveryInProgress / max) * 100, 100 - failedPercent - deliveryPercent);
+
+                    const deliveredStyle = { width: `${deliveryPercent}%`, };
+                    const failedStyle = { width: `${failedPercent}%` };
+                    const inProgressStyle = { width: `${inProgressPercent}%` };
+
+                    return <div className="delivery">
+                        <div className="expected-text-info"><span style={{ fontWeight: "bold" }}>חלוקת {translateDeliveryType(deliveryType)}</span> | צפי יומי - {expected} אנשים</div>
+                        <div className="status-bar">
+                            {delivered > 0 && <span className="delivered" style={deliveredStyle} />}
+                            {deliveryInProgress > 0 && <span className="in-progress" style={inProgressStyle} />}
+                            {deliveryFailed > 0 && <span className="failed" style={failedStyle} />}
+                        </div>
+                        <div className="actual-text-info">
+                            <span className="delivered">בוצע: {delivered}</span>
+                            <span className="in-progress zero">בדרך: {deliveryInProgress}</span>
+                            {deliveryFailed > 0 ? <PieChartTooltip title={_generatePieChart(FAILED_COLOR, _convertToChartData(deliveryFailReasons, failRasonToText))}>
+                                <span className="failed"> נתקלו בבעיה: {deliveryFailed}</span>
+                            </PieChartTooltip> : <span className="failed zero">נתקלו בבעיה: {deliveryFailed}</span>}
+                            <span>סך הכל: {actual}</span>
+                        </div>                        
+                    </div>;
+                })}
             </div>
             {level === "municipality" && !isTotal && isToday(date) &&
                 <DeliveryReport name={name} municipality={levelValue!} disabled={!!hasExternalInfo} />}
@@ -91,6 +112,11 @@ export default function DeliveryStatus({ level, levelValue, reports, hideEmpty, 
 
     function getTotalReport() {
         const initialReport: DeliveryReport = {
+            deliveries: {},
+            name: "סך הכל"
+        };
+
+        const reportInfoTemplate = {
             actual: 0,
             delivered: 0,
             deliveryFailReasons: {
@@ -101,23 +127,28 @@ export default function DeliveryStatus({ level, levelValue, reports, hideEmpty, 
             },
             deliveryFailed: 0,
             deliveryInProgress: 0,
-            expected: 0,
-            name: "סך הכל",
+            expected: 0
         };
 
         return reports.reduce((accumulated, current, index, []) => {
-            accumulated.actual += current.actual;
-            accumulated.expected += current.expected;
-            accumulated.delivered += current.delivered;
-            accumulated.deliveryFailed += current.deliveryFailed;
-            accumulated.deliveryInProgress += current.deliveryInProgress;
+            Object.entries(current.deliveries).map(([deliveryType, deliveryInfo]) => {
+                if (!accumulated.deliveries[deliveryType]) accumulated.deliveries[deliveryType] = { ...reportInfoTemplate };
 
-            (Object.keys(current.deliveryFailReasons) as FailReason[]).forEach(
-                (reason) => {
-                    accumulated.deliveryFailReasons[reason] +=
-                        current.deliveryFailReasons[reason];
-                }
-            );
+                const currentAccumulated = accumulated.deliveries[deliveryType];
+
+                currentAccumulated.actual += deliveryInfo.actual;
+                currentAccumulated.expected += deliveryInfo.expected;
+                currentAccumulated.delivered += deliveryInfo.delivered;
+                currentAccumulated.deliveryFailed += deliveryInfo.deliveryFailed;
+                currentAccumulated.deliveryInProgress += deliveryInfo.deliveryInProgress;
+
+                (Object.keys(deliveryInfo.deliveryFailReasons) as FailReason[]).forEach(
+                    (reason) => {
+                        currentAccumulated.deliveryFailReasons[reason] +=
+                            deliveryInfo.deliveryFailReasons[reason];
+                    }
+                );
+            });
 
             return accumulated;
         }, initialReport);
