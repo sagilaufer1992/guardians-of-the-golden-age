@@ -14,9 +14,39 @@ $failed-color: #f44336;
         display: flex;
         justify-content: space-between;
     }
+    .delivery-status-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin: 10px 1%;
+        .delivery-status-legend {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+            background-color: #f5f5f5;
+            padding: 0 20px;
+            height: 130px;
+            border-radius: 10px;
+        }
+    }
+    .delivery-filter-buttons {
+        .filter-buttons-title {
+            margin-left: 10px;
+        }
+        .filter-button {
+            margin: 0 2px;
+            line-height: 1.3;
+            border-radius: 15px;
+            &.MuiButton-containedPrimary {
+                background-color: lighten(#007aff, 10%);
+            }
+            &:not(.MuiButton-containedPrimary) {
+                color: darken(gray, 10%);
+            }
+        }
+    }
     .total {
-        margin: 15px auto;
-        width: 75%;
+        width: 75%;        
         .location {
             color: $primary-color !important;
             border: 2px solid $primary-color !important;
@@ -28,6 +58,8 @@ $failed-color: #f44336;
         align-items: center;
         .location {
             width: 150px;
+            height: 100px;
+            position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -39,6 +71,22 @@ $failed-color: #f44336;
             border-radius: 3px;
             overflow: hidden;
             cursor: pointer;
+            .delivery-report-dialog {
+                position: absolute;
+                top: -20px;
+                right: -30px;
+                button {
+                    width: 50px;
+                    height: 50px;
+                    box-shadow: none;
+                    svg {
+                        margin-right: 10px;
+                        margin-top: 10px;
+                        height: 0.8em;
+                        width: 0.8em;
+                    }
+                }
+            }
             &.disabled {
                 pointer-events: none;
             }
@@ -54,10 +102,10 @@ $failed-color: #f44336;
         .deliveries-data {
             flex: 1;
             .delivery {
-                margin: 10px 0;        
+                margin: 10px 0;
                 .status-bar {
                     display: flex;
-                    height: 15px;
+                    height: 10px;
                     border-radius: 5px;
                     margin: 2px 0;
                     background-color: darken(whitesmoke, 5);
@@ -93,40 +141,51 @@ $failed-color: #f44336;
                         background: $failed-color;
                     }
                 }
-                .expected-text-info {
-                    font-size: 12px;
-                }
-                .actual-text-info {
-                    font-size: 14px;
-                    & > * {
-                        &:not(:last-child) {
-                            &:after {
-                                padding: 0 5px;
-                                content: "|";
-                                color: gray;
-                            }
+                .delivery-info {
+                    display: flex;
+                    justify-content: space-between;
+                    .expected-text-info {
+                        font-size: 14px;
+                        span {
+                            font-weight: bold;
                         }
                     }
-                    .delivered {
-                        cursor: default;
-                        color: darken($delivered-color, 5);
-                    }
-                    .in-progress {
-                        cursor: pointer;
-                        color: darken($in-progress-color, 5);
-                    }
-                    .failed {
-                        cursor: pointer;
-                        color: darken($failed-color, 5);
-                    }
-                    .zero {
-                        cursor: default !important;
+                    .actual-text-info {
+                        font-size: 14px;
+                        & > * {
+                            padding-right: 10px;
+                        }
                     }
                 }
             }
         }
         .open-manual-report {
             margin-right: 13px;
+        }
+    }
+    .delivery-status-legend, .actual-text-info {
+        color: #007aff;        
+        .MuiSvgIcon-root {
+            margin: 0 5px;
+            font-size: 18px;
+        }
+        .delivered, .in-progress, .failed {
+            font-size: 16px;
+        }
+        .delivered {
+            cursor: default;
+            color: darken($delivered-color, 5);
+        }
+        .in-progress {
+            cursor: default;
+            color: darken($in-progress-color, 5);
+        }
+        .failed {
+            cursor: pointer;
+            color: darken($failed-color, 5);
+            &.zero {
+                cursor: default !important;
+            }
         }
     }
     .all-reports {
