@@ -112,7 +112,7 @@ export async function getRelevantDeliveryTypes(req, res) {
     const reports = await DailyReport.find({ date: { $gte: start, $lt: end } }, "deliveries");
 
     const result = new Set<string>();
-    reports.map(_ => Array.from(_.deliveries.keys())).forEach(keys => keys.forEach(result.add));
+    reports.map(_ => Array.from(_.deliveries.keys())).forEach(keys => keys.forEach(x => result.add(x)));
 
     res.status(200).json(Array.from(result.values()));
 }
@@ -204,7 +204,7 @@ function _groupBySubLevels(level: be.Level, branches: be.Branch[], reports: be.D
     }
 
     const reportTotals: be.DailyReport[] = reports.map(({ branchId, deliveries }) => ({
-        name,
+        name: lowerLevelDisplayName(branchDictionary[branchId]),
         address: level === "municipality" ? branchDictionary[branchId].address : undefined,
         deliveries: Array.from(deliveries.entries()).reduce((pv, [type, { total, delivered, deliveryFailed, deliveryFailReasons }]) => ({
             ...pv,

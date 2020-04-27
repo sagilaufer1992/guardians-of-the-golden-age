@@ -1,13 +1,37 @@
 .upload-file-input {
   display: flex;
   margin: 0 20px 10px 20px;
-  .upload-input-element {
-    display: none;
-  }
   .example-file-link {
     text-align: center;
     margin-right: 10px;
     font-weight: bold;
     text-decoration: none !important;
+  }
+}
+
+.upload-file-dialog {
+  padding: 20px;
+  .select-delivery-type {
+    display: flex;
+    .select-title {
+      font-size: 22px;
+      text-align: center;
+    }
+    .select-radio-group {
+      margin: 20px;
+    }
+    .other-control-label {
+      margin-top: 10px;
+    }
+    .other-delivery-type {
+      width: 250px;
+    }
+  }
+  .upload-input-element {
+    display: none;
+  }
+  .upload-file-button {
+    display: flex;
+    justify-content: center;
   }
 }

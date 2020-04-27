@@ -15,7 +15,7 @@ interface DeliveryInfo {
     deliveryFailReasons: Record<"declined" | "unreachable" | "address" | "other", number>;
   }
 
-  interface DailyReport {
+  interface DeliveryReport {
     name: string;
     address?: string;
     hasExternalInfo?: boolean; // true if information from other team is included

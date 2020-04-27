@@ -1,11 +1,14 @@
 import "./UploadDeliveryFile.scss";
 
-import React from "react";
-import { Button } from "@material-ui/core";
+import React, { useState, useCallback, useEffect } from "react";
+import { Button, Dialog, RadioGroup, FormControl, FormControlLabel, Radio } from "@material-ui/core";
 import { useSnackbar } from "notistack";
 import GetAppOutlinedIcon from '@material-ui/icons/GetAppOutlined';
+
 import { extractDailyReports } from "../../utils/expectedReports";
+import { deliveryTypeToText } from "../../utils/translations";
 import { useApi } from "../../hooks/useApi";
+import Autocomplete from "../Inputs/AutocompleteInput";
 
 interface Props {
     title: string;
@@ -14,8 +17,28 @@ interface Props {
 }
 
 export default function UploadExpectedFile({ title, date, onUploaded }: Props) {
-    const [fetchApi] = useApi("/api/dailyReports/futureReports");
+    const [fetchApi] = useApi("/api/dailyReports");
+    const [modalOpen, setModalOpen] = useState<boolean>(false);
+    const [deliveryType, setDeliveryType] = useState<DeliveryType>(Object.keys(deliveryTypeToText)[0]);
+    const [otherDeliveryType, setOtherDeliveryType] = useState<string>("");
+    const [otherDeliveryTypes, setOtherDeliveryTypes] = useState<Option[]>([]);
     const { enqueueSnackbar } = useSnackbar();
+
+    useEffect(() => {
+        if (!modalOpen) return;
+
+        async function getOtherDeliveries() {
+            const result = await fetchApi<string[]>({ route: `/${date.toISOString()}/deliveryTypes` });
+            if (!result) return;
+
+            const knownTypes = Object.keys(deliveryTypeToText);
+
+            setOtherDeliveryTypes(result.filter(s => !knownTypes.includes(s))
+                .map(value => ({ value, label: deliveryTypeToText[value] || value })));
+        }
+
+        getOtherDeliveries();
+    }, [modalOpen]);
 
     const onFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files) return;
@@ -33,23 +56,51 @@ export default function UploadExpectedFile({ title, date, onUploaded }: Props) {
         }
 
         const result = await fetchApi({
+            route: `/futureReports?deliveryType=${deliveryType === "other" ? otherDeliveryType : deliveryType}`,
             method: "POST",
             body: { reports, date },
             successMessage: "הדיווחים נשלחו בהצלחה"
         });
 
-        if (result) onUploaded();
+        if (!result) return;
+
+        closeModal();
+        onUploaded();
     }
 
+    const closeModal = useCallback(() => {
+        setModalOpen(false);
+        setDeliveryType(Object.keys(deliveryTypeToText)[0]);
+        setOtherDeliveryType("");
+    }, [setModalOpen, setDeliveryType, setOtherDeliveryType]);
+
     return <div className="upload-file-input">
-        <Button
-            color="primary"
-            variant="contained"
-            component="label">
+        <Dialog open={modalOpen} onClose={closeModal} fullWidth maxWidth="sm">
+            <div className="upload-file-dialog">
+                <FormControl className="select-delivery-type">
+                    <div className="select-title">בחר את סוג המשלוח:</div>
+                    <RadioGroup className="select-radio-group" value={deliveryType} onChange={(_, v) => setDeliveryType(v)}>
+                        <div className="delivery-type-options">
+                            {Object.entries(deliveryTypeToText).map(([value, text]) =>
+                                <FormControlLabel key={value} value={value} label={text} control={<Radio color="primary" />} />)}
+                        </div>
+                        <FormControlLabel className="other-control-label" value="other" control={<Radio color="primary" />}
+                            label={<Autocomplete freeSolo className="other-delivery-type" title="משלוח אחר"
+                                defaultValue={otherDeliveryType} options={otherDeliveryTypes}
+                                onInputChange={setOtherDeliveryType} />} onClick={() => setDeliveryType("other")} />
+                    </RadioGroup>
+                </FormControl>
+                <div className="upload-file-button">
+                    <Button color="primary" variant="contained" component="label" onClick={() => setModalOpen(true)}>
+                        העלה קובץ
+                    <input type="file" className="upload-input-element" onChange={onFileUpload}
+                            accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />
+                    </Button>
+                </div>
+            </div>
+        </Dialog>
+        <Button color="primary" variant="contained" component="label" onClick={() => setModalOpen(true)}>
             {title}
-            <input type="file" className="upload-input-element" onChange={onFileUpload}
-                accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-            />
         </Button>
         <Button
             href={process.env.PUBLIC_URL + "/example.xlsx"}
