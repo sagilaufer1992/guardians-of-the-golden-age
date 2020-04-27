@@ -4,7 +4,7 @@ import Job from "./job.model";
 import { getRangeFromDate } from "../utils/dates";
 import { isHamal, getBranchIdentifier } from "../utils/users";
 
-const LOWER_LEVEL_DICTIONARY: Record<string, (branch: be.BranchHierarchy) => string> = {
+const LOWER_LEVEL_DICTIONARY: Record<string, (branch: be.BranchHierarchy | be.Branch) => string> = {
     "national": branch => branch.district,
     "district": branch => branch.napa,
     "napa": branch => branch.municipality,
@@ -22,6 +22,10 @@ export async function createFutureReports(req, res) {
     if (!isHamal(req.user)) res.status(403).send("אינך מורשה");
 
     const { reports } = req.body;
+    const { deliveryType } = req.query;
+
+    if (!deliveryType) return res.status(400).send("חובה לציין סוג משלוח");
+
     const date = new Date(req.body.date);
 
     const error = _isValid(reports);
@@ -43,7 +47,7 @@ export async function createFutureReports(req, res) {
         if (!newReport) return;
 
         existingReports.add(report.branchId);
-        report.total = newReport.amount;
+        report.deliveries.set(deliveryType, { ...report.deliveries.get(deliveryType), total: newReport.amount });
         await report.save();
     });
 
@@ -52,7 +56,11 @@ export async function createFutureReports(req, res) {
     // add new branches
     await Branch.create(newBranches);
     // add new reports
-    await DailyReport.create(newReports.map(({ id, amount }) => ({ branchId: id, date, total: amount })));
+    await DailyReport.create(newReports.map(({ id, amount }) => ({
+        branchId: id,
+        date,
+        deliveries: { [deliveryType]: { total: amount } }
+    })));
 
     res.status(201).json("הועלה בהצלחה");
 }
@@ -82,7 +90,7 @@ export async function getRelevantBranches(req, res) {
     const { date } = req.params;
     const { level, value } = req.query;
     const { start, end } = getRangeFromDate(new Date(date));
-    
+
     const reports = await DailyReport.find({
         date: { $gte: start, $lt: end },
         total: { $gt: 0 }
@@ -95,6 +103,18 @@ export async function getRelevantBranches(req, res) {
     if ((level as be.Level) === "national") res.json(branches);
 
     else res.json(branches.filter(branch => branch[level] === value));
+}
+
+export async function getRelevantDeliveryTypes(req, res) {
+    const { date } = req.params;
+    const { start, end } = getRangeFromDate(new Date(date));
+
+    const reports = await DailyReport.find({ date: { $gte: start, $lt: end } }, "deliveries");
+
+    const result = new Set<string>();
+    reports.map(_ => Array.from(_.deliveries.keys())).forEach(keys => keys.forEach(result.add));
+
+    res.status(200).json(Array.from(result.values()));
 }
 
 export async function getDailyReport(req, res) {
@@ -122,16 +142,13 @@ export async function getDailyReport(req, res) {
     res.status(200).json(_groupBySubLevels(level, branches, reports, jobs, hideEmpty === "true"));
 }
 
-type ReportWithHierarchy = Omit<be.DailyReport, "name"> & { hierarchy: be.BranchHierarchy };
-
 function _groupBySubLevels(level: be.Level, branches: be.Branch[], reports: be.DBDailyReport[], jobs: gg.Job[], hideEmpty: boolean): be.DailyReport[] {
     const branchDictionary: Record<number, be.Branch> = branches.reduce((pv, v) => ({ ...pv, [v.id]: v }), {});
-
     const hierarchyCache: Record<string, be.BranchHierarchy> = {};
 
     const lowerLevelDisplayName = LOWER_LEVEL_DICTIONARY[level];
 
-    const totals: Record<string, ReportWithHierarchy> = {};
+    const jobTotals: Record<string, be.DailyReport> = {};
 
     for (const { city, distributionPoint, status, tasks } of jobs) {
         if (status === "CANCELED") continue;
@@ -148,91 +165,130 @@ function _groupBySubLevels(level: be.Level, branches: be.Branch[], reports: be.D
             }
         }
 
-        if (!totals[branchId]) totals[branchId] = {
-            hierarchy: hierarchyCache[branchId],
+        const displayName = lowerLevelDisplayName(hierarchyCache[branchId]);
+
+        if (!displayName) continue;
+
+        if (!jobTotals[displayName]) jobTotals[displayName] = {
+            name: displayName,
             hasExternalInfo: true,
-            expected: 0,
-            actual: 0,
-            delivered: 0,
-            deliveryFailed: 0,
-            deliveryInProgress: 0,
-            deliveryFailReasons: { declined: 0, address: 0, unreachable: 0, other: 0 }
+            deliveries: {}
         };
 
-        for (const { status: taskStatus, failureReason } of tasks) {
-            totals[branchId].actual += 1;
-            switch (taskStatus) {
-                // delivered
-                case "DELIVERED":
-                    totals[branchId].delivered += 1;
-                    break;
-                case "UNDELIVERED":
-                    totals[branchId].deliveryInProgress += 1;
-                    break;
-                // deliveryFailed
-                case "FAILED":
-                    totals[branchId].deliveryFailed += 1;
-                    const field = ["DECLINED", "UNREACHABLE", "ADDRESS"].includes(failureReason) ? failureReason.toLowerCase() : "other";
-                    totals[branchId].deliveryFailReasons[field] += 1;
-                    break;
+        const { deliveries } = jobTotals[displayName];
+
+        for (const { status: taskStatus, failureReason, needType } of tasks) {
+            const deliveryTypes = _parseNeedType(needType);
+
+            for (const deliveryType of deliveryTypes) {
+                if (!deliveries[deliveryType]) deliveries[deliveryType] = _getEmptyDelivery();
+
+                deliveries[deliveryType].actual += 1;
+                switch (taskStatus) {
+                    // delivered
+                    case "DELIVERED":
+                        deliveries[deliveryType].delivered += 1;
+                        break;
+                    case "UNDELIVERED":
+                        deliveries[deliveryType].deliveryInProgress += 1;
+                        break;
+                    // deliveryFailed
+                    case "FAILED":
+                        deliveries[deliveryType].deliveryFailed += 1;
+                        const field = ["DECLINED", "UNREACHABLE", "ADDRESS"].includes(failureReason) ? failureReason.toLowerCase() : "other";
+                        deliveries[deliveryType].deliveryFailReasons[field] += 1;
+                        break;
+                }
             }
         }
     }
 
-    for (const { branchId, total, delivered, deliveryFailed, deliveryFailReasons } of reports) {
-        const id = getBranchIdentifier(branchDictionary[branchId]);
-
-        if (totals[id]) totals[id].expected = total;
-        else totals[id] = {
-            hierarchy: { identifier: id, ...branchDictionary[branchId] },
-            expected: total,
-            actual: delivered + deliveryFailed,
-            delivered,
-            deliveryFailed,
-            deliveryInProgress: 0,
-            deliveryFailReasons: {
-                declined: (deliveryFailReasons as any).get("declined") ?? 0,
-                address: (deliveryFailReasons as any).get("address") ?? 0,
-                unreachable: (deliveryFailReasons as any).get("unreachable") ?? 0,
-                other: (deliveryFailReasons as any).get("other") ?? 0
+    const reportTotals: be.DailyReport[] = reports.map(({ branchId, deliveries }) => ({
+        name,
+        address: level === "municipality" ? branchDictionary[branchId].address : undefined,
+        deliveries: Array.from(deliveries.entries()).reduce((pv, [type, { total, delivered, deliveryFailed, deliveryFailReasons }]) => ({
+            ...pv,
+            [type]: {
+                expected: total,
+                actual: delivered + deliveryFailed,
+                delivered,
+                deliveryFailed,
+                deliveryInProgress: 0,
+                deliveryFailReasons: {
+                    declined: deliveryFailReasons.get("declined") ?? 0,
+                    address: deliveryFailReasons.get("address") ?? 0,
+                    unreachable: deliveryFailReasons.get("unreachable") ?? 0,
+                    other: deliveryFailReasons.get("other") ?? 0
+                }
             }
-        };
-    }
+        }), {})
+    }))
 
-    let result: be.DailyReport[] = Object.values(Object.values(totals).reduce((pv, report) => {
-        const name = lowerLevelDisplayName(report.hierarchy);
-        if (!name) return pv;
+    let result = [...reportTotals, ...Object.values(jobTotals).filter(_ => Object.keys(_.deliveries).length > 0)];
 
-        const acc = pv[name];
-        const result = _mergeAndFilterResults(name, acc, report);
+    if (level !== "municipality")
+        // combine daily reports by display name (not for distibution centers)
+        result = Object.values(result.reduce((pv, v) => ({
+            ...pv,
+            [v.name]: _mergeReports(pv[v.name], v)
+        }), {} as Record<string, be.DailyReport>));
 
-        return { ...pv, [name]: result };
-    }, {}));
-
-    if (hideEmpty) result = result.filter(_ => _.actual > 0);
-
-    return result;
+    return !hideEmpty ? result : result.filter(_ => Object.values(_.deliveries).some(d => d.actual > 0));
 }
 
-function _mergeAndFilterResults(name: string, acc: be.DailyReport, report: ReportWithHierarchy): be.DailyReport {
-    if (!acc) {
-        const { hierarchy, ...other } = report;
-        return { ...other, name };
+function _parseNeedType(needType: gg.NeedType): be.DeliveryType[] {
+    switch (needType) {
+        case "FLOWER": return ["flower"];
+        case "FOOD":
+        case "MEAL": return ["food_hot"];
+        case "FOOD_PARCEL": return ["food_cold"];
+        case "FOOD_PARCEL_MEAL": return ["food_hot", "food_cold"];
+        case "FOOD_FLOWER": return ["food_cold", "flower"];
+        default: return [];
     }
+}
+
+function _getEmptyDelivery(): be.DeliveryInfo {
+    return {
+        expected: 0,
+        actual: 0,
+        delivered: 0,
+        deliveryFailed: 0,
+        deliveryInProgress: 0,
+        deliveryFailReasons: { declined: 0, address: 0, unreachable: 0, other: 0 }
+    };
+}
+
+function _mergeReports(prev: be.DailyReport | undefined, curr: be.DailyReport): be.DailyReport {
+    if (!prev) return curr;
 
     return {
-        name,
-        hasExternalInfo: acc.hasExternalInfo || report.hasExternalInfo,
-        expected: acc.expected + report.expected,
-        actual: acc.actual + report.actual,
-        delivered: acc.delivered + report.delivered,
-        deliveryFailed: acc.deliveryFailed + report.deliveryFailed,
-        deliveryInProgress: acc.deliveryInProgress + report.deliveryInProgress,
-        deliveryFailReasons: {
-            declined: acc.deliveryFailReasons.declined + report.deliveryFailReasons.declined,
-            address: acc.deliveryFailReasons.address + report.deliveryFailReasons.address,
-            unreachable: acc.deliveryFailReasons.unreachable + report.deliveryFailReasons.unreachable,
-            other: acc.deliveryFailReasons.other + report.deliveryFailReasons.other
-        }
+        name: prev.name,
+        hasExternalInfo: prev.hasExternalInfo || curr.hasExternalInfo,
+        deliveries: _mergeDeliveries(prev.deliveries, curr.deliveries)
     };
+}
+
+function _mergeDeliveries(prev: Record<be.DeliveryType, be.DeliveryInfo>, curr: Record<be.DeliveryType, be.DeliveryInfo>): Record<be.DeliveryType, be.DeliveryInfo> {
+    const deliveryTypes = new Set([...Object.keys(prev), ...Object.keys(curr)]);
+
+    return Array.from(deliveryTypes.values()).reduce((pv, key) => {
+        if (!prev[key] || !curr[key]) return prev[key] || curr[key];
+
+        pv[key] = {
+            expected: prev[key].expected + curr[key].expected,
+            actual: prev[key].actual + curr[key].actual,
+            delivered: prev[key].delivered + curr[key].delivered,
+            deliveryFailed: prev[key].deliveryFailed + curr[key].deliveryFailed,
+            deliveryInProgress: prev[key].deliveryInProgress + curr[key].deliveryInProgress,
+            deliveryFailReasons: {
+                declined: prev[key].deliveryFailReasons.declined + curr[key].deliveryFailReasons.declined,
+                address: prev[key].deliveryFailReasons.address + curr[key].deliveryFailReasons.address,
+                unreachable: prev[key].deliveryFailReasons.unreachable + curr[key].deliveryFailReasons.unreachable,
+                other: prev[key].deliveryFailReasons.other + curr[key].deliveryFailReasons.other
+            }
+        };
+
+        return pv;
+    }, {});
 }

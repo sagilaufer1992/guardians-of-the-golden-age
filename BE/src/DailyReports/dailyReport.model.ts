@@ -1,16 +1,7 @@
 import * as mongoose from "mongoose";
 import { faultsDB } from "../cosmosdb";
 
-// TODO: RENAME ID TO BRANCH ID
-const DailyReportSchema = new mongoose.Schema({
-    branchId: {
-        type: Number,
-        required: true
-    },
-    date: {
-        type: Date,
-        required: true
-    },
+const Delivery = new mongoose.Schema({
     total: {
         type: Number,
         required: true
@@ -27,6 +18,22 @@ const DailyReportSchema = new mongoose.Schema({
         type: Map,
         of: Number,
         default: {}
+    }
+});
+
+// TODO: RENAME ID TO BRANCH ID
+const DailyReportSchema = new mongoose.Schema({
+    branchId: {
+        type: Number,
+        required: true
+    },
+    date: {
+        type: Date,
+        required: true
+    },
+    deliveries: {
+        type: Map,
+        of: Delivery
     }
 });
 

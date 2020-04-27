@@ -26,8 +26,10 @@ declare namespace gg {
     municipality: string; // שם הרשות
   }
 
+  type NeedType = "FOOD" | "FOOD_PARCEL" | "MEAL" | "FLOWER" | "FOOD_FLOWER" | "FOOD_PARCEL_MEAL";
+
   interface Task {
-    needType: "FOOD" | "DRUGS";
+    needType: NeedType;
     amount: number;
     status: "UNDELIVERED" | "DELIVERED" | "FAILED";
     failureReason: "DECLINED" | "UNREACHABLE" | "ADDRESS" | "OTHER";
@@ -56,6 +58,8 @@ declare namespace be {
 
   type FaultCategory = "food" | "supplier" | "volunteers" | "other";
 
+  type DeliveryType = "food_hot" | "food_cold" | "mask" | "flower" | string;
+
   interface AuthorInfo {
     name: string;
     phone?: string;
@@ -69,7 +73,7 @@ declare namespace be {
   type ExtendItem<T> = Omit<T, "author" | "distributionCenter"> & {
     _id: string;
     date: Date;
-    author: AuthorInfo & gg.UserInfo;    
+    author: AuthorInfo & gg.UserInfo;
   }
 
   interface Fault extends ExtendItem<NewFault> {
@@ -101,20 +105,28 @@ declare namespace be {
   // TODO: לתקן אחרי ראשון, שיסגרו מה נשמר במאגר שלנו ומה להביא מבחוץ
   interface DBDailyReport {
     branchId: number;
-    total: number;
-    delivered: number;
-    deliveryFailed: number;
-    deliveryFailReasons: Record<"declined" | "unreachable" | "address" | "other", number>;
+    date: Date;
+    deliveries: Map<DeliveryType, {
+      total: number;
+      delivered: number;
+      deliveryFailed: number;
+      deliveryFailReasons: Map<"declined" | "unreachable" | "address" | "other", number>;
+    }>
   }
 
-  interface DailyReport {
-    name: string;
-    hasExternalInfo?: boolean; // true if information from other team is included
+  interface DeliveryInfo {
     expected: number;
     actual: number;
     delivered: number;
     deliveryFailed: number;
     deliveryInProgress: number;
     deliveryFailReasons: Record<"declined" | "unreachable" | "address" | "other", number>;
+  }
+
+  interface DailyReport {
+    name: string;
+    address?: string;
+    hasExternalInfo?: boolean; // true if information from other team is included
+    deliveries: Record<DeliveryType, DeliveryInfo>;
   }
 }

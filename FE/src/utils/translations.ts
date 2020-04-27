@@ -17,3 +17,10 @@ export const failRasonToText: Record<FailReason, string> = {
     address: "כתובת שגויה",
     other: "אחר"
 };
+
+export const deliveryTypeToText: Record<DeliveryType, string> = {
+    food_hot: "מנות חמות",
+    food_cold: "מנות קרות",
+    flower: "פרחים",
+    mask: "מסיכות"
+}
