@@ -87,7 +87,10 @@ export default function Dashboard({ date, setDate, levelAndValue, setLevelAndVal
         newDeliveryReports && setDeliveryReports(newDeliveryReports);
     }, [date, levelAndValue, hideEmpty]);
 
-    const onExpectedFileUploaded = () => { datePanelRef.current?.refresh(); };
+    const onExpectedFileUploaded = () => {
+        setHideEmpty(false);
+        datePanelRef.current?.refresh();
+    };
 
     const onDeliveryReportClick = (value: string) => {
         const levelIndex = HIERARCHY_LEVELS_ORDER.findIndex(level => level === levelAndValue.level);

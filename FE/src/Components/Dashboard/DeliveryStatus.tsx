@@ -2,7 +2,7 @@ import "./DeliveryStatus.scss";
 import React, { useMemo, useEffect, useState } from "react";
 import classNames from "classnames";
 import { PieChart, Pie } from "recharts";
-import { Card, Tooltip, withStyles, Divider, Checkbox, Button } from "@material-ui/core";
+import { Card, Tooltip, withStyles, Divider, Checkbox, Button, Hidden } from "@material-ui/core";
 
 import logo from "../../assets/logo.png";
 import { isToday } from "../../utils/dates";
@@ -96,7 +96,7 @@ export default function DeliveryStatus({ level, levelValue, reports, hideEmpty, 
 
                     return <div className="delivery">
                         <div className="delivery-info">
-                            <div className="expected-text-info"><span>חלוקת {deliveryTypeToText[deliveryType] ?? deliveryType}</span> | צפי יומי - {expected} אנשים</div>
+                            <div className="expected-text-info"><span>{deliveryTypeToText[deliveryType] ?? deliveryType}</span> | צפי יומי - {expected} אנשים</div>
                             <div className="actual-text-info">
                                 <span className="delivered">{delivered}<DoneAll fontSize="small" /></span>
                                 <span className="in-progress">{deliveryInProgress}<LocalShipping fontSize="small" /></span>
@@ -188,15 +188,20 @@ export default function DeliveryStatus({ level, levelValue, reports, hideEmpty, 
         {reportsMemo.length > 0 && <>
             <div className="delivery-status-header">
                 <div className="total">{totalReportMemo}</div>
-                <Card className="delivery-status-legend">
-                    <span className="delivered"><DoneAll fontSize="small" />בוצע</span>
-                    <span className="in-progress"><LocalShipping fontSize="small" />בדרך</span>
-                    <span className="failed zero"><Warning fontSize="small" />נתקלו בבעיה</span>
-                    <span><Assessment fontSize="small" />סך הכל</span>
-                </Card>
+                <Hidden smDown>
+                    <Card className="delivery-status-legend">
+                        <span className="delivered"><DoneAll fontSize="small" />בוצע</span>
+                        <span className="in-progress"><LocalShipping fontSize="small" />בדרך</span>
+                        <span className="failed zero"><Warning fontSize="small" />נתקלו בבעיה</span>
+                        <span><Assessment fontSize="small" />סך הכל</span>
+                    </Card>
+                </Hidden>
             </div>
             <Divider variant="fullWidth" />
-            <div className="all-reports">{reportsMemo}</div>
+            <div className="all-reports">
+                {reportsMemo}
+                {reportsMemo.length % 2 !== 0 && <div className="empty-report-container" />}
+            </div>
         </>}
     </Card>);
 }

@@ -43,15 +43,15 @@ export async function createFutureReports(req, res) {
 
     // update exist reports
     dbDailyReports.forEach(async report => {
-        const newReport = reports.find(_ => _.id === report.branchId);
+        const newReport = reports.find(_ => _.id === report.branchId && _.amount > 0);
         if (!newReport) return;
 
         existingReports.add(report.branchId);
-        report.deliveries.set(deliveryType, { ...report.deliveries.get(deliveryType), total: newReport.amount });
+        report.deliveries.set(deliveryType, { ...(report.deliveries.get(deliveryType) || {} as any), total: newReport.amount });
         await report.save();
     });
 
-    const newReports = reports.filter(report => !existingReports.has(report.id));
+    const newReports = reports.filter(report => !existingReports.has(report.id) && report.amount > 0);
 
     // add new branches
     await Branch.create(newBranches);
