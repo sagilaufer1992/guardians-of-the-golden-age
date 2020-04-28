@@ -12,31 +12,26 @@ export const ColorButton = withStyles(() => ({
     },
 }))(Button);
 
-const Bar = withStyles(() => ({
-    root: {
-        height: 30,
-        backgroundColor: '#ddd',
-    },
-    bar: {
-        backgroundColor: '#007aff',
-    },
-}))(LinearProgress);
-
 interface Props {
     total: number;
     current: number;
+    failed?: number;
 }
 
-export function ProgressBar({ total, current }: Props) {
-    const percentage = Math.round(current / total * 100);
+export function ProgressBar({ total, current, failed = 0 }: Props) {
+    const deliveryPercentage = Math.round(current / total * 100);
+    const failedPercentage = Math.round(failed / total * 100);
 
     return <div className="bar-content">
         <span>התקדמות החלוקה להיום</span>
-        {/* <div className="precentage">{isNaN(percentage) ? 0 : percentage}%</div> */}
-        <Bar variant="determinate" value={percentage}/>
+        <div className="status-bar">
+            {current > 0 && <span className="delivered" style={{ width: `${deliveryPercentage}%`}} />}
+            {failed > 0 && <span className="failed" style={{ width: `${failedPercentage}%`}} />}
+        </div>
         <span>
             תכנון: {total} אנשים
             | בוצע: {isNaN(current) ? 0 : current}
+            {failed > 0 && <> | נכשל: {failed} </>}
         </span>
     </div>
 }

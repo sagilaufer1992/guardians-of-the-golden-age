@@ -11,6 +11,7 @@ interface Props {
   min: number;
   max: number;
   disabled?: boolean;
+  dense?: boolean;
   helperText?: string;
   placeholder?: string;
   className?: string;
@@ -33,6 +34,7 @@ export default function NumberInput(props: Props) {
     placeholder,
     min,
     max,
+    dense,
   } = props;
 
   const mountRef = useRef<boolean>(false);
@@ -51,9 +53,10 @@ export default function NumberInput(props: Props) {
   }
 
   return (
-    <div className={classnames("text-field", className || "")}>
-      <label>{label}</label>
+    <div className={classnames("text-field", "fix-label", className || "")}>
+      <label className="text-field-label">{label}</label>
       <TextFieldCore
+        margin={dense ? "dense" : undefined}
         type="number"
         disabled={disabled}
         InputProps={{

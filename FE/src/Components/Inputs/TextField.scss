@@ -1,4 +1,10 @@
 .text-field {
     display: flex;
     flex-direction: column;
+    .text-field-label {
+        margin-bottom: -8px;
+    }
+}
+.fix-label {
+    margin-top: 10px;
 }

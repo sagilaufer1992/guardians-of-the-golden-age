@@ -1,15 +1,41 @@
+$primary-color: #007aff;
+$delivered-color: #4caf50;
+$failed-color: #f44336;
+
 .bar-content {
-    margin-bottom: 20px;
-    .precentage {
-        max-height: 20px;
-        margin: 3px 10px;
-        position: absolute;
+    width: 100%;
+    .status-bar {
         display: flex;
-        text-align: left;
-        align-items: center;
-        z-index: 1;
-        &.white {
-            color: white
+        height: 10px;
+        border-radius: 5px;
+        margin: 2px 0;
+        background-color: darken(whitesmoke, 5);
+        .status {
+            width: 0;
+            height: 100%;
+            text-align: center;
+            overflow: hidden;
+            font-size: 12px;
+            color: white;
+            cursor: auto;
+            &:first-child {
+                border-radius: 0 5px 5px 0;
+            }
+            &:last-child {
+                border-radius: 5px 0 0 5px;
+            }
+            &:only-child {
+                border-radius: 5px;
+            }
+        }
+        .delivered {
+            @extend .status;
+            background: $delivered-color;
+        }
+        .failed {
+            @extend .status;
+            border-radius: 5px 0 0 5px;
+            background: $failed-color;
         }
     }
 }

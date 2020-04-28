@@ -37,8 +37,12 @@ interface FaultReasonReport {
 interface DeliveryReportData {
     branchId: number;
     date: Date;
+    deliveries: Record<DeliveryType, DeliveryInfoData>;
+}
+
+interface DeliveryInfoData {
     total: number;
     delivered: number;
     deliveryFailed: number;
-    deliveryFailReasons: Record<FailReason, number>;
+    deliveryFailReasons: Record<FailReason, number> | null;
 }

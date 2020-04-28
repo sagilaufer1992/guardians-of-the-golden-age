@@ -8,21 +8,23 @@ import { ProgressBar } from "./utils";
 import DeliveryReasons from "./DeliveryReasons";
 
 interface Props {
-    deliveryReport: DeliveryReportData | null;
-    setDeliveryReport: (deliveryReport: Partial<DeliveryReportData>) => Promise<void>;
-    finishDeliveryReport: (deliveryReport: Partial<DeliveryReportData>) => void;
+    deliveryReport: DeliveryInfoData | null;
+    deliveryType: DeliveryType;
+    setDeliveryReport: (deliveryReport: Partial<DeliveryInfoData>, deliveryType: DeliveryType) => Promise<void>;
+    finishDeliveryReport: (deliveryReport: Partial<DeliveryInfoData>, deliveryType: DeliveryType) => void;
 }
 
 export default function DailySummary(props: Props) {
     const report = props.deliveryReport;
 
     return <div className="report">
-        {report && <ProgressBar total={report.total} current={report.delivered} />}
+        <div className="title">{props.deliveryType}</div>
+        {report && <ProgressBar total={report.total} current={report.delivered} failed={report.deliveryFailed} />}
         <DeliveryForm {...props} />
     </div>;
 }
 
-function DeliveryForm({ deliveryReport, setDeliveryReport, finishDeliveryReport }: Props) {
+function DeliveryForm({ deliveryReport, setDeliveryReport, finishDeliveryReport, deliveryType }: Props) {
     const [currentNumber, setCurrentNumber] = useState<number>(0);
     const [isApproved, setIsApproved] = useState<boolean>(false);
     const [isValid, setIsValid] = useState<boolean>(true);
@@ -38,13 +40,18 @@ function DeliveryForm({ deliveryReport, setDeliveryReport, finishDeliveryReport 
         if (!isValid) return;
 
         setIsApproved(true);
-        setDeliveryReport({ delivered: currentNumber });
+        setDeliveryReport({ delivered: currentNumber }, deliveryType);
+    }
+
+    function _finishDeliveryReport(deliveryReport: Partial<DeliveryInfoData>) {
+        finishDeliveryReport(deliveryReport, deliveryType);
     }
 
     return <div className="summary-content">
         <div className="total-deliveries">
             <NumberInput className="total-input"
                 disabled={isApproved}
+                dense={true}
                 label='כמה משלוחים בוצעו סה"כ?'
                 min={0}
                 max={deliveryReport?.total ?? 0}
@@ -61,7 +68,7 @@ function DeliveryForm({ deliveryReport, setDeliveryReport, finishDeliveryReport 
                     שנה
             </Button>}
         </div>
-        {deliveryReport?.deliveryFailReasons && <DeliveryReasons deliveryReport={deliveryReport}
-            finishDeliveryReport={!isApproved ? undefined : finishDeliveryReport} />}
+        {isApproved && <DeliveryReasons deliveryReport={deliveryReport}
+            finishDeliveryReport={!isApproved ? undefined : _finishDeliveryReport} />}
     </div>
 }

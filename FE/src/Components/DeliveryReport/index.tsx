@@ -24,6 +24,7 @@ export default function DeliveryReport({ isDialog = false, branch: DialogBranch 
     const [branches, setBranches] = useState<Branch[] | null>(null);
     const [deliveryReport, setDeliveryReport] = useState<DeliveryReportData | null>(null);
     const [openForm, setOpenForm] = useState<"manual" | "advanced" | null>(null);
+    const [deliveryType, setDeliveryType] = useState<DeliveryType | null>(null);
 
     const date = moment().startOf('day').toDate();
 
@@ -38,7 +39,7 @@ export default function DeliveryReport({ isDialog = false, branch: DialogBranch 
     }, [levelAndValue]);
 
     async function getBranches() {
-        const { level , value } = levelAndValue as LevelAndValue;
+        const { level, value } = levelAndValue as LevelAndValue;
         const queryString = `level=${level}` + `${level !== "national" ? `&value=${value}` : ""}`;
         const branches = await fetchDailyReports<Branch[]>({
             route: `/${date.toISOString()}/branches?${queryString}`,
@@ -47,24 +48,26 @@ export default function DeliveryReport({ isDialog = false, branch: DialogBranch 
         if (branches) setBranches(branches);
     }
 
-    async function _updateDeliveryReport(body: Partial<DeliveryReportData>, increment: boolean = false) {
+    async function _updateDeliveryReport(body: Partial<DeliveryInfoData>, type: DeliveryType, increment: boolean = false) {
         const result = await fetchDelivery<DeliveryReportData>({
             method: "PUT",
             route: `/${branch!.id}/${date.toISOString()}${increment ? "/increment" : ""}`,
-            body
+            body: {
+                ...body,
+                deliveryType: type,
+            }
         });
 
         if (result) setDeliveryReport(result);
     }
 
-    async function _finishDeliveryReport(body: Partial<DeliveryReportData>) {
-        await _updateDeliveryReport(body);
+    async function _finishDeliveryReport(body: Partial<DeliveryInfoData>, type: DeliveryType) {
+        await _updateDeliveryReport(body, type);
 
-        enqueueSnackbar("יום החלוקה הסתיים בהצלחה!", { variant: "success" });
+        enqueueSnackbar("עודכן בהצלחה!", { variant: "success" });
 
-        setOpenForm(null);
-        setDeliveryReport(null);
-        setBranch(null);
+        setDeliveryType(null);
+        setOpenForm("manual");
     }
 
     async function fetchReport({ id }: Branch) {
@@ -76,10 +79,7 @@ export default function DeliveryReport({ isDialog = false, branch: DialogBranch 
         if (!deliveryReport) return;
 
         setDeliveryReport(deliveryReport);
-
-        if (deliveryReport.deliveryFailReasons && Object.keys(deliveryReport.deliveryFailReasons).length > 0)
-            setOpenForm("advanced");
-        else setOpenForm("manual");
+        setOpenForm("manual");
     }
 
     const _filterAutocomplete = useCallback((branches: Branch[], { inputValue }) => branches.filter(_ => _.name.startsWith(inputValue)), []);
@@ -92,7 +92,12 @@ export default function DeliveryReport({ isDialog = false, branch: DialogBranch 
     }
 
     const _selectBranch = useCallback((_, branch) => { setBranch(branch) }, [setBranch]);
-    const isManualFormDisabled = !branch || (!!deliveryReport?.deliveryFailReasons && Object.keys(deliveryReport.deliveryFailReasons).length > 0)
+    const deliveryReportInfo = (deliveryType && deliveryReport) ? deliveryReport.deliveries[deliveryType] : null;
+
+    function _manualFormIsDone(type: string) {
+        setDeliveryType(type);
+        setOpenForm("advanced");
+    }
 
     return <div className="delivery-report-container">
         <div className="delivery-report">
@@ -109,7 +114,7 @@ export default function DeliveryReport({ isDialog = false, branch: DialogBranch 
                     </div> :
                 <></>
             }
-            <ExpansionPanel disabled={isManualFormDisabled}
+            <ExpansionPanel disabled={!branch}
                 expanded={!!branch && openForm === "manual"} onChange={(_, v) => setOpenForm(v ? "manual" : null)}>
                 <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} style={{ backgroundColor: "#eee" }}>
                     <div className="title">
@@ -117,17 +122,17 @@ export default function DeliveryReport({ isDialog = false, branch: DialogBranch 
                     </div>
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails style={{ padding: 0 }}>
-                    <ManualFrom date={date} deliveryReport={deliveryReport} updateDelivery={_updateDeliveryReport} setIsDone={() => setOpenForm("advanced")} />
+                    <ManualFrom date={date} deliveryReport={deliveryReport} updateDelivery={_updateDeliveryReport} setIsDone={_manualFormIsDone} />
                 </ExpansionPanelDetails>
             </ExpansionPanel>
-            <ExpansionPanel disabled={!branch} expanded={!!branch && openForm === "advanced"} onChange={(_, v) => setOpenForm(v ? "advanced" : null)}>
+            <ExpansionPanel disabled={!branch || !deliveryType} expanded={!!branch && openForm === "advanced"} onChange={(_, v) => setOpenForm(v ? "advanced" : null)}>
                 <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} style={{ backgroundColor: "#eee" }}>
                     <div className="title">
-                        סיכום יום החלוקה
+                        סיכום החלוקה
                     </div>
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails style={{ padding: 0 }}>
-                    <DailySummary deliveryReport={deliveryReport} setDeliveryReport={_updateDeliveryReport} finishDeliveryReport={_finishDeliveryReport} />
+                    <DailySummary deliveryType={deliveryType ? deliveryType : ""} deliveryReport={deliveryReportInfo} setDeliveryReport={_updateDeliveryReport} finishDeliveryReport={_finishDeliveryReport} />
                 </ExpansionPanelDetails>
             </ExpansionPanel>
         </div>

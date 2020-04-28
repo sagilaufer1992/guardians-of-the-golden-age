@@ -12,8 +12,8 @@ import { toSelect } from "../../utils/inputs";
 import { failRasonToText } from "../../utils/translations";
 
 interface Props {
-    deliveryReport: DeliveryReportData | null;
-    finishDeliveryReport?: (deliveryReport: Partial<DeliveryReportData>) => void;
+    deliveryReport: DeliveryInfoData | null;
+    finishDeliveryReport?: (deliveryReport: Partial<DeliveryInfoData>) => void;
 }
 
 interface Reason {
@@ -87,7 +87,7 @@ export default function DeliveryReasons({ deliveryReport, finishDeliveryReport }
                 הוסף סיבה
                 <AddIcon />
             </Fab>
-            <Fab className="add-reason-button" onClick={_onRemoveReason} disabled={reasons.length < 1} size="small" color="primary" variant="extended">
+            <Fab className="add-reason-button" onClick={_onRemoveReason} disabled={reasons.length <= 1} size="small" color="primary" variant="extended">
                 הסר סיבה
                 <RemoveIcon />
             </Fab>
@@ -100,7 +100,7 @@ export default function DeliveryReasons({ deliveryReport, finishDeliveryReport }
         <div className="send-reasons">
             <ColorButton disabled={!finishDeliveryReport || !deliveryReport || sumDeliveries !== deliveryReport.total} onClick={_finishDeliveryReport}>
                 סיום יום החלוקה
-        </ColorButton>
+            </ColorButton>
         </div>
     </>
 }
@@ -123,11 +123,13 @@ function ReasonInput({ reason, reasons, setReason }: ReasonsProps) {
             <DropDownInput
                 defaultValue={reason.value}
                 options={options}
+                dense={true}
                 title=""
                 onChange={explanation => setReason(reason, { value: explanation as FailReason, deliveries: reason.deliveries })} />
         </div>
         <NumberInput className="reason-number"
             label="מספר המשלוחים"
+            dense={true}
             onChange={deliveries => setReason(reason, { value: reason.value, deliveries })}
             min={0}
             max={Infinity}

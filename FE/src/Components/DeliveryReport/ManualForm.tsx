@@ -3,41 +3,63 @@ import "./ManualForm.scss";
 import React, { useState } from "react";
 import moment from "moment";
 import { Fab } from '@material-ui/core';
-import AddIcon from '@material-ui/icons/Add';
-import RemoveIcon from '@material-ui/icons/Remove';
 
 import { ColorButton, ProgressBar } from "./utils";
 import NumberInput from "../Inputs/NumberInput";
 
-const BUTTON_VALUES = [100, 10, 1];
-
 interface Props {
     date: Date;
     deliveryReport: DeliveryReportData | null;
-    setIsDone: (isDone: boolean) => void;
-    updateDelivery: (report: Partial<DeliveryReportData>, increment: boolean) => void;
+    setIsDone: (deliveryType: string) => void;
+    updateDelivery: (report: Partial<DeliveryInfoData>, deliveryType: DeliveryType, increment: boolean) => void;
 }
 
-export default function ManualFrom({ date, deliveryReport, setIsDone, updateDelivery }: Props) {
-    const { delivered = 0, total = 100 } = deliveryReport || {};
-    const [valueToAdd, setValueToAdd] = useState<number>(0);
-
-    function onChange(value: number) {
-        if (value + delivered <= total)
-            updateDelivery({ delivered: value, total }, true);
-    }
+export default function ManualForm({ date, deliveryReport, setIsDone, updateDelivery }: Props) {
+    const { deliveries = {} } = deliveryReport || {};
 
     return <div className="report">
         <div className="manual-form-header">
             <div className="date">
                 יום {moment(date).format('dddd')} {moment(date).format("DD/MM/YY")}
             </div>
-            <ColorButton onClick={() => setIsDone(true)}>
-                סיים את החלוקה להיום
+        </div>
+        {Object.entries(deliveries).map(([deliveryType, deliveryInfo]) =>
+            <AddDeliveriesByType key={deliveryType}
+                updateDelivery={updateDelivery}
+                setIsDone={setIsDone}
+                deliveryType={deliveryType}
+                {...deliveryInfo} />)}
+    </div>
+}
+
+interface AddProps {
+    total: number;
+    delivered: number;
+    deliveryFailed: number;
+    deliveryType: DeliveryType;
+    setIsDone: (deliveryType: string) => void;
+    updateDelivery: (report: Partial<DeliveryInfoData>, deliveryType: DeliveryType, increment: boolean) => void;
+}
+
+function AddDeliveriesByType({ delivered = 0, total = 100, deliveryFailed = 0, deliveryType, setIsDone, updateDelivery }: AddProps) {
+    const [valueToAdd, setValueToAdd] = useState<number>(0);
+
+    function onChange(value: number) {
+        if (value + delivered <= total)
+            updateDelivery({ delivered: value, total }, deliveryType, true);
+    }
+
+    console.log(delivered, deliveryFailed, total, deliveryFailed + delivered === total);
+
+    return <>
+        <div className="title">{deliveryType}</div>
+        <div className="delivery-progress">
+            <ProgressBar total={total} current={delivered} failed={deliveryFailed} />
+            <ColorButton className="progress-button" onClick={() => setIsDone(deliveryType)}>
+                סיים להיום
             </ColorButton>
         </div>
-        <div><ProgressBar total={total} current={delivered} /></div>
-        <div className="manual-form-bottom">
+        {deliveryFailed + delivered !== total && <div className="manual-form-bottom">
             <Fab className="small-button"
                 variant="extended"
                 onClick={() => onChange(valueToAdd)}
@@ -50,6 +72,7 @@ export default function ManualFrom({ date, deliveryReport, setIsDone, updateDeli
                 value={valueToAdd}
                 onChange={(value) => setValueToAdd(value)}
                 label=""
+                dense={true}
                 min={0} max={Infinity} />
             <Fab className="small-button"
                 variant="extended"
@@ -58,27 +81,6 @@ export default function ManualFrom({ date, deliveryReport, setIsDone, updateDeli
                 size="small">
                 הורד
             </Fab>
-        </div>
-        <div className="manual-form-buttons">
-            <div>
-                {BUTTON_VALUES.map(value => <Fab key={`+${value}`}
-                    className="small-button"
-                    size="small"
-                    color="primary"
-                    disabled={delivered + value > total}
-                    onClick={() => onChange(value)}>
-                    {value}+
-                </Fab>)}
-            </div>
-            <div className="decrease-buttons">
-                {BUTTON_VALUES.map(value => <Fab key={`-${value}`}
-                    className="small-button"
-                    size="small"
-                    disabled={delivered - value < 0}
-                    onClick={() => onChange(-value)}>
-                    {value}-
-                </Fab>)}
-            </div>
-        </div>
-    </div>
+        </div>}
+    </>
 }

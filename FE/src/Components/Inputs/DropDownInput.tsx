@@ -11,10 +11,11 @@ interface Props {
     title: string;
     defaultValue: string;
     options: Option[];
+    dense?: boolean;
     onChange: (value: string) => void;
 }
 
-export default function DropDownInput({ onChange, defaultValue, title, options }: Props) {
+export default function DropDownInput({ onChange, defaultValue, title, options, dense }: Props) {
     const handleChange = (e: any) => {
         onChange(e.target.value);
     };
@@ -22,6 +23,7 @@ export default function DropDownInput({ onChange, defaultValue, title, options }
     return <FormControl variant="outlined" >
         <InputLabel>{title}</InputLabel>
         <Select
+            margin={dense ? "dense" : undefined}
             defaultValue={defaultValue}
             onChange={handleChange}
             label={title}>
