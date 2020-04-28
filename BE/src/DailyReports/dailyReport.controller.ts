@@ -43,7 +43,7 @@ export async function createFutureReports(req, res) {
 
     // update exist reports
     dbDailyReports.forEach(async report => {
-        const newReport = reports.find(_ => _.id === report.branchId && _.amount > 0);
+        const newReport = reports.find(_ => _.id === report.branchId);
         if (!newReport) return;
 
         existingReports.add(report.branchId);
@@ -51,7 +51,7 @@ export async function createFutureReports(req, res) {
         await report.save();
     });
 
-    const newReports = reports.filter(report => !existingReports.has(report.id) && report.amount > 0);
+    const newReports = reports.filter(report => !existingReports.has(report.id));
 
     // add new branches
     await Branch.create(newBranches);
@@ -208,25 +208,29 @@ function _groupBySubLevels(level: be.Level, branches: be.Branch[], reports: be.D
     const reportTotals: be.DailyReport[] = reports.map(({ branchId, deliveries }) => ({
         name: lowerLevelDisplayName(branchDictionary[branchId]),
         address: level === "municipality" ? branchDictionary[branchId].address : undefined,
-        deliveries: Array.from(deliveries.entries()).reduce((pv, [type, { total, delivered, deliveryFailed, deliveryFailReasons }]) => ({
-            ...pv,
-            [type]: {
-                expected: total,
-                actual: delivered + deliveryFailed,
-                delivered,
-                deliveryFailed,
-                deliveryInProgress: 0,
-                deliveryFailReasons: {
-                    declined: deliveryFailReasons.get("declined") ?? 0,
-                    address: deliveryFailReasons.get("address") ?? 0,
-                    unreachable: deliveryFailReasons.get("unreachable") ?? 0,
-                    other: deliveryFailReasons.get("other") ?? 0
+        deliveries: Array.from(deliveries.entries()).filter(([key, value]) => value?.total > 0)
+            .reduce((pv, [type, { total, delivered, deliveryFailed, deliveryFailReasons }]) => ({
+                ...pv,
+                [type]: {
+                    expected: total,
+                    actual: delivered + deliveryFailed,
+                    delivered,
+                    deliveryFailed,
+                    deliveryInProgress: 0,
+                    deliveryFailReasons: {
+                        declined: deliveryFailReasons.get("declined") ?? 0,
+                        address: deliveryFailReasons.get("address") ?? 0,
+                        unreachable: deliveryFailReasons.get("unreachable") ?? 0,
+                        other: deliveryFailReasons.get("other") ?? 0
+                    }
                 }
-            }
-        }), {})
+            }), {})
     }))
 
-    let result = [...reportTotals, ...Object.values(jobTotals).filter(_ => Object.keys(_.deliveries).length > 0)];
+    let result = [
+        ...reportTotals.filter(_ => Object.keys(_.deliveries).length > 0),
+        ...Object.values(jobTotals).filter(_ => Object.keys(_.deliveries).length > 0)
+    ];
 
     if (level !== "municipality")
         // combine daily reports by display name (not for distibution centers)
@@ -275,9 +279,9 @@ function _mergeDeliveries(prev: Record<be.DeliveryType, be.DeliveryInfo>, curr: 
     const deliveryTypes = new Set([...Object.keys(prev), ...Object.keys(curr)]);
 
     return Array.from(deliveryTypes.values()).reduce((pv, key) => {
-        if (!prev[key] || !curr[key]) return prev[key] || curr[key];
-
-        pv[key] = {
+        if (!prev[key]) pv[key] = curr[key];
+        else if (!curr[key]) pv[key] = prev[key];
+        else pv[key] = {
             expected: prev[key].expected + curr[key].expected,
             actual: prev[key].actual + curr[key].actual,
             delivered: prev[key].delivered + curr[key].delivered,
