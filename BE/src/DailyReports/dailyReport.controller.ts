@@ -92,12 +92,14 @@ export async function getRelevantBranches(req, res) {
     const { start, end } = getRangeFromDate(new Date(date));
 
     const reports = await DailyReport.find({
-        date: { $gte: start, $lt: end },
-        total: { $gt: 0 }
-    }, "branchId");
+        date: { $gte: start, $lt: end }
+    });
+
+    const relevantReports = reports.filter(_ => _.deliveries &&
+        Array.from(_.deliveries.keys()).some(key => _.deliveries.get(key).total > 0));
 
     const branches = await Branch.find({
-        id: { $in: reports.map(_ => _.branchId) }
+        id: { $in: relevantReports.map(_ => _.branchId) }
     });
 
     if ((level as be.Level) === "national") res.json(branches);
