@@ -6,6 +6,7 @@ import { Fab } from '@material-ui/core';
 
 import { ColorButton, ProgressBar } from "./utils";
 import NumberInput from "../Inputs/NumberInput";
+import { deliveryTypeToText } from "../../utils/translations";
 
 interface Props {
     date: Date;
@@ -52,7 +53,7 @@ function AddDeliveriesByType({ delivered = 0, total = 100, deliveryFailed = 0, d
     console.log(delivered, deliveryFailed, total, deliveryFailed + delivered === total);
 
     return <>
-        <div className="title">{deliveryType}</div>
+        <div className="title">{deliveryTypeToText[deliveryType] ?? deliveryType}</div>
         <div className="delivery-progress">
             <ProgressBar total={total} current={delivered} failed={deliveryFailed} />
             <ColorButton className="progress-button" onClick={() => setIsDone(deliveryType)}>

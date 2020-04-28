@@ -6,6 +6,7 @@ import { Button } from '@material-ui/core';
 import NumberInput from "../Inputs/NumberInput";
 import { ProgressBar } from "./utils";
 import DeliveryReasons from "./DeliveryReasons";
+import { deliveryTypeToText } from "../../utils/translations";
 
 interface Props {
     deliveryReport: DeliveryInfoData | null;
@@ -18,7 +19,7 @@ export default function DailySummary(props: Props) {
     const report = props.deliveryReport;
 
     return <div className="report">
-        <div className="title">{props.deliveryType}</div>
+        <div className="title">{deliveryTypeToText[props.deliveryType] ?? props.deliveryType}</div>
         {report && <ProgressBar total={report.total} current={report.delivered} failed={report.deliveryFailed} />}
         <DeliveryForm {...props} />
     </div>;
@@ -51,7 +52,7 @@ function DeliveryForm({ deliveryReport, setDeliveryReport, finishDeliveryReport,
         <div className="total-deliveries">
             <NumberInput className="total-input"
                 disabled={isApproved}
-                dense={true}
+                dense
                 label='כמה משלוחים בוצעו סה"כ?'
                 min={0}
                 max={deliveryReport?.total ?? 0}

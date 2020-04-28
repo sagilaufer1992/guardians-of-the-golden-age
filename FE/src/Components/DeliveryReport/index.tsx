@@ -35,7 +35,7 @@ export default function DeliveryReport({ isDialog = false, branch: DialogBranch 
     }, [branch, branches]);
 
     useEffect(() => {
-        getBranches()
+        if (levelAndValue) getBranches();
     }, [levelAndValue]);
 
     async function getBranches() {
