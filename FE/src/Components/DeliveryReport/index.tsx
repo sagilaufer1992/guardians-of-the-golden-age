@@ -84,9 +84,10 @@ export default function DeliveryReport({ isDialog = false, branch: DialogBranch 
 
     const _filterAutocomplete = useCallback((branches: Branch[], { inputValue }) => branches.filter(_ => _.name.startsWith(inputValue)), []);
 
-    function _showBranch({ name, napa, municipality, district }: Branch) {
+    function _showBranch({ name, napa, municipality, district, address }: Branch) {
         return <div className="autocomplete-branch">
             <span className="autocomplete-branch-name">{name}</span>
+            <span className="autocomplete-branch-address">כתובת: {address}</span>
             <span className="autocomplete-branch-hierarchy">{district} / {napa} / {municipality}</span>
         </div>;
     }

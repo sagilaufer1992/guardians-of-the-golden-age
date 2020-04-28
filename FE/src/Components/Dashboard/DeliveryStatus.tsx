@@ -66,7 +66,7 @@ export default function DeliveryStatus({ level, levelValue, reports, hideEmpty, 
             .filter(_ => _.value > 0);
 
     function singleReport(report: DeliveryReport, disabled: boolean, isTotal: boolean = false) {
-        const { name, hasExternalInfo, deliveries } = report;
+        const { name, hasExternalInfo, deliveries, address } = report;
 
         const filteredDeliveries = Object.entries(deliveries).filter(([key]) => shownDeliveryTypes.some(_ => _.name === key && _.isActive));
 
@@ -80,6 +80,9 @@ export default function DeliveryStatus({ level, levelValue, reports, hideEmpty, 
                     <img className="external-logo" src={logo} />
                 </Tooltip>}
                 <span>{name}</span>
+                {address && <Tooltip title={address} placement="bottom">
+                    <span className="report-address">{address}</span>
+                </Tooltip>}
             </div>
             <div className="deliveries-data">
                 {filteredDeliveries.map(([deliveryType, deliveryInfo]) => {
