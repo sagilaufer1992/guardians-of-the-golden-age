@@ -12,7 +12,7 @@ services:
    be:
      depends_on:
        - nginx
-     image: zahav.azurecr.io/zahav/be:4.8-dev
+     image: zahav.azurecr.io/zahav/be:4.9-dev
      restart: always
      environment:
         BE_PORT: 8000

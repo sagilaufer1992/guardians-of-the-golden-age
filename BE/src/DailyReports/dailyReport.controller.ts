@@ -249,8 +249,8 @@ function _parseNeedType(needType: gg.NeedType): be.DeliveryType[] {
     switch (needType) {
         case "FOOD":
         case "FOOD_FLOWER":
-        case "MEAL": return ["food_hot"];
         case "FOOD_PARCEL": return ["food_cold"];
+        case "MEAL": return ["food_hot"];
         case "FOOD_PARCEL_MEAL": return ["food_hot", "food_cold"];
         default: return [];
     }
