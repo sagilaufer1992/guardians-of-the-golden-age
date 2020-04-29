@@ -42,14 +42,17 @@ export async function createFutureReports(req, res) {
     const existingReports = new Set();
 
     // update exist reports
-    dbDailyReports.forEach(async report => {
+    await Promise.all(dbDailyReports.map(report => {
         const newReport = reports.find(_ => _.id === report.branchId);
-        if (!newReport) return;
+        if (!newReport) return null;
 
         existingReports.add(report.branchId);
-        report.deliveries.set(deliveryType, { ...(report.deliveries.get(deliveryType) || {} as any), total: newReport.amount });
-        await report.save();
-    });
+
+        const oldDeliveryInfo = report.deliveries.get(deliveryType);
+        if (oldDeliveryInfo.total === newReport.amount) return null;
+
+        return DailyReport.findOneAndUpdate({ _id: report._id }, { [`deliveries.${deliveryType}.total`]: newReport.amount });
+    }).filter(Boolean));
 
     const newReports = reports.filter(report => !existingReports.has(report.id));
 
