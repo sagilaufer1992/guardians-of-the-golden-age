@@ -58,7 +58,7 @@ declare namespace be {
 
   type FaultCategory = "food" | "supplier" | "volunteers" | "other";
 
-  type DeliveryType = "food_hot" | "food_cold" | "mask" | "flower" | string;
+  type DeliveryType = "food_hot" | "food_cold" | string;
 
   interface AuthorInfo {
     name: string;

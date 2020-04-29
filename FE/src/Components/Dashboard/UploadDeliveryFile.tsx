@@ -16,10 +16,12 @@ interface Props {
     onUploaded: () => void;
 }
 
+const DELIVERY_TYPE_OPTIONS: DeliveryType[] = Object.keys(deliveryTypeToText).filter(key => key !== "other");
+
 export default function UploadExpectedFile({ title, date, onUploaded }: Props) {
     const [fetchApi] = useApi("/api/dailyReports");
     const [modalOpen, setModalOpen] = useState<boolean>(false);
-    const [deliveryType, setDeliveryType] = useState<DeliveryType>(Object.keys(deliveryTypeToText)[0]);
+    const [deliveryType, setDeliveryType] = useState<DeliveryType>(DELIVERY_TYPE_OPTIONS[0]);
     const [otherDeliveryType, setOtherDeliveryType] = useState<string>("");
     const [otherDeliveryTypes, setOtherDeliveryTypes] = useState<Option[]>([]);
     const { enqueueSnackbar } = useSnackbar();
@@ -31,9 +33,7 @@ export default function UploadExpectedFile({ title, date, onUploaded }: Props) {
             const result = await fetchApi<string[]>({ route: `/${date.toISOString()}/deliveryTypes` });
             if (!result) return;
 
-            const knownTypes = Object.keys(deliveryTypeToText);
-
-            setOtherDeliveryTypes(result.filter(s => !knownTypes.includes(s))
+            setOtherDeliveryTypes(result.filter(s => !DELIVERY_TYPE_OPTIONS.includes(s))
                 .map(value => ({ value, label: deliveryTypeToText[value] || value })));
         }
 
@@ -70,7 +70,7 @@ export default function UploadExpectedFile({ title, date, onUploaded }: Props) {
 
     const closeModal = useCallback(() => {
         setModalOpen(false);
-        setDeliveryType(Object.keys(deliveryTypeToText)[0]);
+        setDeliveryType(DELIVERY_TYPE_OPTIONS[0]);
         setOtherDeliveryType("");
     }, [setModalOpen, setDeliveryType, setOtherDeliveryType]);
 
@@ -81,8 +81,8 @@ export default function UploadExpectedFile({ title, date, onUploaded }: Props) {
                     <div className="select-title">בחר את סוג המשלוח:</div>
                     <RadioGroup className="select-radio-group" value={deliveryType} onChange={(_, v) => setDeliveryType(v)}>
                         <div className="delivery-type-options">
-                            {Object.entries(deliveryTypeToText).map(([value, text]) =>
-                                <FormControlLabel key={value} value={value} label={text} control={<Radio color="primary" />} />)}
+                            {DELIVERY_TYPE_OPTIONS.map(value =>
+                                <FormControlLabel key={value} value={value} label={deliveryTypeToText[value] ?? value} control={<Radio color="primary" />} />)}
                         </div>
                         <FormControlLabel className="other-control-label" value="other" control={<Radio color="primary" />}
                             label={<Autocomplete freeSolo className="other-delivery-type" title="משלוח אחר"

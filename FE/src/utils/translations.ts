@@ -21,6 +21,5 @@ export const failRasonToText: Record<FailReason, string> = {
 export const deliveryTypeToText: Record<DeliveryType, string> = {
     food_hot: "מנות חמות",
     food_cold: "מנות קרות",
-    flower: "פרחים",
-    mask: "מסיכות"
+    other: "אחר"
 }

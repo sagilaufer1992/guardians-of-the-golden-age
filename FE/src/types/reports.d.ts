@@ -2,7 +2,8 @@ interface FutureReport extends Branch {
     amount: number;
 }
 
-type DeliveryType = "food_hot" | "food_cold" | "mask" | "flower" | string;
+// other = old delivery report information (from migration)
+type DeliveryType = "food_hot" | "food_cold" | "other" | string;
 
 type FailReason = "declined" | "unreachable" | "address" | "other";
 
