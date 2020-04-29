@@ -73,7 +73,7 @@ export default function DeliveryStatus({ level, levelValue, reports, hideEmpty, 
 
         if (filteredDeliveries.length === 0) return null;
 
-        return <div className="report-container" key={name}>
+        return <div className="report-container" key={`${levelValue}|${name}|${address}`}>
             <div className={classNames("location", { disabled })} onClick={() => onDeliveryReportClick(name)}>
                 {level === "municipality" && !isTotal && isToday(date) &&
                     <DeliveryReport name={name} municipality={levelValue!} disabled={!!hasExternalInfo} onUpdate={onDeliveryUpdated} />}
@@ -98,7 +98,7 @@ export default function DeliveryStatus({ level, levelValue, reports, hideEmpty, 
                     const failedStyle = { width: `${failedPercent}%` };
                     const inProgressStyle = { width: `${inProgressPercent}%` };
 
-                    return <div className="delivery">
+                    return <div className="delivery" key={deliveryType}>
                         <div className="delivery-info">
                             <div className="expected-text-info"><span>{deliveryTypeToText[deliveryType] ?? deliveryType}</span> | צפי יומי - {expected} אנשים</div>
                             <div className="actual-text-info">
