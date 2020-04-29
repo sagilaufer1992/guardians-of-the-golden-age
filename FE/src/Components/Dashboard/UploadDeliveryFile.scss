@@ -34,4 +34,11 @@
     display: flex;
     justify-content: center;
   }
+  .upload-loading {
+    margin-top: 10px;
+    text-align: center;
+    .upload-progress {
+      margin-left: 10px;
+    }
+  }
 }

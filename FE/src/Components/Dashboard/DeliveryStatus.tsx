@@ -19,6 +19,7 @@ interface Props {
     reports: DeliveryReport[];
     setHideEmpty: (value: boolean) => void;
     onDeliveryReportClick: (value: string) => void;
+    onDeliveryUpdated: () => void;
 }
 
 const RADIAN = Math.PI / 180;
@@ -30,7 +31,7 @@ interface DeliveryTypeButton {
     isActive: boolean;
 }
 
-export default function DeliveryStatus({ level, levelValue, reports, hideEmpty, setHideEmpty, onDeliveryReportClick, date }: Props) {
+export default function DeliveryStatus({ level, levelValue, reports, hideEmpty, setHideEmpty, onDeliveryReportClick, date, onDeliveryUpdated }: Props) {
     const allDeliveryTypes = useMemo(() => Array.from(new Set<string>(reports.flatMap(_ => Object.keys(_.deliveries)))), [reports]);
     const [shownDeliveryTypes, setShownDeliveryTypes] = useState<DeliveryTypeButton[]>(allDeliveryTypes.map(name => ({ name, isActive: true })));
 
@@ -75,7 +76,7 @@ export default function DeliveryStatus({ level, levelValue, reports, hideEmpty, 
         return <div className="report-container" key={name}>
             <div className={classNames("location", { disabled })} onClick={() => onDeliveryReportClick(name)}>
                 {level === "municipality" && !isTotal && isToday(date) &&
-                    <DeliveryReport name={name} municipality={levelValue!} disabled={!!hasExternalInfo} />}
+                    <DeliveryReport name={name} municipality={levelValue!} disabled={!!hasExternalInfo} onUpdate={onDeliveryUpdated} />}
                 {hasExternalInfo && <Tooltip title='מכיל מידע ממערכת "משמרות הזהב"' placement="top">
                     <img className="external-logo" src={logo} />
                 </Tooltip>}

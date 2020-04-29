@@ -10,9 +10,10 @@ interface Props {
     name: string;
     municipality: string;
     disabled: boolean;
+    onUpdate?: () => void;
 }
 
-export default function DeliveryReportDialog({ name, municipality, disabled }: Props) {
+export default function DeliveryReportDialog({ name, municipality, disabled, onUpdate }: Props) {
     const [open, setOpen] = useState<boolean>(false);
     const [branch, setBranch] = useState<Branch | null>(null);
     const [fetchApi] = useApi("/api/branches");
@@ -34,7 +35,7 @@ export default function DeliveryReportDialog({ name, municipality, disabled }: P
         </Tooltip>
         <Dialog onClose={() => setOpen(false)} open={open}>
             {branch ?
-                <DeliveryReport isDialog branch={branch} /> :
+                <DeliveryReport isDialog branch={branch} onUpdate={onUpdate} /> :
                 <div className="load-dialog-branch">
                     <span>טוען מרכז חלוקה</span>
                     <CircularProgress size={20} thickness={5} />

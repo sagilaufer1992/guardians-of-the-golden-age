@@ -1,7 +1,7 @@
 import "./UploadDeliveryFile.scss";
 
 import React, { useState, useCallback, useEffect } from "react";
-import { Button, Dialog, RadioGroup, FormControl, FormControlLabel, Radio } from "@material-ui/core";
+import { Button, Dialog, RadioGroup, FormControl, FormControlLabel, Radio, CircularProgress } from "@material-ui/core";
 import { useSnackbar } from "notistack";
 import GetAppOutlinedIcon from '@material-ui/icons/GetAppOutlined';
 
@@ -21,6 +21,7 @@ const DELIVERY_TYPE_OPTIONS: DeliveryType[] = Object.keys(deliveryTypeToText).fi
 export default function UploadExpectedFile({ title, date, onUploaded }: Props) {
     const [fetchApi] = useApi("/api/dailyReports");
     const [modalOpen, setModalOpen] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const [deliveryType, setDeliveryType] = useState<DeliveryType>(DELIVERY_TYPE_OPTIONS[0]);
     const [otherDeliveryType, setOtherDeliveryType] = useState<string>("");
     const [otherDeliveryTypes, setOtherDeliveryTypes] = useState<Option[]>([]);
@@ -43,36 +44,46 @@ export default function UploadExpectedFile({ title, date, onUploaded }: Props) {
     const onFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files) return;
 
-        const file = e.target.files[0];
-        let reports: FutureReport[];
+        setIsLoading(true);
 
-        e.target.value = "";
+        const result = await sendFile(e.target.files[0]);
+
+        if (result) {
+            closeModal();
+            onUploaded();
+        }
+
+        setIsLoading(false);
+
+        if (e.target) e.target.value = "";
+    }
+
+    async function sendFile(file: File) {
+        let reports: FutureReport[];
 
         try {
             reports = await extractDailyReports(file);
         }
         catch (e) {
-            return enqueueSnackbar(e.message, { variant: "error" });
+            enqueueSnackbar(e.message, { variant: "error" });
+            return null;
         }
 
-        const result = await fetchApi({
+        return await fetchApi({
             route: `/futureReports?deliveryType=${deliveryType === "other" ? otherDeliveryType : deliveryType}`,
             method: "POST",
             body: { reports, date },
             successMessage: "הדיווחים נשלחו בהצלחה"
         });
-
-        if (!result) return;
-
-        closeModal();
-        onUploaded();
     }
 
     const closeModal = useCallback(() => {
+        if (isLoading) return;
+
         setModalOpen(false);
         setDeliveryType(DELIVERY_TYPE_OPTIONS[0]);
         setOtherDeliveryType("");
-    }, [setModalOpen, setDeliveryType, setOtherDeliveryType]);
+    }, [isLoading, setModalOpen, setDeliveryType, setOtherDeliveryType]);
 
     return <div className="upload-file-input">
         <Dialog open={modalOpen} onClose={closeModal} fullWidth maxWidth="sm">
@@ -91,12 +102,16 @@ export default function UploadExpectedFile({ title, date, onUploaded }: Props) {
                     </RadioGroup>
                 </FormControl>
                 <div className="upload-file-button">
-                    <Button color="primary" variant="contained" component="label" onClick={() => setModalOpen(true)}>
+                    <Button disabled={isLoading} color="primary" variant="contained" component="label" onClick={() => setModalOpen(true)}>
                         העלה קובץ
                     <input type="file" className="upload-input-element" onChange={onFileUpload}
                             accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />
                     </Button>
                 </div>
+                {isLoading && <div className="upload-loading">
+                    <CircularProgress className="upload-progress" color="primary" size={12} thickness={5} />
+                    <span>שולח מידע...</span>
+                </div>}
             </div>
         </Dialog>
         <Button color="primary" variant="contained" component="label" onClick={() => setModalOpen(true)}>

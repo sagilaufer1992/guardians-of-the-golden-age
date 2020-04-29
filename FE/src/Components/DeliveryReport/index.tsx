@@ -14,9 +14,10 @@ import { AppRouteProps } from "../../routesConfig";
 interface Props {
     branch?: Branch | null;
     isDialog?: boolean;
+    onUpdate?: () => void;
 }
 
-export default function DeliveryReport({ isDialog = false, branch: DialogBranch = null, levelAndValue }: Props & Partial<AppRouteProps>) {
+export default function DeliveryReport({ isDialog = false, branch: DialogBranch = null, levelAndValue, onUpdate }: Props & Partial<AppRouteProps>) {
     const { enqueueSnackbar } = useSnackbar();
     const [fetchDelivery] = useApi("/api/deliveryReport");
     const [fetchDailyReports] = useApi("/api/dailyReports");
@@ -58,7 +59,10 @@ export default function DeliveryReport({ isDialog = false, branch: DialogBranch 
             }
         });
 
-        if (result) setDeliveryReport(result);
+        if (!result) return;
+
+        setDeliveryReport(result);
+        onUpdate?.();
     }
 
     async function _finishDeliveryReport(body: Partial<DeliveryInfoData>, type: DeliveryType) {

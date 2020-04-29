@@ -48,18 +48,18 @@ export async function createFutureReports(req, res) {
 
         existingReports.add(report.branchId);
 
-        const oldDeliveryInfo = report.deliveries.get(deliveryType);
+        const oldDeliveryInfo = report.deliveries.get(deliveryType) || {} as any;
         if (oldDeliveryInfo.total === newReport.amount) return null;
 
-        return DailyReport.findOneAndUpdate({ _id: report._id }, { [`deliveries.${deliveryType}.total`]: newReport.amount });
+        return DailyReport.findOneAndUpdate({ _id: report._id }, { [`deliveries.${deliveryType}`]: { total: newReport.amount } });
     }).filter(Boolean));
 
     const newReports = reports.filter(report => !existingReports.has(report.id));
 
     // add new branches
-    await Branch.create(newBranches);
+    await Branch.insertMany(newBranches);
     // add new reports
-    await DailyReport.create(newReports.map(({ id, amount }) => ({
+    await DailyReport.insertMany(newReports.map(({ id, amount }) => ({
         branchId: id,
         date,
         deliveries: { [deliveryType]: { total: amount } }
@@ -231,8 +231,8 @@ function _groupBySubLevels(level: be.Level, branches: be.Branch[], reports: be.D
     }))
 
     let result = [
-        ...reportTotals.filter(_ => Object.keys(_.deliveries).length > 0),
-        ...Object.values(jobTotals).filter(_ => Object.keys(_.deliveries).length > 0)
+        ...Object.values(jobTotals).filter(_ => Object.keys(_.deliveries).length > 0),
+        ...reportTotals.filter(_ => Object.keys(_.deliveries).length > 0)
     ];
 
     if (level !== "municipality")

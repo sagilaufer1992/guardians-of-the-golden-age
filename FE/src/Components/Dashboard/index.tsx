@@ -75,7 +75,9 @@ export default function Dashboard({ date, setDate, levelAndValue, setLevelAndVal
 
     const showUpload = useMemo(() => dayDifference(date, new Date()) >= 0, [date]);
 
-    useEffect(() => { datePanelRef.current?.refresh() }, [levelAndValue, hideEmpty]);
+    const onUpdate = useCallback(() => { datePanelRef.current?.refresh() }, [datePanelRef]);
+    
+    useEffect(onUpdate, [levelAndValue, hideEmpty]);
 
     const _refreshReports = useCallback(async (date: Date) => {
         const { level, value: levelValue } = levelAndValue;
@@ -89,7 +91,7 @@ export default function Dashboard({ date, setDate, levelAndValue, setLevelAndVal
 
     const onExpectedFileUploaded = () => {
         setHideEmpty(false);
-        datePanelRef.current?.refresh();
+        onUpdate();
     };
 
     const onDeliveryReportClick = (value: string) => {
@@ -117,6 +119,7 @@ export default function Dashboard({ date, setDate, levelAndValue, setLevelAndVal
                 level={levelAndValue.level}
                 levelValue={levelAndValue.value}
                 reports={deliveryReports}
+                onDeliveryUpdated={onUpdate}
                 onDeliveryReportClick={onDeliveryReportClick} />}
         </div>
     </Container>;
