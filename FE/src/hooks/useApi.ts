@@ -9,6 +9,7 @@ interface ApiOptions {
     parseDate?: boolean;
     defaultErrorMessage?: string;
     successMessage?: string;
+    cache?: string;
 }
 
 export function useApi(baseUrl: string = "", defaultOptions: ApiOptions = {}) {
@@ -16,10 +17,10 @@ export function useApi(baseUrl: string = "", defaultOptions: ApiOptions = {}) {
     const { enqueueSnackbar } = useSnackbar();
 
     async function fetchApi<T>(options: ApiOptions = {}): Promise<T | null> {
-        const { route = "", method = "GET", body, defaultErrorMessage, successMessage, parseDate } = { ...defaultOptions, ...options };
+        const { route = "", method = "GET", body, defaultErrorMessage, successMessage, parseDate, ...rest } = { ...defaultOptions, ...options };
 
         try {
-            const result = await fetchBackend(`${baseUrl}${route}`, { token, method, body });
+            const result = await fetchBackend(`${baseUrl}${route}`, { token, method, body, ...rest });
 
             // 401 means the token is invalid and needs to be refreshed (in login page)
             if (result.status === 401) window.location.reload();

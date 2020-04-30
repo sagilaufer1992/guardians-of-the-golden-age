@@ -82,7 +82,7 @@ export default function Dashboard({ date, setDate, levelAndValue, setLevelAndVal
     const _refreshReports = useCallback(async (date: Date) => {
         const { level, value: levelValue } = levelAndValue;
         const params = `?level=${level}${levelValue ? `&value=${levelValue}` : ""}&date=${date.toISOString()}&hideEmpty=${hideEmpty}`;
-        const newDeliveryReports = await fetchDeliveryReports<DeliveryReport[]>({ route: params });
+        const newDeliveryReports = await fetchDeliveryReports<DeliveryReport[]>({ route: params, cache: "no-store" });
 
         if (!newDeliveryReports) throw new Error();
 
