@@ -5,7 +5,7 @@ export interface FetchOptions {
 }
 
 export async function fetchBackend(url: string, options: FetchOptions = {}): Promise<Response> {
-    const { token, method = "GET", body } = options;
+    const { token, method = "GET", body, ...rest } = options;
 
     return await fetch((process.env.REACT_APP_BE || "") + url, {
         method,
@@ -13,6 +13,7 @@ export async function fetchBackend(url: string, options: FetchOptions = {}): Pro
             "Content-Type": "application/json",
             ...(token ? { authorization: `Bearer ${token}` } : {})
         }),
-        body: body ? JSON.stringify(body) : undefined
+        body: body ? JSON.stringify(body) : undefined,
+        ...rest
     });
 }
