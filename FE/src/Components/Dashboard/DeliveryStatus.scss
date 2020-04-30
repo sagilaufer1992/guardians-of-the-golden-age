@@ -68,6 +68,7 @@ $dashboard-margin: 10px;
             padding: 5px;
             position: relative;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             text-align: center;
@@ -106,11 +107,7 @@ $dashboard-margin: 10px;
                 pointer-events: all;
             }
             .report-address {
-                position: absolute;
-                bottom: 5px;
-                left: 5px;
-                right: 5px;
-                font-size: 14px;
+                font-size: 13px;
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
@@ -172,6 +169,8 @@ $dashboard-margin: 10px;
                     .actual-text-info {
                         font-size: 14px;
                         & > * {
+                            display: inline-flex;
+                            align-items: center;
                             padding-right: 10px;
                         }
                     }
@@ -191,8 +190,10 @@ $dashboard-margin: 10px;
             margin: 0 5px;
             font-size: 18px;
         }
-        .delivered, .in-progress, .failed {
+        & > * {
             font-size: 16px;
+            display: flex;
+            align-items: center;
         }
         .delivered {
             cursor: default;
@@ -219,6 +220,40 @@ $dashboard-margin: 10px;
             @extend .report-container;
             flex: 2 2 48%;
             margin: $dashboard-margin;
+        }
+    }
+}
+
+/* Extra small devices (phones, 600px and down) */
+@media only screen and (max-width: 600px) {
+    .delivery-status {
+        .delivery-status-title {
+            display: flex;
+            flex-direction: column;
+            & > * {
+                margin: 5px 0;
+            }
+        }
+        .report-container {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            margin: 5px 0 !important;
+            flex: none;
+            .location {
+                width: 100% !important;
+                height: 50px !important;
+                margin: 0 !important;
+            } 
+            .deliveries-data {
+                width:100%;
+                * {
+                    font-size: 13px !important;
+                }
+                .delivery-info {
+                    flex-direction: column;
+                }
+            } 
         }
     }
 }
