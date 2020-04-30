@@ -195,7 +195,7 @@ export default function DeliveryStatus({ level, levelValue, reports, hideEmpty, 
                 <Hidden smDown>
                     <Card className="delivery-status-legend">
                         <span className="delivered"><DoneAll fontSize="small" />בוצע</span>
-                        <span className="in-progress"><LocalShipping fontSize="small" />בדרך</span>
+                        <span className="in-progress"><LocalShipping fontSize="small" />בתהליך</span>
                         <span className="failed zero"><Warning fontSize="small" />נתקלו בבעיה</span>
                         <span><Assessment fontSize="small" />סך הכל</span>
                     </Card>
